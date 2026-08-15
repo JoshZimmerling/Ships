@@ -15,6 +15,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using static UnityEngine.LowLevelPhysics2D.PhysicsLayers;
+using Unity.Networking.Transport.Relay;
 
 public class MenuManager : MonoBehaviour
 {
@@ -74,8 +75,6 @@ public class MenuManager : MonoBehaviour
 
         switch (currentScreen)
         {
-            //case ScreenNames.FirstScreen:
-            //    return;
             case ScreenNames.LobbyListScreen:
                 if (lobbyRefreshTimer < 0f)
                 {
@@ -126,9 +125,6 @@ public class MenuManager : MonoBehaviour
         }
     }
 
-
-
-
     private async void CreateLobby()
     {
         try
@@ -177,7 +173,6 @@ public class MenuManager : MonoBehaviour
         ChangeScreen(ScreenNames.LobbyScreen);
     }
 
-
     private async void RefreshLobbyList()
     {
         lobbyRefreshTimer = lobbyRefreshTimeMax;
@@ -216,22 +211,6 @@ public class MenuManager : MonoBehaviour
             if (!exists)
                 Destroy(child.gameObject);
         }
-    }
-
-    public async Task<Lobby> PollLobbyForUpdates()
-    {
-        if (currentLobby == null)
-            return null;
-        try
-        {
-            currentLobby = await LobbyService.Instance.GetLobbyAsync(currentLobby.Id);
-            return currentLobby;
-        }
-        catch (LobbyServiceException e)
-        {
-            Debug.Log(e);
-        }
-        return null;
     }
 
     private async void RefreshLobbyInfo()
@@ -294,8 +273,6 @@ public class MenuManager : MonoBehaviour
             JoinGame(currentLobby.Data["RelayCode"].Value);
     }
 
-
-
     public async void RemovePlayerFromLobby(string playerId)
     {
         try
@@ -335,14 +312,6 @@ public class MenuManager : MonoBehaviour
         };
     }
 
-
-
-
-
-
-
-
-
     private async void StartGame()
     {
         string relayCode = null;
@@ -352,13 +321,12 @@ public class MenuManager : MonoBehaviour
             NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(AllocationUtils.ToRelayServerData(allocation, "wss"));
             NetworkManager.Singleton.GetComponent<UnityTransport>().UseWebSockets = true;
             relayCode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
-            //return NetworkManager.Singleton.StartHost() ? joinCode : null
         }
         catch (RelayServiceException e)
         {
             Debug.Log(e);
         }
-
+     
         if (relayCode == null) return;
         try
         {
@@ -374,8 +342,12 @@ public class MenuManager : MonoBehaviour
         }
 
         Debug.Log("Relay created: " + relayCode);
-        //TODO: start game
+
+        NetworkManager.Singleton.StartHost();
+        //GameManager.Singleton.ChangeState(GameState.Gameplay);
+        SceneManager.LoadScene("Multiplayer Scene");
     }
+
     private async void JoinGame(string relayCode)
     {
         try
@@ -391,5 +363,9 @@ public class MenuManager : MonoBehaviour
         }
         Debug.Log("Relay joined: " + relayCode);
         //TODO: start game
+
+        NetworkManager.Singleton.StartClient();
+        //GameManager.Singleton.ChangeState(GameState.Gameplay);
+        SceneManager.LoadScene("Multiplayer Scene");
     }
 }
