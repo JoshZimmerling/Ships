@@ -13,10 +13,10 @@ TagManager:
   - UI
   - 
   - 
-  - 
-  - 
-  - 
-  - 
+  - MiniMap
+  - Terrain
+  - Bullet
+  - Ship
   - 
   - 
   - 
@@ -41,6 +41,9 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
-  - name: Secondary
+  - name: Scanner
+    uniqueID: 257962177
+    locked: 0
+  - name: HideInFog
     uniqueID: 2182174917
     locked: 0

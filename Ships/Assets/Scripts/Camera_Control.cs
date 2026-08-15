@@ -60,7 +60,7 @@ public class Camera_Control : MonoBehaviour
         }
     }
 
-    public void toggleLockState()
+    public void ToggleLockState()
     {
         if (camLocked)
             camLocked = false;

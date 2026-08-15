@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 3255665473735665440}
   - component: {fileID: 6968995227602875638}
   - component: {fileID: 2939247289548882504}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: SatelliteMid
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -94,7 +94,7 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1297920763496874744}
-  m_BodyType: 2
+  m_BodyType: 1
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0

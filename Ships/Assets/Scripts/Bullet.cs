@@ -7,27 +7,19 @@ public class Bullet : NetworkBehaviour
 {
     float dmg;
     float maxbulletLifetime;
-    NetworkVariable<int> parentPlayerNum = new NetworkVariable<int>();
+    float bulletSpeed;
 
     public override void OnNetworkSpawn()
     {
-        parentPlayerNum.OnValueChanged += (int previousValue, int newValue) =>
-        {
-            if (newValue == 1)
-                GetComponent<SpriteRenderer>().color = Color.red;
-            else if (newValue == 2)
-                GetComponent<SpriteRenderer>().color = Color.blue;
-            else
-                GetComponent<SpriteRenderer>().color = Color.black;
-        };
+        GetComponent<SpriteRenderer>().color = GameManager.Singleton.playerColors[OwnerClientId];
     }
 
     float bulletLifetime = 0;
     void FixedUpdate()
     {
-        if (!IsHost)
-            return;
+        if (!IsHost) return;
 
+        transform.Translate(new Vector2(0, 1) * bulletSpeed * Time.deltaTime);
         bulletLifetime += Time.deltaTime;
 
         if (bulletLifetime > maxbulletLifetime)
@@ -39,36 +31,31 @@ public class Bullet : NetworkBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (!IsHost)
-            return;
+        if (!IsHost) return;
 
-        //Ensures not colliding with another bullet
-        if (collision.GetComponent<Bullet>() == null)
-        {
-            if(collision.GetComponent<Ship>() != null)
-            {
-                if(collision.GetComponent<Ship>().getPlayerNum() != parentPlayerNum.Value)
-                {
-                    collision.GetComponent<Ship>().doDamage(dmg);
-                    GetComponent<NetworkObject>().Despawn();
-                    Destroy(this.gameObject);
-                }
-            }
-        }
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Ship"))
+            if (collision.GetComponent<Ship>().OwnerClientId == this.OwnerClientId)
+                return;
+            else
+                collision.GetComponent<Ship>().DoDamage(dmg);
+
+        GetComponent<NetworkObject>().Despawn();
+        Destroy(this.gameObject);
     }
 
-    public void setBulletLifetime(float lifetime)
+    public void SetupBullet(float lifetime, float damage, float speed)
     {
         maxbulletLifetime = lifetime;
-    }
-
-    public void setDamage(float damage)
-    {
         dmg = damage;
+        bulletSpeed = speed;
     }
-
-    public void setParentPlayerNum(int num)
+    /*
+    [ClientRpc]
+    public void SetupBulletClientRPC(float lifetime, float damage, float speed)
     {
-        parentPlayerNum.Value = num;
+        maxbulletLifetime = lifetime;
+        dmg = damage;
+        bulletSpeed = speed;
     }
+    */
 }
