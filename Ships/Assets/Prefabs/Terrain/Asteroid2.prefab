@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8260938250507823062}
   - component: {fileID: 2940578617757331848}
   - component: {fileID: 7277853098798622017}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Asteroid2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -94,7 +94,7 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 883296491478411448}
-  m_BodyType: 2
+  m_BodyType: 1
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
