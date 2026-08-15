@@ -262,7 +262,7 @@ public class LobbyManager: MonoBehaviour
     {
         try
         {
-            Allocation allocation = await RelayService.Instance.CreateAllocationAsync(3);
+            Allocation allocation = await RelayService.Instance.CreateAllocationAsync(7);
             NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(AllocationUtils.ToRelayServerData(allocation, "wss"));
             NetworkManager.Singleton.GetComponent<UnityTransport>().UseWebSockets = true;
             string joinCode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
