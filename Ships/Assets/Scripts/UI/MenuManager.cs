@@ -230,5 +230,6 @@ public class MenuManager : MonoBehaviour
         await lobbyManager.RemovePlayer(playerId);
         if (playerId == AuthenticationService.Instance.PlayerId)
             ChangeScreen(screenNames.LobbyListScreen);
+        RefreshLobbyInfo();
     }
  }
