@@ -1678,6 +1678,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MenuManager
   lobbyRepeaterPrefab: {fileID: 5862539692977956443, guid: ed318bcd7268d1840bc7fa23dbdeae4d, type: 3}
   playerRepeaterPrefab: {fileID: 1643282718538799694, guid: b234946f12d5a7d48a7339f4c714b5a8, type: 3}
+  playerColors:
+  - {r: 1, g: 0, b: 0, a: 1}
+  - {r: 0, g: 0.22719002, b: 1, a: 1}
+  - {r: 0, g: 1, b: 0.04815674, a: 1}
+  - {r: 1, g: 0, b: 0.9320469, a: 1}
+  - {r: 0, g: 0.8562715, b: 1, a: 1}
+  - {r: 1, g: 0.9104993, b: 0, a: 1}
+  - {r: 1, g: 0.5452945, b: 0, a: 1}
+  - {r: 0.6721854, g: 0, b: 1, a: 1}
+  - {r: 0, g: 0.3921569, b: 0, a: 1}
+  - {r: 0.5450981, g: 0, b: 0, a: 1}
+  - {r: 0, g: 0.5450981, b: 0.5450981, a: 1}
+  - {r: 0.8235295, g: 0.7058824, b: 0.5490196, a: 1}
 --- !u!114 &950860228
 MonoBehaviour:
   m_ObjectHideFlags: 0
