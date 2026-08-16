@@ -14,6 +14,7 @@ public class PlayerRepeater : MonoBehaviour
     private GameObject hostIcon;
     private Button leaveLobbyButton;
     private Image leaveKickLobbyImage;
+    private Image backgroundColor;
 
     [SerializeField] private Sprite kickIcon;
     [SerializeField] private Sprite leaveIcon;
@@ -30,6 +31,7 @@ public class PlayerRepeater : MonoBehaviour
         leaveLobbyButton = transform.Find("Leave Button").GetComponent<Button>();
         leaveLobbyButton.onClick.AddListener(() => LeaveOrKickPlayer());
         leaveKickLobbyImage = transform.Find("Leave Button").GetComponent<Image>();
+        backgroundColor = gameObject.GetComponent<Image>();
     }
 
     public void UpdatePlayerDetails(Player player, string hostId)
@@ -38,6 +40,7 @@ public class PlayerRepeater : MonoBehaviour
 
         playerName.text = player.Data["PlayerName"].Value;
         hostIcon.SetActive(playerId == hostId);
+        backgroundColor.color = menuManager.playerColors[int.Parse(player.Data["Color"].Value)];
 
         if (playerId == AuthenticationService.Instance.PlayerId) // Looking at self
         {
@@ -64,7 +67,7 @@ public class PlayerRepeater : MonoBehaviour
 
     private void ChangeColorPlayer()
     {
-        //TODO
+        menuManager.ChangePlayerColor(playerId);
     }
 
     private void LeaveOrKickPlayer()

@@ -85,6 +85,7 @@ public class MenuManager : MonoBehaviour
                 if (lobbyRefreshTimer < 0f)
                 {
                     RefreshLobbyInfo();
+                    RefreshLobbyVisuals();
                 }
                 return;
         }
@@ -159,11 +160,13 @@ public class MenuManager : MonoBehaviour
     {
         try
         {
+            Player player = GetPlayer();
             JoinLobbyByIdOptions joinLobbyByIdOptions = new JoinLobbyByIdOptions
             {
-                Player = GetPlayer()
+                Player = player
             };
             currentLobby = await LobbyService.Instance.JoinLobbyByIdAsync(lobbyId, joinLobbyByIdOptions);
+            ChangePlayerColor(player.Id);
         }
         catch (LobbyServiceException e)
         {
@@ -226,7 +229,15 @@ public class MenuManager : MonoBehaviour
         } catch (LobbyServiceException e) {
             Debug.Log(e);
         }
-        // Verifies player is still in lobby
+
+        // Checks for if the game has started
+        if (currentLobby.Data["RelayCode"].Value != "")
+            JoinGame(currentLobby.Data["RelayCode"].Value);
+    }
+
+    private void RefreshLobbyVisuals()
+    {
+        // Verifies if player is still in lobby
         bool inLobby = false;
         if (currentLobby != null)
             foreach (Player player in currentLobby.Players)
@@ -238,7 +249,7 @@ public class MenuManager : MonoBehaviour
             return;
         }
 
-
+        // Checks if new players have entered lobby
         foreach (Player player in currentLobby.Players)
         {
             if (player.Id == AuthenticationService.Instance.PlayerId) inLobby = true;
@@ -252,9 +263,11 @@ public class MenuManager : MonoBehaviour
             }
             else
                 playerObject = t.gameObject;
+            // Updates the data in the repeaters
             playerObject.GetComponent<PlayerRepeater>().UpdatePlayerDetails(player, currentLobby.HostId);
         }
 
+        // Remove players that have left the lobby
         for (int i = playerViewerObject.transform.childCount - 1; i >= 0; i--)
         {
             Transform child = playerViewerObject.transform.GetChild(i);
@@ -266,11 +279,9 @@ public class MenuManager : MonoBehaviour
                 Destroy(child.gameObject);
         }
 
+        // Update lobby info
         lobbyName.text = currentLobby.Name;
         startGameButton.gameObject.SetActive(AuthenticationService.Instance.PlayerId == currentLobby.HostId);
-
-        if (currentLobby.Data["RelayCode"].Value != "")
-            JoinGame(currentLobby.Data["RelayCode"].Value);
     }
 
     public async void RemovePlayerFromLobby(string playerId)
@@ -293,7 +304,7 @@ public class MenuManager : MonoBehaviour
                 currentLobby = null;
                 ChangeScreen(ScreenNames.LobbyListScreen);
             }
-            RefreshLobbyInfo();
+            RefreshLobbyVisuals();
         }
         catch (LobbyServiceException e)
         {
@@ -301,15 +312,64 @@ public class MenuManager : MonoBehaviour
         }
     }
 
-    private Player GetPlayer()
+    
+    private Player GetPlayer(Lobby lobby = null)
     {
+        int colorValue = 0;
+
+        if (lobby != null)
+            colorValue = GetAvailableColor(lobby, 0);
+
         return new Player
         {
             Data = new Dictionary<string, PlayerDataObject> {
                     { "PlayerName", new PlayerDataObject(PlayerDataObject.VisibilityOptions.Member, playerName)},
-                    { "Color",      new PlayerDataObject(PlayerDataObject.VisibilityOptions.Member, "-1")}
+                    { "Color",      new PlayerDataObject(PlayerDataObject.VisibilityOptions.Member, colorValue.ToString())}
                 }
         };
+    }
+
+    public Color[] playerColors = new Color[12];
+    private int GetAvailableColor(Lobby lobby, int colorValue)
+    {
+        List<string> colors = new List<string>();
+        foreach (var player in lobby.Players)
+            colors.Add(player.Data["Color"].Value);
+
+        
+        while (colorValue < playerColors.Length)
+        {
+            if (colors.Contains(colorValue.ToString()))
+                colorValue++;
+            else
+                break;
+        }
+
+        return colorValue;
+    }
+
+    public async void ChangePlayerColor(string playerId)
+    {
+        try
+        {
+            Player player = null;
+            foreach (Player p2 in currentLobby.Players)
+                if (p2.Id == playerId)
+                    player = p2;
+
+            UpdatePlayerOptions updatePlayerOptions = new UpdatePlayerOptions
+            {
+                Data = new Dictionary<string, PlayerDataObject> {
+                    { "Color",      new PlayerDataObject(PlayerDataObject.VisibilityOptions.Member, GetAvailableColor(currentLobby, int.Parse(player.Data["Color"].Value)).ToString())}
+                }
+            };
+            currentLobby = await LobbyService.Instance.UpdatePlayerAsync(currentLobby.Id, playerId, updatePlayerOptions);
+        }
+        catch (LobbyServiceException e)
+        {
+            Debug.Log(e);
+        }
+        RefreshLobbyVisuals();
     }
 
     private async void StartGame()
@@ -343,10 +403,8 @@ public class MenuManager : MonoBehaviour
 
         Debug.Log("Relay created: " + relayCode);
 
-
         await SceneManager.LoadSceneAsync("Multiplayer Scene");
         NetworkManager.Singleton.StartHost();
-        //GameManager.Singleton.ChangeState(GameState.Gameplay);
     }
 
     private async void JoinGame(string relayCode)
@@ -363,10 +421,8 @@ public class MenuManager : MonoBehaviour
             Debug.Log(e);
         }
         Debug.Log("Relay joined: " + relayCode);
-        //TODO: start game
 
         await SceneManager.LoadSceneAsync("Multiplayer Scene");
         NetworkManager.Singleton.StartClient();
-        //GameManager.Singleton.ChangeState(GameState.Gameplay);
     }
 }
