@@ -1,17 +1,21 @@
-using System;
+using NUnit.Framework;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using TMPro;
-using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
+using Unity.Netcode;
 using Unity.Services.Authentication;
 using Unity.Services.Lobbies;
 using Unity.Services.Lobbies.Models;
-using Unity.Services.Relay;
 using Unity.Services.Relay.Models;
+using Unity.Services.Relay;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using static UnityEngine.LowLevelPhysics2D.PhysicsLayers;
+using Unity.Networking.Transport.Relay;
 
 public class MenuManager : MonoBehaviour
 {
@@ -41,10 +45,14 @@ public class MenuManager : MonoBehaviour
 
     void Start()
     {
+        //TODO: Move to file storage system
+        playerName = "Player " + Random.Range(100, 999);
+        Debug.Log(playerName);
+
         // Activate all ui elements (for if they are disabled for testing)
         for (int i = 0; i < transform.childCount; i++)
             transform.GetChild(i).gameObject.SetActive(true);
-
+        
         // Initialize Variables
         usernameScreen = transform.Find("Choose Username Screen").gameObject;
         usernameTitleText = transform.Find("Choose Username Screen").Find("Header").GetComponentInChildren<TMP_Text>();
@@ -75,8 +83,8 @@ public class MenuManager : MonoBehaviour
         }
         else
         {
-            ChangeScreen(ScreenNames.LobbyListScreen);
-        }
+        ChangeScreen(ScreenNames.LobbyListScreen);
+    }
     }
 
     private readonly float lobbyRefreshTimeMax = 3f;
@@ -415,7 +423,7 @@ public class MenuManager : MonoBehaviour
         {
             Debug.Log(e);
         }
-     
+
         if (relayCode == null) return;
         try
         {
@@ -434,6 +442,7 @@ public class MenuManager : MonoBehaviour
 
         await SceneManager.LoadSceneAsync("Multiplayer Scene");
         NetworkManager.Singleton.StartHost();
+
     }
 
     private async void JoinGame(string relayCode)
