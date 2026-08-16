@@ -343,9 +343,10 @@ public class MenuManager : MonoBehaviour
 
         Debug.Log("Relay created: " + relayCode);
 
+
+        await SceneManager.LoadSceneAsync("Multiplayer Scene");
         NetworkManager.Singleton.StartHost();
         //GameManager.Singleton.ChangeState(GameState.Gameplay);
-        SceneManager.LoadScene("Multiplayer Scene");
     }
 
     private async void JoinGame(string relayCode)
@@ -364,8 +365,8 @@ public class MenuManager : MonoBehaviour
         Debug.Log("Relay joined: " + relayCode);
         //TODO: start game
 
+        await SceneManager.LoadSceneAsync("Multiplayer Scene");
         NetworkManager.Singleton.StartClient();
         //GameManager.Singleton.ChangeState(GameState.Gameplay);
-        SceneManager.LoadScene("Multiplayer Scene");
     }
 }

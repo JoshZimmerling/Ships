@@ -22,7 +22,7 @@ public class Shop : Singleton<Shop>
     public void SetupShop()
     {
         playerId = NetworkManager.Singleton.LocalClientId;
-        Debug.Log(playerId);
+        Debug.Log("Setup Shop: " + playerId);
         transform.Find("Toggle Window Button").GetComponent<Button>().onClick.AddListener(() => ToggleShop()); ;
 
         Color playerColor = GameManager.Singleton.playerColors[playerId];
@@ -56,6 +56,7 @@ public class Shop : Singleton<Shop>
         {
             playerGold -= cost;
             GameManager.Singleton.players[playerId].SpawnShipServerRPC(type);
+            Debug.Log(playerId);
         }
 
         UpdateGold();

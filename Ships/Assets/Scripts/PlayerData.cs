@@ -20,12 +20,14 @@ public class PlayerData : NetworkBehaviour
         spawnPlatform.SetActive(true);
         gameObject.name = "Player " + OwnerClientId;
 
+        GameManager.Singleton.ChangeState(GameState.Gameplay);
+
         if (!IsOwner) return;
 
         Camera.main.transform.position = new Vector3(spawnPlatform.transform.position.x, spawnPlatform.transform.position.y, Camera.main.transform.position.z);
     }
 
-    [ServerRpc]
+    [Rpc(SendTo.Server)]
     public void SpawnShipServerRPC(Ship.ShipTypes shipType)
     {
         Vector3 spawnPos = spawnPlatform.transform.position;
