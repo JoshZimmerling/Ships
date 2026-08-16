@@ -1,25 +1,25 @@
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TMPro;
+using Unity.Netcode.Transports.UTP;
+using Unity.Netcode;
 using Unity.Services.Authentication;
 using Unity.Services.Lobbies;
 using Unity.Services.Lobbies.Models;
+using Unity.Services.Relay.Models;
+using Unity.Services.Relay;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using static UnityEngine.LowLevelPhysics2D.PhysicsLayers;
+using Unity.Networking.Transport.Relay;
 
 public class MenuManager : MonoBehaviour
 {
-    private LobbyManager lobbyManager;
-
-    private GameObject firstScreen;
-    private Button mainPlayButton;
-    //TODO: Change Name button
-
     private GameObject lobbyListScreen;
-    private Button lobbyListBackButton;
     private GameObject lobbyViewerObject;
     [SerializeField] private GameObject lobbyRepeaterPrefab;
     private Button createLobbyButton;
@@ -30,25 +30,25 @@ public class MenuManager : MonoBehaviour
     [SerializeField] private GameObject playerRepeaterPrefab;
     private Button startGameButton;
 
-    private enum screenNames { FirstScreen, LobbyListScreen, LobbyScreen };
-    private screenNames currentScreen;
+    private enum ScreenNames { LobbyListScreen, LobbyScreen };
+    private ScreenNames currentScreen;
 
     private Lobby currentLobby;
 
+    private string playerName;
+
     void Start()
     {
+        //TODO: Move to file storage system
+        playerName = "Player " + Random.Range(100, 999);
+        Debug.Log(playerName);
+
+        // Activate all ui elements (for if they are disabled for testing)
         for (int i = 0; i < transform.childCount; i++)
             transform.GetChild(i).gameObject.SetActive(true);
-
-        lobbyManager = GetComponent<LobbyManager>();
-
-        firstScreen = transform.Find("First Screen").gameObject;
-        mainPlayButton = firstScreen.GetComponentInChildren<Button>();
-        mainPlayButton.onClick.AddListener(() => ChangeScreen(screenNames.LobbyListScreen));
-
+        
+        // Initialize Variables
         lobbyListScreen = transform.Find("Lobby List Screen").gameObject;
-        lobbyListBackButton = lobbyListScreen.transform.Find("Header").Find("Lobby List Back Button").GetComponent<Button>();
-        lobbyListBackButton.onClick.AddListener(() => ChangeScreen(screenNames.FirstScreen));
         lobbyViewerObject = transform.Find("Lobby List Screen").Find("Lobby Viewer").gameObject;
         createLobbyButton = transform.Find("Lobby List Screen").Find("Create Lobby Button").GetComponent<Button>();
         createLobbyButton.onClick.AddListener(() => CreateLobby());
@@ -59,73 +59,131 @@ public class MenuManager : MonoBehaviour
         startGameButton = transform.Find("Lobby Screen").Find("Start Game Button").GetComponent<Button>();
         startGameButton.onClick.AddListener(() => StartGame());
 
-        ChangeScreen(screenNames.FirstScreen);
+        // Initialize the starting screen
+        ChangeScreen(ScreenNames.LobbyListScreen);
     }
 
     private readonly float lobbyRefreshTimeMax = 3f;
     private float lobbyRefreshTimer = 0f;
+
+
+    private readonly float heartbeatTimeMax = 15f;
+    private float heartbeatTimer = 0f;
     void FixedUpdate()
     {
         lobbyRefreshTimer -= Time.deltaTime;
 
         switch (currentScreen)
         {
-            case screenNames.FirstScreen:
-                return;
-            case screenNames.LobbyListScreen:
+            case ScreenNames.LobbyListScreen:
                 if (lobbyRefreshTimer < 0f)
                 {
                     RefreshLobbyList();
                 }
                 return;
-            case screenNames.LobbyScreen:
+            case ScreenNames.LobbyScreen:
                 if (lobbyRefreshTimer < 0f)
                 {
                     RefreshLobbyInfo();
                 }
                 return;
         }
+
+        HandleLobbyHeartbeat();
     }
 
-    private void ChangeScreen(screenNames newScreen)
+    private async void HandleLobbyHeartbeat()
+    {
+        if (currentLobby != null && currentLobby.HostId == AuthenticationService.Instance.PlayerId)
+        {
+            heartbeatTimer -= Time.deltaTime;
+            if (heartbeatTimer < 0f)
+            {
+                heartbeatTimer = heartbeatTimeMax;
+
+                await LobbyService.Instance.SendHeartbeatPingAsync(currentLobby.Id);
+            }
+        }
+    }
+
+    private void ChangeScreen(ScreenNames newScreen)
     {
         currentScreen = newScreen;
+        lobbyRefreshTimer = 0f; //Starts immediately data refresh
 
-        firstScreen.SetActive(currentScreen == screenNames.FirstScreen);
-        lobbyListScreen.SetActive(currentScreen == screenNames.LobbyListScreen);
-        lobbyScreen.SetActive(currentScreen == screenNames.LobbyScreen);
+        // Updates screen state
+        lobbyListScreen.SetActive(currentScreen == ScreenNames.LobbyListScreen);
+        lobbyScreen.SetActive(currentScreen == ScreenNames.LobbyScreen);
 
+        // Does additional code if needed
         switch (currentScreen)
         {
-            case screenNames.FirstScreen:
+            case ScreenNames.LobbyListScreen:
                 return;
-            case screenNames.LobbyListScreen:
-                RefreshLobbyList();
-                return;
-            case screenNames.LobbyScreen:
-                RefreshLobbyInfo();
+            case ScreenNames.LobbyScreen:
                 return;
         }
     }
 
     private async void CreateLobby()
     {
-        currentLobby = await lobbyManager.CreateLobby();
-        ChangeScreen(screenNames.LobbyScreen);
+        try
+        {
+            string lobbyName = GetPlayer().Data["PlayerName"].Value + "'s Lobby";
+            int maxPlayers = 8;
+
+            CreateLobbyOptions options = new CreateLobbyOptions
+            {
+                //IsPrivate = false,
+                Player = GetPlayer(),
+                Data = new Dictionary<string, DataObject> {
+                   { "RelayCode", new DataObject(DataObject.VisibilityOptions.Member, "") }
+                }
+            };
+
+
+            Lobby lobby = await LobbyService.Instance.CreateLobbyAsync(lobbyName, maxPlayers, options);
+
+            currentLobby = lobby;
+
+            Debug.Log("Created Lobby! " + lobby.Name + " " + lobby.MaxPlayers);
+        }
+        catch (LobbyServiceException e)
+        {
+            Debug.Log(e);
+        }
+        ChangeScreen(ScreenNames.LobbyScreen);
     }
 
     public async void JoinLobby(string lobbyId)
     {
-        currentLobby = await lobbyManager.JoinLobby(lobbyId);
-        ChangeScreen(screenNames.LobbyScreen);
-    }
+        try
+        {
+            JoinLobbyByIdOptions joinLobbyByIdOptions = new JoinLobbyByIdOptions
+            {
+                Player = GetPlayer()
+            };
+            currentLobby = await LobbyService.Instance.JoinLobbyByIdAsync(lobbyId, joinLobbyByIdOptions);
+        }
+        catch (LobbyServiceException e)
+        {
+            Debug.Log(e);
+        }
 
+        ChangeScreen(ScreenNames.LobbyScreen);
+    }
 
     private async void RefreshLobbyList()
     {
         lobbyRefreshTimer = lobbyRefreshTimeMax;
 
-        QueryResponse lobbyList = await lobbyManager.RefreshLobbyList();
+        // Attempts to pull lobby list
+        QueryResponse lobbyList = null;
+        try {
+            lobbyList = await LobbyService.Instance.QueryLobbiesAsync();
+        } catch (LobbyServiceException e) {
+            Debug.Log(e);
+        }
         if (lobbyList == null) return;
 
         foreach (Lobby lobby in lobbyList.Results)
@@ -159,8 +217,16 @@ public class MenuManager : MonoBehaviour
     {
         lobbyRefreshTimer = lobbyRefreshTimeMax;
 
-        currentLobby = await lobbyManager.PollLobbyForUpdates();
-
+        // Checks are in an active lobby
+        if (currentLobby == null) //TODO: maybe verify lobby still exists
+            return;
+        // Gets updated lobby info
+        try {
+            currentLobby = await LobbyService.Instance.GetLobbyAsync(currentLobby.Id);
+        } catch (LobbyServiceException e) {
+            Debug.Log(e);
+        }
+        // Verifies player is still in lobby
         bool inLobby = false;
         if (currentLobby != null)
             foreach (Player player in currentLobby.Players)
@@ -168,9 +234,10 @@ public class MenuManager : MonoBehaviour
         if (!inLobby)
         {
             currentLobby = null;
-            ChangeScreen(screenNames.LobbyListScreen);
+            ChangeScreen(ScreenNames.LobbyListScreen);
             return;
         }
+
 
         foreach (Player player in currentLobby.Players)
         {
@@ -206,30 +273,100 @@ public class MenuManager : MonoBehaviour
             JoinGame(currentLobby.Data["RelayCode"].Value);
     }
 
-    private async void StartGame()
-    {
-        string joinCode = await lobbyManager.CreateRelay();
-        await lobbyManager.SetLobbyRelayCode(joinCode);
-
-        Debug.Log("Relay created: " + joinCode);
-        //TODO: start game
-    }
-    private async void JoinGame(string joinCode)
-    {
-        await lobbyManager.JoinRelay(joinCode);
-        Debug.Log("Relay joined: " + joinCode);
-        //TODO: start game
-    }
-
     public async void RemovePlayerFromLobby(string playerId)
     {
-        RefreshLobbyInfo();
-        if (playerId == currentLobby.HostId && currentLobby.Players.Count > 1) await lobbyManager.MigrateLobbyHost();
-        if (currentLobby.Players.Count == 1)
-            currentLobby = null;
-        await lobbyManager.RemovePlayer(playerId);
-        if (playerId == AuthenticationService.Instance.PlayerId)
-            ChangeScreen(screenNames.LobbyListScreen);
-        RefreshLobbyInfo();
+        try
+        {
+            RefreshLobbyInfo();
+            // Migrate host if needed
+            if (playerId == currentLobby.HostId && currentLobby.Players.Count > 1)
+            {
+                currentLobby = await LobbyService.Instance.UpdateLobbyAsync(currentLobby.Id, new UpdateLobbyOptions
+                {
+                    HostId = currentLobby.Players[1].Id
+                });
+            }
+            await LobbyService.Instance.RemovePlayerAsync(currentLobby.Id, playerId);
+            // Remove reference to lobby
+            if (playerId == AuthenticationService.Instance.PlayerId)
+            {
+                currentLobby = null;
+                ChangeScreen(ScreenNames.LobbyListScreen);
+            }
+            RefreshLobbyInfo();
+        }
+        catch (LobbyServiceException e)
+        {
+            Debug.Log(e);
+        }
     }
- }
+
+    private Player GetPlayer()
+    {
+        return new Player
+        {
+            Data = new Dictionary<string, PlayerDataObject> {
+                    { "PlayerName", new PlayerDataObject(PlayerDataObject.VisibilityOptions.Member, playerName)},
+                    { "Color",      new PlayerDataObject(PlayerDataObject.VisibilityOptions.Member, "-1")}
+                }
+        };
+    }
+
+    private async void StartGame()
+    {
+        string relayCode = null;
+        try
+        {
+            Allocation allocation = await RelayService.Instance.CreateAllocationAsync(7);
+            NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(AllocationUtils.ToRelayServerData(allocation, "wss"));
+            NetworkManager.Singleton.GetComponent<UnityTransport>().UseWebSockets = true;
+            relayCode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
+        }
+        catch (RelayServiceException e)
+        {
+            Debug.Log(e);
+        }
+     
+        if (relayCode == null) return;
+        try
+        {
+            currentLobby = await LobbyService.Instance.UpdateLobbyAsync(currentLobby.Id, new UpdateLobbyOptions
+            {
+                Data = new Dictionary<string, DataObject> {
+                { "RelayCode", new DataObject(DataObject.VisibilityOptions.Member, relayCode) } }
+            });
+        }
+        catch (LobbyServiceException e)
+        {
+            Debug.Log(e);
+        }
+
+        Debug.Log("Relay created: " + relayCode);
+
+
+        await SceneManager.LoadSceneAsync("Multiplayer Scene");
+        NetworkManager.Singleton.StartHost();
+        //GameManager.Singleton.ChangeState(GameState.Gameplay);
+    }
+
+    private async void JoinGame(string relayCode)
+    {
+        try
+        {
+            JoinAllocation allocation = await RelayService.Instance.JoinAllocationAsync(relayCode);
+            NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(AllocationUtils.ToRelayServerData(allocation, "wss"));
+            NetworkManager.Singleton.GetComponent<UnityTransport>().UseWebSockets = true;
+            // return !string.IsNullOrEmpty(joinCode) && NetworkManager.Singleton.StartClient();
+        }
+        catch (RelayServiceException e)
+        {
+            Debug.Log(e);
+        }
+        Debug.Log("Relay joined: " + relayCode);
+        //TODO: start game
+
+        await SceneManager.LoadSceneAsync("Multiplayer Scene");
+        NetworkManager.Singleton.StartClient();
+        //GameManager.Singleton.ChangeState(GameState.Gameplay);
+    }
+}

@@ -42,7 +42,7 @@ public class GameManager : Singleton<GameManager>
     public static event Action<GameState> OnAfterStateChange;
     
     public GameState State { get; private set; }
-    private void Start() => ChangeState(GameState.Starting);
+    //private void Start() => ChangeState(GameState.Gameplay);
 
     public void ChangeState(GameState newState)
     {
