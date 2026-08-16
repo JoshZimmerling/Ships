@@ -1,7 +1,4 @@
-using NUnit.Framework;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using TMPro;
 using Unity.Netcode.Transports.UTP;
 using Unity.Netcode;
@@ -10,32 +7,32 @@ using Unity.Services.Lobbies;
 using Unity.Services.Lobbies.Models;
 using Unity.Services.Relay.Models;
 using Unity.Services.Relay;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using static UnityEngine.LowLevelPhysics2D.PhysicsLayers;
-using Unity.Networking.Transport.Relay;
 
 public class MenuManager : MonoBehaviour
 {
+    // Reference variables
+    // Username screen
     private GameObject usernameScreen;
     private TMP_Text usernameTitleText;
     private Button closeUsernameScreenButton;
     private TMP_InputField usernameTextInput;
     private Button submitUsernameButton;
-
+    // Lobby list screen
     private GameObject lobbyListScreen;
     private GameObject lobbyViewerObject;
     [SerializeField] private GameObject lobbyRepeaterPrefab;
     private Button createLobbyButton;
-
+    // Lobby screen
     private GameObject lobbyScreen;
     private TextMeshProUGUI lobbyName;
     private GameObject playerViewerObject;
     [SerializeField] private GameObject playerRepeaterPrefab;
     private Button startGameButton;
 
+    // Runtime variables
     private enum ScreenNames { UsernameScreen, LobbyListScreen, LobbyScreen };
     private ScreenNames currentScreen;
 
@@ -83,10 +80,11 @@ public class MenuManager : MonoBehaviour
         }
         else
         {
-        ChangeScreen(ScreenNames.LobbyListScreen);
-    }
+            ChangeScreen(ScreenNames.LobbyListScreen);
+        }
     }
 
+    // Update timer parameters
     private readonly float lobbyRefreshTimeMax = 3f;
     private float lobbyRefreshTimer = 0f;
 
@@ -117,6 +115,7 @@ public class MenuManager : MonoBehaviour
         HandleLobbyHeartbeat();
     }
 
+    // Pings lobby to keep it active
     private async void HandleLobbyHeartbeat()
     {
         if (currentLobby != null && currentLobby.HostId == AuthenticationService.Instance.PlayerId)
@@ -131,6 +130,7 @@ public class MenuManager : MonoBehaviour
         }
     }
 
+    // Handles changing the menu screens
     private void ChangeScreen(ScreenNames newScreen)
     {
         currentScreen = newScreen;
