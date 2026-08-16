@@ -8,7 +8,7 @@ public class SaveData
 
     public SaveData()
     {
-        uniqueID = Guid.NewGuid().ToString();
+        AssignUniqueId();
         username = null;
     }
 
@@ -19,9 +19,20 @@ public class SaveData
         this.username = username;
     }
 
+    public void AssignUniqueId()
+    {
+        uniqueID = Guid.NewGuid().ToString();
+    }
+
+    public void UpdateUsername(string newUsername)
+    {
+        username = newUsername;
+        Save.SaveMyData();
+    }
+
     public override string ToString()
     {
-        string returnString = "Username: " + username + "\n";
+        string returnString = "Username: " + username + "\n" + "Unique ID: " + uniqueID + "\n";
         return returnString;
     }
 }

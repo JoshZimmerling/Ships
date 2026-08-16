@@ -1,23 +1,25 @@
 using Newtonsoft.Json;
-using System;
 using System.IO;
 using UnityEngine;
 
 public class Save : MonoBehaviour
 {
 #if UNITY_WEBGL && !UNITY_EDITOR
-    private static string saveFilePath = "/idbfs/";
+    private static string isWebBuild = true;
 #else
-    private static string saveFilePath = Application.persistentDataPath + "/";
+    private static bool isWebBuild = false;
 #endif
 
     public static SaveData myGlobalSaveData;
+    private static string saveFilePath;
 
     private void Start()
     {
-        myGlobalSaveData = LoadFile("saveFile.json");
-
         DontDestroyOnLoad(gameObject);
+
+        saveFilePath = isWebBuild ? "/idbfs/" : Application.persistentDataPath + "/";
+
+        myGlobalSaveData = LoadFile("saveFile.json");
     }
 
     public static void SaveMyData()
@@ -68,9 +70,10 @@ public class Save : MonoBehaviour
     {
         if (data.uniqueID == null)
         {
-            data.uniqueID = Guid.NewGuid().ToString();
+            data.AssignUniqueId();
         }
 
+        Debug.Log(data.ToString());
         SaveFile(fileName, data);
     }
 }
