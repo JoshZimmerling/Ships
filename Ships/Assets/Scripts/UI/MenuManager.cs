@@ -377,7 +377,10 @@ public class MenuManager : MonoBehaviour
         while (colorValue < playerColors.Length)
         {
             if (colors.Contains(colorValue.ToString()))
-                colorValue++;
+                if (colorValue == playerColors.Length - 1)
+                    colorValue = 0;
+                else
+                    colorValue++;
             else
                 break;
         }
