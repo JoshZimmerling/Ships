@@ -165,6 +165,25 @@ public class MenuManager : MonoBehaviour
 
     private async void CreateLobby()
     {
+        // Create relay and start real time connection
+        string relayCode = null;
+        try
+        {
+            Allocation allocation = await RelayService.Instance.CreateAllocationAsync(7);
+            NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(AllocationUtils.ToRelayServerData(allocation, "wss"));
+            NetworkManager.Singleton.GetComponent<UnityTransport>().UseWebSockets = true;
+            relayCode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
+
+            NetworkManager.Singleton.StartHost();
+        }
+        catch (RelayServiceException e)
+        {
+            Debug.Log(e);
+        }
+
+        Debug.Log("RELAY CODE: " + relayCode);
+
+        // Create the lobby enviroment
         try
         {
             string lobbyName = GetPlayer().Data["PlayerName"].Value + "'s Lobby";
@@ -172,10 +191,9 @@ public class MenuManager : MonoBehaviour
 
             CreateLobbyOptions options = new CreateLobbyOptions
             {
-                //IsPrivate = false,
                 Player = GetPlayer(),
                 Data = new Dictionary<string, DataObject> {
-                   { "RelayCode", new DataObject(DataObject.VisibilityOptions.Member, "") }
+                   { "RelayCode", new DataObject(DataObject.VisibilityOptions.Member, relayCode) }
                 }
             };
 
@@ -190,25 +208,43 @@ public class MenuManager : MonoBehaviour
         {
             Debug.Log(e);
         }
+
         ChangeScreen(ScreenNames.LobbyScreen);
+
+        //await SceneManager.LoadSceneAsync("Multiplayer Scene");
     }
 
     public async void JoinLobby(string lobbyId)
     {
         try
         {
-            Player player = GetPlayer();
             JoinLobbyByIdOptions joinLobbyByIdOptions = new JoinLobbyByIdOptions
             {
-                Player = player
+                Player = GetPlayer()
             };
             currentLobby = await LobbyService.Instance.JoinLobbyByIdAsync(lobbyId, joinLobbyByIdOptions);
-            ChangePlayerColor(player.Id);
         }
         catch (LobbyServiceException e)
         {
             Debug.Log(e);
         }
+
+        string relayCode = currentLobby.Data["RelayCode"].Value;
+
+        try
+        {
+            JoinAllocation allocation = await RelayService.Instance.JoinAllocationAsync(relayCode);
+            NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(AllocationUtils.ToRelayServerData(allocation, "wss"));
+            NetworkManager.Singleton.GetComponent<UnityTransport>().UseWebSockets = true;
+            
+            NetworkManager.Singleton.StartClient();
+        }
+        catch (RelayServiceException e)
+        {
+            Debug.Log(e);
+        }
+
+        //await SceneManager.LoadSceneAsync("Multiplayer Scene");
 
         ChangeScreen(ScreenNames.LobbyScreen);
     }
@@ -266,10 +302,6 @@ public class MenuManager : MonoBehaviour
         } catch (LobbyServiceException e) {
             Debug.Log(e);
         }
-
-        // Checks for if the game has started
-        if (currentLobby.Data["RelayCode"].Value != "")
-            JoinGame(currentLobby.Data["RelayCode"].Value);
     }
 
     private void RefreshLobbyVisuals()
@@ -285,18 +317,17 @@ public class MenuManager : MonoBehaviour
             ChangeScreen(ScreenNames.LobbyListScreen);
             return;
         }
-
+        /*
         // Checks if new players have entered lobby
         foreach (Player player in currentLobby.Players)
         {
-            if (player.Id == AuthenticationService.Instance.PlayerId) inLobby = true;
-            Transform t = playerViewerObject.transform.Find(player.Data["PlayerName"].Value);
-            GameObject playerObject = null;
+            Transform t = playerViewerObject.transform.Find(player.Id);
+            GameObject playerObject;
             if (t == null)
             {
                 playerObject = Instantiate(playerRepeaterPrefab, playerViewerObject.transform);
                 playerObject.GetComponent<PlayerRepeater>().menuManager = this;
-                playerObject.name = player.Data["PlayerName"].Value;
+                playerObject.name = player.Id;
             }
             else
                 playerObject = t.gameObject;
@@ -310,11 +341,11 @@ public class MenuManager : MonoBehaviour
             Transform child = playerViewerObject.transform.GetChild(i);
             bool exists = false;
             foreach (Player player in currentLobby.Players)
-                if (child.name == player.Data["PlayerName"].Value)
+                if (child.name == player.Id)
                     exists = true;
             if (!exists)
                 Destroy(child.gameObject);
-        }
+        }*/
 
         // Update lobby info
         lobbyName.text = currentLobby.Name;
@@ -350,23 +381,18 @@ public class MenuManager : MonoBehaviour
     }
 
     
-    private Player GetPlayer(Lobby lobby = null)
+    private Player GetPlayer()
     {
-        int colorValue = 0;
-
-        if (lobby != null)
-            colorValue = GetAvailableColor(lobby, 0);
-
         return new Player
         {
             Data = new Dictionary<string, PlayerDataObject> {
-                    { "PlayerName", new PlayerDataObject(PlayerDataObject.VisibilityOptions.Member, playerName)},
-                    { "Color",      new PlayerDataObject(PlayerDataObject.VisibilityOptions.Member, colorValue.ToString())}
+                    { "PlayerName", new PlayerDataObject(PlayerDataObject.VisibilityOptions.Member, playerName)}
                 }
         };
     }
 
     public Color[] playerColors = new Color[12];
+    /*
     private int GetAvailableColor(Lobby lobby, int colorValue)
     {
         List<string> colors = new List<string>();
@@ -409,59 +435,11 @@ public class MenuManager : MonoBehaviour
         RefreshLobbyVisuals();
     }
 
-    private async void StartGame()
+    private void StartGame()
     {
-        string relayCode = null;
-        try
-        {
-            Allocation allocation = await RelayService.Instance.CreateAllocationAsync(7);
-            NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(AllocationUtils.ToRelayServerData(allocation, "wss"));
-            NetworkManager.Singleton.GetComponent<UnityTransport>().UseWebSockets = true;
-            relayCode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
-        }
-        catch (RelayServiceException e)
-        {
-            Debug.Log(e);
-        }
 
-        if (relayCode == null) return;
-        try
-        {
-            currentLobby = await LobbyService.Instance.UpdateLobbyAsync(currentLobby.Id, new UpdateLobbyOptions
-            {
-                Data = new Dictionary<string, DataObject> {
-                { "RelayCode", new DataObject(DataObject.VisibilityOptions.Member, relayCode) } }
-            });
-        }
-        catch (LobbyServiceException e)
-        {
-            Debug.Log(e);
-        }
 
-        Debug.Log("Relay created: " + relayCode);
-
-        await SceneManager.LoadSceneAsync("Multiplayer Scene");
-        NetworkManager.Singleton.StartHost();
-
-    }
-
-    private async void JoinGame(string relayCode)
-    {
-        try
-        {
-            JoinAllocation allocation = await RelayService.Instance.JoinAllocationAsync(relayCode);
-            NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(AllocationUtils.ToRelayServerData(allocation, "wss"));
-            NetworkManager.Singleton.GetComponent<UnityTransport>().UseWebSockets = true;
-            // return !string.IsNullOrEmpty(joinCode) && NetworkManager.Singleton.StartClient();
-        }
-        catch (RelayServiceException e)
-        {
-            Debug.Log(e);
-        }
-        Debug.Log("Relay joined: " + relayCode);
-
-        await SceneManager.LoadSceneAsync("Multiplayer Scene");
-        NetworkManager.Singleton.StartClient();
+        // Change to just switch scene
     }
 
     private void SetUsername()
