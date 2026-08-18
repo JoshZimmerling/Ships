@@ -1,6 +1,3 @@
-using Newtonsoft.Json.Bson;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Camera_Control : MonoBehaviour
@@ -23,8 +20,6 @@ public class Camera_Control : MonoBehaviour
         cam = this.gameObject.GetComponent<Camera>();
         currentZoomLevel = cam.orthographicSize;
         camLocked = true;
-
-        //minimapViewportRectangle.gameObject.SetActive(false);
     }
 
     void Update()
@@ -43,27 +38,29 @@ public class Camera_Control : MonoBehaviour
         }
 
         //Moving camera around
+        Vector3 camMoveDirection = Vector3.zero;
         if (((Input.mousePosition.y >= (Screen.height * (1 - moveCamBorderSize)) && !camLocked) || Input.GetKey(KeyCode.W)) && transform.position.y <= 125)
         {
             //Move cam up
-            transform.Translate(Vector3.up * camMoveSpeed * currentZoomLevel * Time.deltaTime);
+            camMoveDirection += Vector3.up;
         }
         if (((Input.mousePosition.y <= (Screen.height * moveCamBorderSize) && !camLocked) || Input.GetKey(KeyCode.S)) && transform.position.y >= -125)
         {
             //Move cam down
-            transform.Translate(Vector3.down * camMoveSpeed * currentZoomLevel * Time.deltaTime);
+            camMoveDirection += Vector3.down;
         }
         if (((Input.mousePosition.x >= (Screen.width * (1 - moveCamBorderSize)) && !camLocked) || Input.GetKey(KeyCode.D)) && transform.position.x <= 125)
         {
             //Move cam right
-            transform.Translate(Vector3.right * camMoveSpeed * currentZoomLevel * Time.deltaTime);
+            camMoveDirection += Vector3.right;
         }
         if (((Input.mousePosition.x <= (Screen.width * moveCamBorderSize) && !camLocked) || Input.GetKey(KeyCode.A)) && transform.position.x >= -125)
         {
             //Move cam left
-            transform.Translate(Vector3.left * camMoveSpeed * currentZoomLevel * Time.deltaTime);
+            camMoveDirection += Vector3.left;
         }
 
+        transform.Translate(camMoveDirection.normalized * camMoveSpeed * currentZoomLevel * Time.deltaTime);
         MoveViewport();
     }
 

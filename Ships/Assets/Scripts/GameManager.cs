@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
@@ -63,6 +62,7 @@ public class GameManager : Singleton<GameManager>
                 gameUI.SetActive(true);
                 inputManager.SetActive(true);
                 Shop.Singleton.SetupShop();
+                Shop.Singleton.ToggleShop(); //Opens the shop by default
                 break;
             case GameState.Gameover:
                 break;
