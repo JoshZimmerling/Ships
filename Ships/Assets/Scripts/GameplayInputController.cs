@@ -23,7 +23,7 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
     void Update()
     {
         // Setting the target destination for the ships
-        if (Input.GetButtonDown("Fire2"))
+        if (Input.GetMouseButtonDown(1))
         {
 
             VerifySelection();
@@ -34,11 +34,31 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
 
             if (selectedShips.Count == 1)
             {
-                selectedShips[0].GetComponent<Movement>().SetTargetDestinationServerRPC(worldPosition);
+                selectedShips[0].GetComponent<Movement>().SetTargetDestinationServerRPC(worldPosition, false);
             }
             else
             {
-                SetDestinationInFormation(); 
+                SetDestinationInFormation(false); 
+            }
+        }
+
+        // Rotate only ships
+        if (Input.GetMouseButtonDown(2))
+        {
+
+            VerifySelection();
+
+            Vector3 mousePos = Input.mousePosition;
+            mousePos.z = 0;
+            Vector3 worldPosition = Camera.main.ScreenToWorldPoint(mousePos);
+
+            if (selectedShips.Count == 1)
+            {
+                selectedShips[0].GetComponent<Movement>().SetTargetDestinationServerRPC(worldPosition, true);
+            }
+            else
+            {
+                SetDestinationInFormation(true);
             }
         }
 
@@ -119,7 +139,7 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
     float xDiff;
     float yDiff;
     Vector2 shipCenter;
-    public void SetDestinationInFormation()
+    public void SetDestinationInFormation(bool rotateOnly)
     {
         if (selectedShips.Count == 0) 
         {
@@ -152,7 +172,7 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
 
         foreach (Ship ship in selectedShips)
         {
-            ship.GetComponent<Movement>().SetTargetDestinationServerRPC((Vector2) worldPosition + ((Vector2) ship.transform.position - shipCenter));
+            ship.GetComponent<Movement>().SetTargetDestinationServerRPC((Vector2) worldPosition + ((Vector2) ship.transform.position - shipCenter), rotateOnly);
         }
 
     }

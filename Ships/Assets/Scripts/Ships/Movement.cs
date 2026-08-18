@@ -23,6 +23,7 @@ public class Movement : NetworkBehaviour
     bool noTarget = true;
     bool moving;
     bool backingUp;
+    bool rotateOnly;
 
     /*    LineRenderer lineRenderer;*/
 
@@ -83,7 +84,7 @@ public class Movement : NetworkBehaviour
             }
 
             // Prevents moving the ship if not moving and too high an angle
-            if (Mathf.Abs(angle) > 45 && !moving)
+            if ((Mathf.Abs(angle) > 45 && !moving) || rotateOnly)
             {
                 return;
             }
@@ -137,10 +138,11 @@ public class Movement : NetworkBehaviour
     }
 
     [ServerRpc]
-    public void SetTargetDestinationServerRPC(Vector2 target)
+    public void SetTargetDestinationServerRPC(Vector2 target, bool isRotateOnly)
     {
         noTarget = false;
         backingUp = false;
         targetPos = target;
+        rotateOnly = isRotateOnly;
     }
 }

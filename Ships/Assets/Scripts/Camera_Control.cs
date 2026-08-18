@@ -77,7 +77,7 @@ public class Camera_Control : MonoBehaviour
 
     private void MoveViewport()
     {
-        minimapViewportRectangle.anchoredPosition = new Vector2(transform.position.x, transform.position.y) * 1f;
+        minimapViewportRectangle.anchoredPosition = new Vector2(transform.position.x, transform.position.y) * 1.215f;
 
         minimapViewportRectangle.transform.localScale = new Vector3(0.5f + ((currentZoomLevel-maxZoomIn) / (maxZoomOut - maxZoomIn) * 1.9f), 0.5f + ((currentZoomLevel - maxZoomIn) / (maxZoomOut - maxZoomIn) * 1.9f), 1f);
     }
