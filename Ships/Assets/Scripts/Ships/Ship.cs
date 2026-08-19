@@ -1,9 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using Unity.Netcode;
 using UnityEngine;
-using System;
 
 public class Ship : NetworkBehaviour
 {
@@ -59,6 +55,39 @@ public class Ship : NetworkBehaviour
         mapMarkerSprite.color = teamColor;
         teamColor.a = 0f;
         outlineSprite.color = teamColor;
+
+        //Ship specific setup
+        SetupBasedOnShipType();
+    }
+
+    public void FixedUpdate()
+    {
+        //Ship specific updates
+        UpdateBasedOnShipType();
+    }
+
+    public void SetupBasedOnShipType()
+    {
+        switch (shipType)
+        {
+            case ShipTypes.Scout:
+                if (IsOwner)
+                    transform.Find("Scout Radar").gameObject.SetActive(true);
+                break;
+        }
+    }
+
+    public void UpdateBasedOnShipType()
+    {
+        switch (shipType)
+        {
+            case ShipTypes.Goliath:
+                if (!IsHost) return;
+                
+                if (currentShipHP.Value < maxShipHP)
+                    currentShipHP.Value += 1 * Time.deltaTime;
+                break;
+        }
     }
 
     public void DoDamage(float damage)

@@ -50,6 +50,11 @@ SpriteMask:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -71,9 +76,11 @@ SpriteMask:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_Sprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
   m_MaskAlphaCutoff: 0.2
   m_FrontSortingLayerID: 257962177
@@ -84,8 +91,10 @@ SpriteMask:
   m_BackSortingOrder: 0
   m_IsCustomRangeActive: 1
   m_SpriteSortPoint: 0
+  m_MaskSource: 0
 --- !u!212 &4270709683715836144
 SpriteRenderer:
+  serializedVersion: 2
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -101,6 +110,11 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -122,11 +136,13 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: -2112792379
   m_SortingLayer: 2
   m_SortingOrder: 0
+  m_MaskInteraction: 2
   m_Sprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
-  m_Color: {r: 0.094918124, g: 0.254717, b: 0.15847716, a: 0.039215688}
+  m_Color: {r: 0.094918124, g: 0.254717, b: 0.15847716, a: 0.078431375}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -134,7 +150,6 @@ SpriteRenderer:
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
-  m_MaskInteraction: 2
   m_SpriteSortPoint: 0
 --- !u!1001 &3328956980446575076
 PrefabInstance:
@@ -270,7 +285,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5248488840569974850, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: GlobalObjectIdHash
-      value: 951099334
+      value: 943005247
       objectReference: {fileID: 0}
     - target: {fileID: 5548237794063707659, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: m_Sprite
@@ -382,14 +397,14 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 5167211490098671168, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       insertIndex: 6
-      addedObject: {fileID: 6403154862024880446}
+      addedObject: {fileID: 3862077665457929779}
   m_SourcePrefab: {fileID: 100100000, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
 --- !u!1 &7604129806773835684 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5167211490098671168, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
   m_PrefabInstance: {fileID: 3328956980446575076}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &6403154862024880446
+--- !u!114 &3862077665457929779
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -398,13 +413,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 7604129806773835684}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 370b6f5914efb504c82457157a877b45, type: 3}
+  m_Script: {fileID: 11500000, guid: 86373f9a087ba2a4cad036a5e8b47a94, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier: Assembly-CSharp::Ship
+  ShowTopMostFoldoutHeaderGroup: 1
   shipType: 6
   shipCost: 10
   maxShipHP: 10
-  scoutRadar: {fileID: 7852021445612809834}
 --- !u!4 &9032520902981597589 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6010934806082289777, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
