@@ -16,6 +16,14 @@ public class GameManager : Singleton<GameManager>
     public Color[] playerColors = new Color[8]; //TODO: Make it so you can pick colors
     public GameObject[] playerSpawns = new GameObject[8];
 
+    public void Start()
+    {
+        PlayerData[] playerDataList = FindObjectsByType<PlayerData>(FindObjectsSortMode.None);
+        //TODO: populatye thje dictionary
+        foreach (PlayerData data in playerDataList)
+            data.PlayerSetup();
+    }
+
     public GameObject GetShipPrefab(int shipNum)
     {
         return shipList.PrefabList[shipNum].Prefab;

@@ -5,15 +5,17 @@ using UnityEngine;
 
 public class PlayerData : NetworkBehaviour
 {
-    private GameManager gameManager = GameManager.Singleton;
+    private GameManager gameManager;
     private GameObject spawnPlatform;
 
     private int playerColorIndex = 0;
     private Color playerColor;
 
-    public override void OnNetworkSpawn()
+    public void PlayerSetup()
     {
-        /*
+        Debug.Log("Owner: " + OwnerClientId);
+        gameManager = GameManager.Singleton;
+
         gameManager.AddPlayer(this);
         playerColor = gameManager.playerColors[OwnerClientId];
         spawnPlatform = gameManager.playerSpawns[OwnerClientId];
@@ -28,7 +30,6 @@ public class PlayerData : NetworkBehaviour
         if (!IsOwner) return;
 
         Camera.main.transform.position = new Vector3(spawnPlatform.transform.position.x, spawnPlatform.transform.position.y, Camera.main.transform.position.z);
-        */
     }
 
     [Rpc(SendTo.Server)]
