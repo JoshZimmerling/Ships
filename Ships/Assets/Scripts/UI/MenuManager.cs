@@ -10,6 +10,7 @@ using Unity.Services.Relay;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using System.Threading.Tasks;
 
 public class MenuManager : MonoBehaviour
 {
@@ -85,7 +86,7 @@ public class MenuManager : MonoBehaviour
     }
 
     // Update timer parameters
-    private readonly float lobbyRefreshTimeMax = 3f;
+    private readonly float lobbyRefreshTimeMax = 1.1f;
     private float lobbyRefreshTimer = 0f;
 
 
@@ -181,28 +182,24 @@ public class MenuManager : MonoBehaviour
             Debug.Log(e);
         }
 
-        Debug.Log("RELAY CODE: " + relayCode);
-
         // Create the lobby enviroment
         try
         {
-            string lobbyName = GetPlayer().Data["PlayerName"].Value + "'s Lobby";
+            Player player = GetLocalPlayer();
+            string lobbyName = player.Data["PlayerName"].Value + "'s Lobby";
             int maxPlayers = 8;
 
             CreateLobbyOptions options = new CreateLobbyOptions
             {
-                Player = GetPlayer(),
+                Player = player,
                 Data = new Dictionary<string, DataObject> {
-                   { "RelayCode", new DataObject(DataObject.VisibilityOptions.Member, relayCode) }
+                   { "RelayCode", new DataObject(DataObject.VisibilityOptions.Public, relayCode) }
                 }
             };
 
+            currentLobby = await LobbyService.Instance.CreateLobbyAsync(lobbyName, maxPlayers, options);
 
-            Lobby lobby = await LobbyService.Instance.CreateLobbyAsync(lobbyName, maxPlayers, options);
-
-            currentLobby = lobby;
-
-            Debug.Log("Created Lobby! " + lobby.Name + " " + lobby.MaxPlayers);
+            Debug.Log("Created Lobby! " + currentLobby.Name + " " + currentLobby.MaxPlayers);
         }
         catch (LobbyServiceException e)
         {
@@ -210,18 +207,18 @@ public class MenuManager : MonoBehaviour
         }
 
         ChangeScreen(ScreenNames.LobbyScreen);
-
-        //await SceneManager.LoadSceneAsync("Multiplayer Scene");
     }
 
     public async void JoinLobby(string lobbyId)
     {
+        // Join lobby
         try
         {
             JoinLobbyByIdOptions joinLobbyByIdOptions = new JoinLobbyByIdOptions
             {
-                Player = GetPlayer()
+                Player = GetLocalPlayer()
             };
+
             currentLobby = await LobbyService.Instance.JoinLobbyByIdAsync(lobbyId, joinLobbyByIdOptions);
         }
         catch (LobbyServiceException e)
@@ -229,22 +226,19 @@ public class MenuManager : MonoBehaviour
             Debug.Log(e);
         }
 
-        string relayCode = currentLobby.Data["RelayCode"].Value;
-
+        // Join real time relay
         try
         {
-            JoinAllocation allocation = await RelayService.Instance.JoinAllocationAsync(relayCode);
+            JoinAllocation allocation = await RelayService.Instance.JoinAllocationAsync(currentLobby.Data["RelayCode"].Value);
             NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(AllocationUtils.ToRelayServerData(allocation, "wss"));
             NetworkManager.Singleton.GetComponent<UnityTransport>().UseWebSockets = true;
-            
+
             NetworkManager.Singleton.StartClient();
         }
         catch (RelayServiceException e)
         {
             Debug.Log(e);
         }
-
-        //await SceneManager.LoadSceneAsync("Multiplayer Scene");
 
         ChangeScreen(ScreenNames.LobbyScreen);
     }
@@ -289,7 +283,7 @@ public class MenuManager : MonoBehaviour
         }
     }
 
-    private async void RefreshLobbyInfo()
+    private async Task RefreshLobbyInfo()
     {
         lobbyRefreshTimer = lobbyRefreshTimeMax;
 
@@ -313,11 +307,13 @@ public class MenuManager : MonoBehaviour
                 if (player.Id == AuthenticationService.Instance.PlayerId) inLobby = true;
         if (!inLobby)
         {
+            NetworkManager.Singleton.Shutdown();
             currentLobby = null;
+
             ChangeScreen(ScreenNames.LobbyListScreen);
             return;
         }
-        /*
+
         // Checks if new players have entered lobby
         foreach (Player player in currentLobby.Players)
         {
@@ -345,7 +341,7 @@ public class MenuManager : MonoBehaviour
                     exists = true;
             if (!exists)
                 Destroy(child.gameObject);
-        }*/
+        }
 
         // Update lobby info
         lobbyName.text = currentLobby.Name;
@@ -354,9 +350,9 @@ public class MenuManager : MonoBehaviour
 
     public async void RemovePlayerFromLobby(string playerId)
     {
+        await RefreshLobbyInfo();
         try
         {
-            RefreshLobbyInfo();
             // Migrate host if needed
             if (playerId == currentLobby.HostId && currentLobby.Players.Count > 1)
             {
@@ -365,33 +361,35 @@ public class MenuManager : MonoBehaviour
                     HostId = currentLobby.Players[1].Id
                 });
             }
+
+            // Remove from lobby
             await LobbyService.Instance.RemovePlayerAsync(currentLobby.Id, playerId);
-            // Remove reference to lobby
+            // Remove reference to lobby if you leave
             if (playerId == AuthenticationService.Instance.PlayerId)
             {
                 currentLobby = null;
                 ChangeScreen(ScreenNames.LobbyListScreen);
             }
-            RefreshLobbyVisuals();
         }
         catch (LobbyServiceException e)
         {
             Debug.Log(e);
         }
+        RefreshLobbyVisuals();
     }
 
-    
-    private Player GetPlayer()
+    private Player GetLocalPlayer()
     {
         return new Player
         {
             Data = new Dictionary<string, PlayerDataObject> {
-                    { "PlayerName", new PlayerDataObject(PlayerDataObject.VisibilityOptions.Member, playerName)}
+                    { "PlayerName",   new PlayerDataObject(PlayerDataObject.VisibilityOptions.Member, playerName)}
                 }
         };
     }
 
     public Color[] playerColors = new Color[12];
+    
     /*
     private int GetAvailableColor(Lobby lobby, int colorValue)
     {
@@ -434,12 +432,12 @@ public class MenuManager : MonoBehaviour
         }
         RefreshLobbyVisuals();
     }
+    */
 
     private void StartGame()
     {
-
-
         // Change to just switch scene
+        NetworkManager.Singleton.SceneManager.LoadScene("Multiplayer Scene", LoadSceneMode.Single);
     }
 
     private void SetUsername()

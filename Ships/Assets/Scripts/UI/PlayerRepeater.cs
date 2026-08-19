@@ -25,11 +25,11 @@ public class PlayerRepeater : MonoBehaviour
     void Awake()
     {
         changeColorButton = transform.Find("Change Color Button").GetComponent<Button>();
-        changeColorButton.onClick.AddListener(() => ChangeColorPlayer());
+        //changeColorButton.onClick.AddListener(() => menuManager.ChangePlayerColor(playerId));
         playerName = transform.Find("Name Bar").Find("Player Name").GetComponent<TextMeshProUGUI>();
         hostIcon = transform.Find("Name Bar").Find("Host Icon").gameObject;
         leaveLobbyButton = transform.Find("Leave Button").GetComponent<Button>();
-        leaveLobbyButton.onClick.AddListener(() => LeaveOrKickPlayer());
+        leaveLobbyButton.onClick.AddListener(() => menuManager.RemovePlayerFromLobby(playerId));
         leaveKickLobbyImage = transform.Find("Leave Button").GetComponent<Image>();
         backgroundColor = gameObject.GetComponent<Image>();
     }
@@ -40,7 +40,7 @@ public class PlayerRepeater : MonoBehaviour
 
         playerName.text = player.Data["PlayerName"].Value;
         hostIcon.SetActive(playerId == hostId);
-        backgroundColor.color = menuManager.playerColors[int.Parse(player.Data["Color"].Value)];
+        //backgroundColor.color = menuManager.playerColors[int.Parse(player.Data["Color"].Value)];
 
         if (playerId == AuthenticationService.Instance.PlayerId) // Looking at self
         {
@@ -63,15 +63,5 @@ public class PlayerRepeater : MonoBehaviour
             else // if not host and not you
                 leaveKickLobbyImage.gameObject.SetActive(false);
         }
-    }
-
-    private void ChangeColorPlayer()
-    {
-        menuManager.ChangePlayerColor(playerId);
-    }
-
-    private void LeaveOrKickPlayer()
-    {
-        menuManager.RemovePlayerFromLobby(playerId);
     }
 }
