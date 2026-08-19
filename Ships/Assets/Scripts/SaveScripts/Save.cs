@@ -5,7 +5,7 @@ using UnityEngine;
 public class Save : MonoBehaviour
 {
 #if UNITY_WEBGL && !UNITY_EDITOR
-    private static string isWebBuild = true;
+    private static bool isWebBuild = true;
 #else
     private static bool isWebBuild = false;
 #endif
@@ -19,12 +19,12 @@ public class Save : MonoBehaviour
 
         saveFilePath = isWebBuild ? "/idbfs/" : Application.persistentDataPath + "/";
 
-        myGlobalSaveData = LoadFile("saveFile.json");
+        myGlobalSaveData = LoadFile("saveFile_ships.json");
     }
 
     public static void SaveMyData()
     {
-        SaveFile("saveFile.json", myGlobalSaveData);
+        SaveFile("saveFile_ships.json", myGlobalSaveData);
     }
 
     private static void SaveFile(string fileName, SaveData data)
