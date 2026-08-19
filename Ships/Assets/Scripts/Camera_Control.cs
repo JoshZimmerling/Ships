@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Camera_Control : MonoBehaviour
@@ -13,6 +11,8 @@ public class Camera_Control : MonoBehaviour
     bool camLocked;
 
     Camera cam;
+
+    [SerializeField] RectTransform minimapViewportRectangle;
 
     // Start is called before the first frame update
     void Start()
@@ -38,26 +38,30 @@ public class Camera_Control : MonoBehaviour
         }
 
         //Moving camera around
-        if ((Input.mousePosition.y >= (Screen.height * (1 - moveCamBorderSize)) || Input.GetKey(KeyCode.W)) && !camLocked && transform.position.y <= 125)
+        Vector3 camMoveDirection = Vector3.zero;
+        if (((Input.mousePosition.y >= (Screen.height * (1 - moveCamBorderSize)) && !camLocked) || Input.GetKey(KeyCode.W)) && transform.position.y <= 125)
         {
             //Move cam up
-            transform.Translate(Vector3.up * camMoveSpeed * currentZoomLevel * Time.deltaTime);
+            camMoveDirection += Vector3.up;
         }
-        if ((Input.mousePosition.y <= (Screen.height * moveCamBorderSize) || Input.GetKey(KeyCode.S)) && !camLocked && transform.position.y >= -125)
+        if (((Input.mousePosition.y <= (Screen.height * moveCamBorderSize) && !camLocked) || Input.GetKey(KeyCode.S)) && transform.position.y >= -125)
         {
             //Move cam down
-            transform.Translate(Vector3.down * camMoveSpeed * currentZoomLevel * Time.deltaTime);
+            camMoveDirection += Vector3.down;
         }
-        if ((Input.mousePosition.x >= (Screen.width * (1 - moveCamBorderSize)) || Input.GetKey(KeyCode.D)) && !camLocked && transform.position.x <= 125)
+        if (((Input.mousePosition.x >= (Screen.width * (1 - moveCamBorderSize)) && !camLocked) || Input.GetKey(KeyCode.D)) && transform.position.x <= 125)
         {
             //Move cam right
-            transform.Translate(Vector3.right * camMoveSpeed * currentZoomLevel * Time.deltaTime);
+            camMoveDirection += Vector3.right;
         }
-        if ((Input.mousePosition.x <= (Screen.width * moveCamBorderSize) || Input.GetKey(KeyCode.A)) && !camLocked && transform.position.x >= -125)
+        if (((Input.mousePosition.x <= (Screen.width * moveCamBorderSize) && !camLocked) || Input.GetKey(KeyCode.A)) && transform.position.x >= -125)
         {
             //Move cam left
-            transform.Translate(Vector3.left * camMoveSpeed * currentZoomLevel * Time.deltaTime);
+            camMoveDirection += Vector3.left;
         }
+
+        transform.Translate(camMoveDirection.normalized * camMoveSpeed * currentZoomLevel * Time.deltaTime);
+        MoveViewport();
     }
 
     public void ToggleLockState()
@@ -66,5 +70,12 @@ public class Camera_Control : MonoBehaviour
             camLocked = false;
         else
             camLocked = true;
+    }
+
+    private void MoveViewport()
+    {
+        minimapViewportRectangle.anchoredPosition = new Vector2(transform.position.x, transform.position.y) * 1.215f;
+
+        minimapViewportRectangle.transform.localScale = new Vector3(0.5f + ((currentZoomLevel-maxZoomIn) / (maxZoomOut - maxZoomIn) * 1.9f), 0.5f + ((currentZoomLevel - maxZoomIn) / (maxZoomOut - maxZoomIn) * 1.9f), 1f);
     }
 }

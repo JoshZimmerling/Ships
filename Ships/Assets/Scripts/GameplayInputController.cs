@@ -1,7 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
-using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -23,23 +21,15 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
     void Update()
     {
         // Setting the target destination for the ships
-        if (Input.GetButtonDown("Fire2"))
+        if (Input.GetMouseButtonDown(1))
         {
+            DirectShips(false);
+        }
 
-            VerifySelection();
-
-            Vector3 mousePos = Input.mousePosition;
-            mousePos.z = 0;
-            Vector3 worldPosition = Camera.main.ScreenToWorldPoint(mousePos);
-
-            if (selectedShips.Count == 1)
-            {
-                selectedShips[0].GetComponent<Movement>().SetTargetDestinationServerRPC(worldPosition);
-            }
-            else
-            {
-                SetDestinationInFormation(); 
-            }
+        // Rotate only ships
+        if (Input.GetMouseButtonDown(2))
+        {
+            DirectShips(true);
         }
 
         if (Input.GetKeyDown(KeyCode.Q))
@@ -100,6 +90,24 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
         }
     }
 
+    private void DirectShips(bool rotateOnly)
+    {
+        VerifySelection();
+
+        Vector3 mousePos = Input.mousePosition;
+        mousePos.z = 0;
+        Vector3 worldPosition = Camera.main.ScreenToWorldPoint(mousePos);
+
+        if (selectedShips.Count == 1)
+        {
+            selectedShips[0].GetComponent<Movement>().SetTargetDestinationServerRPC(worldPosition, rotateOnly);
+        }
+        else
+        {
+            SetDestinationInFormation(rotateOnly);
+        }
+    }
+
     // Ship movement / selection
     Transform selectionBox;
 
@@ -119,7 +127,7 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
     float xDiff;
     float yDiff;
     Vector2 shipCenter;
-    public void SetDestinationInFormation()
+    void SetDestinationInFormation(bool rotateOnly)
     {
         if (selectedShips.Count == 0) 
         {
@@ -152,12 +160,12 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
 
         foreach (Ship ship in selectedShips)
         {
-            ship.GetComponent<Movement>().SetTargetDestinationServerRPC((Vector2) worldPosition + ((Vector2) ship.transform.position - shipCenter));
+            ship.GetComponent<Movement>().SetTargetDestinationServerRPC((Vector2) worldPosition + ((Vector2) ship.transform.position - shipCenter), rotateOnly);
         }
 
     }
 
-    public void SetShips(List<Ship> ships)
+    void SetShips(List<Ship> ships)
     {
         VerifySelection();
 

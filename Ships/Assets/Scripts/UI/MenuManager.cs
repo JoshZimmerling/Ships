@@ -24,6 +24,8 @@ public class MenuManager : MonoBehaviour
     // Lobby list screen
     private GameObject lobbyListScreen;
     private GameObject lobbyViewerObject;
+    private TMP_Text usernameText;
+    private Button updateUsernameButton;
     [SerializeField] private GameObject lobbyRepeaterPrefab;
     private Button createLobbyButton;
     // Lobby screen
@@ -34,7 +36,7 @@ public class MenuManager : MonoBehaviour
     private Button startGameButton;
 
     // Runtime variables
-    private enum ScreenNames { UsernameScreen, LobbyListScreen, LobbyScreen };
+    private enum ScreenNames { LobbyListScreen, LobbyScreen };
     private ScreenNames currentScreen;
 
     private Lobby currentLobby;
@@ -43,10 +45,6 @@ public class MenuManager : MonoBehaviour
 
     void Start()
     {
-        //TODO: Move to file storage system
-        playerName = "Player " + Random.Range(100, 999);
-        Debug.Log(playerName);
-
         // Activate all ui elements (for if they are disabled for testing)
         for (int i = 0; i < transform.childCount; i++)
             transform.GetChild(i).gameObject.SetActive(true);
@@ -55,13 +53,16 @@ public class MenuManager : MonoBehaviour
         usernameScreen = transform.Find("Choose Username Screen").gameObject;
         usernameTitleText = transform.Find("Choose Username Screen").Find("Header").GetComponentInChildren<TMP_Text>();
         closeUsernameScreenButton = transform.Find("Choose Username Screen").Find("Close Button").GetComponent<Button>();
-        closeUsernameScreenButton.onClick.AddListener(() => ChangeScreen(ScreenNames.LobbyListScreen));
+        closeUsernameScreenButton.onClick.AddListener(() => usernameScreen.SetActive(false));
         usernameTextInput = transform.Find("Choose Username Screen").Find("Username Text Input").GetComponentInChildren<TMP_InputField>();
         submitUsernameButton = transform.Find("Choose Username Screen").Find("Submit Username Button").GetComponent<Button>();
         submitUsernameButton.onClick.AddListener(SetUsername);
 
         lobbyListScreen = transform.Find("Lobby List Screen").gameObject;
         lobbyViewerObject = transform.Find("Lobby List Screen").Find("Lobby Viewer").gameObject;
+        usernameText = transform.Find("Lobby List Screen").Find("Your Username").Find("Username Text").GetComponentInChildren<TMP_Text>();
+        updateUsernameButton = transform.Find("Lobby List Screen").Find("Your Username").Find("Edit Username Button").GetComponent<Button>();
+        updateUsernameButton.onClick.AddListener(() => OpenUsernamePopup());
         createLobbyButton = transform.Find("Lobby List Screen").Find("Create Lobby Button").GetComponent<Button>();
         createLobbyButton.onClick.AddListener(() => CreateLobby());
 
@@ -75,13 +76,11 @@ public class MenuManager : MonoBehaviour
         playerName = Save.myGlobalSaveData.username;
 
         // Initialize the starting screen
+        ChangeScreen(ScreenNames.LobbyListScreen);
         if (playerName == null)
         {
-            ChangeScreen(ScreenNames.UsernameScreen);
-        }
-        else
-        {
-            ChangeScreen(ScreenNames.LobbyListScreen);
+            OpenUsernamePopup();
+            lobbyListScreen.SetActive(false);
         }
     }
 
@@ -138,26 +137,15 @@ public class MenuManager : MonoBehaviour
         lobbyRefreshTimer = 0f; //Starts immediately data refresh
 
         // Updates screen state
-        usernameScreen.SetActive(currentScreen == ScreenNames.UsernameScreen);
+        usernameScreen.SetActive(false);
         lobbyListScreen.SetActive(currentScreen == ScreenNames.LobbyListScreen);
         lobbyScreen.SetActive(currentScreen == ScreenNames.LobbyScreen);
 
         // Does additional code if needed
         switch (currentScreen)
         {
-            case ScreenNames.UsernameScreen:
-                if (playerName == null)
-                {
-                    usernameTitleText.text = "Enter Your Username";
-                    closeUsernameScreenButton.gameObject.SetActive(false);
-                }
-                else
-                {
-                    usernameTitleText.text = "Change Your Username";
-                    closeUsernameScreenButton.gameObject.SetActive(true);
-                }
-                return;
             case ScreenNames.LobbyListScreen:
+                usernameText.text = playerName;
                 return;
             case ScreenNames.LobbyScreen:
                 return;
@@ -401,7 +389,10 @@ public class MenuManager : MonoBehaviour
         while (colorValue < playerColors.Length)
         {
             if (colors.Contains(colorValue.ToString()))
-                colorValue++;
+                if (colorValue == playerColors.Length - 1)
+                    colorValue = 0;
+                else
+                    colorValue++;
             else
                 break;
         }
@@ -440,15 +431,46 @@ public class MenuManager : MonoBehaviour
         NetworkManager.Singleton.SceneManager.LoadScene("Multiplayer Scene", LoadSceneMode.Single);
     }
 
+    private void OpenUsernamePopup()
+    {
+        usernameScreen.SetActive(true);
+        usernameTextInput.text = "";
+
+        if (playerName == null)
+        {
+            usernameTitleText.text = "Enter Your Username";
+            closeUsernameScreenButton.gameObject.SetActive(false);
+        }
+        else
+        {
+            usernameTitleText.text = "Change Your Username";
+            closeUsernameScreenButton.gameObject.SetActive(true);
+        }
+    }
+
     private void SetUsername()
     {
         if (usernameTextInput != null)
         {
             string newUsername = usernameTextInput.text;
+
+            if (playerName == null)
+            {
+                Debug.Log("Finished first time username setup");
+                ChangeScreen(ScreenNames.LobbyListScreen);
+            }
+
             playerName = newUsername;
             Save.myGlobalSaveData.UpdateUsername(newUsername);
 
-            ChangeScreen(ScreenNames.LobbyListScreen);
+            usernameScreen.SetActive(false);
+
+            switch (currentScreen)
+            {
+                case ScreenNames.LobbyListScreen:
+                    usernameText.text = playerName;
+                    return;
+            }
         }
     }
 }

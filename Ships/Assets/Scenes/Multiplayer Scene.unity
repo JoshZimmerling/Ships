@@ -682,6 +682,7 @@ MonoBehaviour:
   zoomSpeed: 1
   moveCamBorderSize: 0.05
   camMoveSpeed: 2.5
+  minimapViewportRectangle: {fileID: 1581875705}
 --- !u!4 &538751453 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5482460046880129592, guid: f8ace8e298784e24094e333ccc8fd958, type: 3}
@@ -1606,6 +1607,7 @@ GameObject:
   - component: {fileID: 1321346509}
   - component: {fileID: 1321346511}
   - component: {fileID: 1321346510}
+  - component: {fileID: 1321346512}
   m_Layer: 5
   m_Name: Minimap
   m_TagString: Untagged
@@ -1626,6 +1628,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1457088790}
+  - {fileID: 1581875705}
   m_Father: {fileID: 435938190}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -1647,7 +1650,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -1668,6 +1671,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1321346508}
   m_CullTransparentMesh: 1
+--- !u!114 &1321346512
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1321346508}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31a19414c41e5ae4aae2af33fee712f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Mask
+  m_ShowMaskGraphic: 1
 --- !u!4 &1335201337 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 924673155353666279, guid: 90b769422c6ec114790f524db4a7e3ec, type: 3}
@@ -1855,6 +1871,81 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 2267582314055225894, guid: ee3f927ae8ed02243ac57b49ed78f53c, type: 3}
   m_PrefabInstance: {fileID: 3524953308867861889}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1581875704
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1581875705}
+  - component: {fileID: 1581875707}
+  - component: {fileID: 1581875706}
+  m_Layer: 5
+  m_Name: Minimap Rectangle
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1581875705
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1581875704}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1321346509}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 95, y: 50}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1581875706
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1581875704}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.19607843}
+  m_RaycastTarget: 0
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: -6846189919041129761, guid: 58722012f057c764c96e96d51a00993b, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 1
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1581875707
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1581875704}
+  m_CullTransparentMesh: 1
 --- !u!4 &1592619283 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2409241971725158089, guid: 3c53f4fe19f21214aae89db75946539b, type: 3}
@@ -2222,6 +2313,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1907819827}
   - component: {fileID: 1907819826}
+  - component: {fileID: 1907819828}
   m_Layer: 0
   m_Name: MiniMap Camera
   m_TagString: Untagged
@@ -2295,6 +2387,25 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!119 &1907819828
+Projector:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1907819824}
+  m_Enabled: 1
+  serializedVersion: 2
+  m_NearClipPlane: 0.1
+  m_FarClipPlane: 100
+  m_FieldOfView: 60
+  m_AspectRatio: 1
+  m_Orthographic: 0
+  m_OrthographicSize: 10
+  m_Material: {fileID: 2100000, guid: e3265ab4bf004d28a9537516768c1c75, type: 3}
+  m_IgnoreLayers:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!4 &1933729366 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 402625007008844890, guid: 0334efaaddc27454a8f4f3640bf81e5b, type: 3}
