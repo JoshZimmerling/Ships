@@ -25,7 +25,7 @@ public class PlayerRepeater : MonoBehaviour
     void Awake()
     {
         changeColorButton = transform.Find("Change Color Button").GetComponent<Button>();
-        //changeColorButton.onClick.AddListener(() => menuManager.ChangePlayerColor(playerId));
+        changeColorButton.onClick.AddListener(() => menuManager.ChangePlayerColor(playerId));
         playerName = transform.Find("Name Bar").Find("Player Name").GetComponent<TextMeshProUGUI>();
         hostIcon = transform.Find("Name Bar").Find("Host Icon").gameObject;
         leaveLobbyButton = transform.Find("Leave Button").GetComponent<Button>();
@@ -40,7 +40,6 @@ public class PlayerRepeater : MonoBehaviour
 
         playerName.text = player.Data["PlayerName"].Value;
         hostIcon.SetActive(playerId == hostId);
-        //backgroundColor.color = menuManager.playerColors[int.Parse(player.Data["Color"].Value)];
 
         if (playerId == AuthenticationService.Instance.PlayerId) // Looking at self
         {
@@ -63,5 +62,11 @@ public class PlayerRepeater : MonoBehaviour
             else // if not host and not you
                 leaveKickLobbyImage.gameObject.SetActive(false);
         }
+
+        // TODO: A better way to sync the colors
+        PlayerData[] playerDataList = FindObjectsByType<PlayerData>(FindObjectsSortMode.None);
+        foreach (PlayerData data in playerDataList)
+            if (data.authenticationServicePlayerId.Value == playerId)
+                backgroundColor.color = menuManager.playerColors[data.playerColorIndex.Value];
     }
 }
