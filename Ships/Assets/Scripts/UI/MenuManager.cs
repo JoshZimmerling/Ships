@@ -11,6 +11,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using System.Threading.Tasks;
+using Unity.Collections;
 
 public class MenuManager : MonoBehaviour
 {
@@ -88,12 +89,15 @@ public class MenuManager : MonoBehaviour
     private readonly float lobbyRefreshTimeMax = 1.1f;
     private float lobbyRefreshTimer = 0f;
 
+    private readonly float lobbyVisualTimeMax = 0.1f;
+    private float lobbyVisualTimer = 0f;
 
     private readonly float heartbeatTimeMax = 15f;
     private float heartbeatTimer = 0f;
     void FixedUpdate()
     {
         lobbyRefreshTimer -= Time.deltaTime;
+        lobbyVisualTimer -= Time.deltaTime;
 
         switch (currentScreen)
         {
@@ -107,6 +111,9 @@ public class MenuManager : MonoBehaviour
                 if (lobbyRefreshTimer < 0f)
                 {
                     RefreshLobbyInfo();
+                }
+                if (lobbyVisualTimer < 0f)
+                {
                     RefreshLobbyVisuals();
                 }
                 return;
@@ -184,10 +191,10 @@ public class MenuManager : MonoBehaviour
                    { "RelayCode", new DataObject(DataObject.VisibilityOptions.Public, relayCode) }
                 }
             };
-
+            
             currentLobby = await LobbyService.Instance.CreateLobbyAsync(lobbyName, maxPlayers, options);
 
-            Debug.Log("Created Lobby! " + currentLobby.Name + " " + currentLobby.MaxPlayers);
+            //Debug.Log("Created Lobby! " + currentLobby.Name + " " + currentLobby.MaxPlayers);
         }
         catch (LobbyServiceException e)
         {
@@ -288,6 +295,8 @@ public class MenuManager : MonoBehaviour
 
     private void RefreshLobbyVisuals()
     {
+        lobbyVisualTimer = lobbyVisualTimeMax;
+
         // Verifies if player is still in lobby
         bool inLobby = false;
         if (currentLobby != null)
@@ -377,18 +386,18 @@ public class MenuManager : MonoBehaviour
     }
 
     public Color[] playerColors = new Color[12];
+
     
-    /*
-    private int GetAvailableColor(Lobby lobby, int colorValue)
+    private int GetAvailableColor(int colorValue, PlayerData[] playerDataList)
     {
-        List<string> colors = new List<string>();
-        foreach (var player in lobby.Players)
-            colors.Add(player.Data["Color"].Value);
+        List<int> colors = new List<int>();
+        foreach (PlayerData data in playerDataList)
+            colors.Add(data.playerColorIndex.Value);
 
         
         while (colorValue < playerColors.Length)
         {
-            if (colors.Contains(colorValue.ToString()))
+            if (colors.Contains(colorValue))
                 if (colorValue == playerColors.Length - 1)
                     colorValue = 0;
                 else
@@ -399,35 +408,19 @@ public class MenuManager : MonoBehaviour
 
         return colorValue;
     }
-
-    public async void ChangePlayerColor(string playerId)
+    
+    
+    public void ChangePlayerColor(string playerId)
     {
-        try
-        {
-            Player player = null;
-            foreach (Player p2 in currentLobby.Players)
-                if (p2.Id == playerId)
-                    player = p2;
-
-            UpdatePlayerOptions updatePlayerOptions = new UpdatePlayerOptions
-            {
-                Data = new Dictionary<string, PlayerDataObject> {
-                    { "Color",      new PlayerDataObject(PlayerDataObject.VisibilityOptions.Member, GetAvailableColor(currentLobby, int.Parse(player.Data["Color"].Value)).ToString())}
-                }
-            };
-            currentLobby = await LobbyService.Instance.UpdatePlayerAsync(currentLobby.Id, playerId, updatePlayerOptions);
-        }
-        catch (LobbyServiceException e)
-        {
-            Debug.Log(e);
-        }
+        PlayerData[] playerDataList = FindObjectsByType<PlayerData>(FindObjectsSortMode.None);
+        foreach (PlayerData data in playerDataList)
+            if (data.authenticationServicePlayerId.Value == playerId)
+                data.playerColorIndex.Value = GetAvailableColor(data.playerColorIndex.Value, playerDataList);
         RefreshLobbyVisuals();
     }
-    */
 
     private void StartGame()
     {
-        // Change to just switch scene
         NetworkManager.Singleton.SceneManager.LoadScene("Multiplayer Scene", LoadSceneMode.Single);
     }
 

@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Collections;
 using Unity.Netcode;
+using Unity.Services.Authentication;
 using UnityEngine;
 
 public class PlayerData : NetworkBehaviour
@@ -8,12 +10,20 @@ public class PlayerData : NetworkBehaviour
     private GameManager gameManager;
     private GameObject spawnPlatform;
 
-    private int playerColorIndex = 0;
+    public NetworkVariable<int> playerColorIndex = new NetworkVariable<int>(0, writePerm : NetworkVariableWritePermission.Owner);
     private Color playerColor;
+
+    public NetworkVariable<FixedString32Bytes> authenticationServicePlayerId = new NetworkVariable<FixedString32Bytes>(writePerm: NetworkVariableWritePermission.Owner);
+
+    public override void OnNetworkSpawn()
+    {
+        if (!IsOwner) return;
+        //Debug.Log("TEST"); //TODO Move into the create lobby / join lobby code so that player is spawned with a color that is not already in the lobby
+        authenticationServicePlayerId.Value = AuthenticationService.Instance.PlayerId;
+    }
 
     public void PlayerSetup()
     {
-        Debug.Log("Owner: " + OwnerClientId);
         gameManager = GameManager.Singleton;
 
         gameManager.AddPlayer(this);
