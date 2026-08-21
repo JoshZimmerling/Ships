@@ -235,6 +235,7 @@ public class MenuManager : MonoBehaviour
             Debug.Log(e);
         }
 
+        await RefreshLobbyInfo();
         ChangeScreen(ScreenNames.LobbyScreen);
     }
 

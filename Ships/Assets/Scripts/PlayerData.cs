@@ -10,6 +10,8 @@ public class PlayerData : NetworkBehaviour
     private GameManager gameManager;
     private GameObject spawnPlatform;
 
+    public Ship motherShip;
+
     public NetworkVariable<int> playerColorIndex = new NetworkVariable<int>(0, writePerm : NetworkVariableWritePermission.Owner);
     public Color playerColor;
 
@@ -25,28 +27,35 @@ public class PlayerData : NetworkBehaviour
     public void PlayerSetup()
     {
         gameManager = GameManager.Singleton;
+        spawnPlatform = gameManager.playerSpawns[OwnerClientId];
 
         gameManager.AddPlayer(this);
-        spawnPlatform = gameManager.playerSpawns[OwnerClientId];
-        Color _color = playerColor;
-        _color.a = 0.1f;
-        spawnPlatform.GetComponent<SpriteRenderer>().color = _color;
-        spawnPlatform.SetActive(true);
-        gameObject.name = "Player " + OwnerClientId;
+        // Color _color = playerColor;
+        // _color.a = 0.1f;
+        // spawnPlatform.GetComponent<SpriteRenderer>().color = _color;
+        // spawnPlatform.SetActive(true);
+        // gameObject.name = "Player " + OwnerClientId;
 
         GameManager.Singleton.ChangeState(GameState.Gameplay);
 
-        if (!IsOwner) return;
-
-        Camera.main.gameObject.GetComponent<Camera_Control>().MoveCameraToWorldSpace(new Vector2(spawnPlatform.transform.position.x, spawnPlatform.transform.position.y));
+        if (IsOwner){
+            SpawnShipServerRPC(Ship.ShipTypes.Mothership);
+            Camera.main.gameObject.GetComponent<Camera_Control>().MoveCameraToWorldSpace(new Vector2(spawnPlatform.transform.position.x, spawnPlatform.transform.position.y));
+        }
     }
 
     [Rpc(SendTo.Server)]
     public void SpawnShipServerRPC(Ship.ShipTypes shipType)
     {
-        Vector3 spawnPos = spawnPlatform.transform.position;
+        Vector3 spawnPos;
+        Vector2 offset = Random.onUnitCircle * 15;
+        if (motherShip == null)
+            spawnPos = spawnPlatform.transform.position;
+        else
+            spawnPos = motherShip.transform.position + new Vector3(offset.x, offset.y);  //motherShip.transform.rotation * new Vector3(0, 15, 0);
         GameObject ship = Instantiate(gameManager.GetShipPrefab((int)shipType), spawnPos, Quaternion.LookRotation(new Vector3(0, 0, 1), -spawnPos));
         ship.GetComponent<NetworkObject>().SpawnWithOwnership(OwnerClientId);
         ship.transform.parent = transform;
+        ship.GetComponent<Ship>();
     }
 }

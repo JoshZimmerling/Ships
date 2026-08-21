@@ -49,7 +49,7 @@ public class Ship : NetworkBehaviour
         }
 
         // Set the team color
-        Color teamColor = GameManager.Singleton.playerColors[OwnerClientId];
+        Color teamColor = GameManager.Singleton.playerColors[OwnerClientId]; // Update this
         transform.Find("Ship Accent").GetComponent<SpriteRenderer>().color = teamColor;
         transform.Find("Minimap Marker").GetComponent<SpriteRenderer>().color = teamColor;
         transform.Find("Minimap Scout Marker").GetComponent<SpriteRenderer>().color = teamColor;
@@ -74,6 +74,12 @@ public class Ship : NetworkBehaviour
             case ShipTypes.Scout:
                 if (IsOwner)
                     transform.Find("Scout Radar").gameObject.SetActive(true);
+                break;
+            case ShipTypes.Mothership:
+                PlayerData[] playerDataList = FindObjectsByType<PlayerData>(FindObjectsSortMode.None);
+                foreach (PlayerData data in playerDataList)
+                    if (data.OwnerClientId == OwnerClientId)
+                        data.motherShip = this;
                 break;
         }
     }

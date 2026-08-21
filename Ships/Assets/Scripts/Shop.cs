@@ -24,15 +24,18 @@ public class Shop : Singleton<Shop>
         foreach (NetworkPrefab prefab in GameManager.Singleton.shipList.PrefabList)
         {
             Transform shipPrefab = prefab.Prefab.transform;
-            Transform button = Instantiate(shopButtonPrefab, buttonContainer).transform;
-            button.Find("Ship Name").GetComponent<TMP_Text>().text = shipPrefab.GetComponent<Ship>().GetShipType().ToString();
-            button.Find("Ship Sprite").GetComponent<Image>().sprite = shipPrefab.GetComponent<SpriteRenderer>().sprite;
-            button.Find("Ship Color").GetComponent<Image>().sprite = shipPrefab.Find("Ship Accent").GetComponent<SpriteRenderer>().sprite;
-            button.Find("Ship Color").GetComponent<Image>().color = playerColor;
             float shipCost = shipPrefab.GetComponent<Ship>().GetShipCost();
-            button.Find("Ship Cost").GetComponent<TMP_Text>().text = "" + shipCost;
+            if (shipCost > 0)
+            {
+                Transform button = Instantiate(shopButtonPrefab, buttonContainer).transform;
+                button.Find("Ship Name").GetComponent<TMP_Text>().text = shipPrefab.GetComponent<Ship>().GetShipType().ToString();
+                button.Find("Ship Sprite").GetComponent<Image>().sprite = shipPrefab.GetComponent<SpriteRenderer>().sprite;
+                button.Find("Ship Color").GetComponent<Image>().sprite = shipPrefab.Find("Ship Accent").GetComponent<SpriteRenderer>().sprite;
+                button.Find("Ship Color").GetComponent<Image>().color = playerColor;
+                button.Find("Ship Cost").GetComponent<TMP_Text>().text = "" + shipCost;
 
-            button.GetComponent<Button>().onClick.AddListener(() => BuyShip(shipPrefab.GetComponent<Ship>().GetShipType(), shipCost));
+                button.GetComponent<Button>().onClick.AddListener(() => BuyShip(shipPrefab.GetComponent<Ship>().GetShipType(), shipCost));
+            }
         }
 
         UpdateGold();
