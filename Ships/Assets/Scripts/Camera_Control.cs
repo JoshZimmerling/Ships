@@ -35,6 +35,8 @@ public class Camera_Control : MonoBehaviour
                 currentZoomLevel = maxZoomIn;
 
             cam.orthographicSize = currentZoomLevel;
+
+            MoveViewport();
         }
 
         //Moving camera around
@@ -60,8 +62,11 @@ public class Camera_Control : MonoBehaviour
             camMoveDirection += Vector3.left;
         }
 
-        transform.Translate(camMoveDirection.normalized * camMoveSpeed * currentZoomLevel * Time.deltaTime);
-        MoveViewport();
+        if (camMoveDirection != Vector3.zero)
+        {
+            transform.Translate(camMoveDirection.normalized * camMoveSpeed * currentZoomLevel * Time.deltaTime);
+            MoveViewport();
+        }
     }
 
     public void ToggleLockState()
@@ -70,6 +75,12 @@ public class Camera_Control : MonoBehaviour
             camLocked = false;
         else
             camLocked = true;
+    }
+
+    public void MoveCameraToNormalizedPosition(Vector2 normalizedPositionVector)
+    {
+        gameObject.transform.position = new Vector3(-125f + (250f * normalizedPositionVector.x), -125f + (250f * normalizedPositionVector.y), gameObject.transform.position.z);
+        MoveViewport();
     }
 
     private void MoveViewport()

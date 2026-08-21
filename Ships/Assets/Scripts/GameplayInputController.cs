@@ -3,11 +3,36 @@ using Unity.Netcode;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class GameplayInputManager : Singleton<GameplayInputManager>
 {
     private readonly List<Ship> selectedShips = new();
     private Camera_Control cameraScript; // TODO: move to using singleton
+
+    // Ship movement / selection
+    Transform selectionBox;
+
+    private Vector2 startPos;
+    private Vector2 curPos;
+    private bool mouseDown = false; //Used for not having weird issues when holding down mouse and sliding off of minimap
+
+    private float curWidth;
+    private float curHeight;
+
+    public List<Collider2D> hitColliders = new List<Collider2D>();
+    public List<Ship> shipsFromHit = new List<Ship>();
+
+    float xMax;
+    float yMax;
+    float xMin;
+    float yMin;
+    float xDiff;
+    float yDiff;
+    Vector2 shipCenter;
+
+    [SerializeField] private GraphicRaycaster raycaster;
+    [SerializeField] private EventSystem eventSystem;
 
     protected override void Awake()
     {
@@ -58,24 +83,43 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
             cameraScript.ToggleLockState();
         }
 
-        if (EventSystem.current.IsPointerOverGameObject())
-        {
-            return;
-        }
-
         if (Input.GetMouseButtonDown(0))
         {
-            startPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            PointerEventData pointerData = new PointerEventData(eventSystem);
+            pointerData.position = Input.mousePosition;
+            List<RaycastResult> clickedUIElements = new List<RaycastResult>();
+            raycaster.Raycast(pointerData, clickedUIElements);
+
+            foreach (RaycastResult UI_Element in clickedUIElements)
+            {
+                if (UI_Element.gameObject.name == "Minimap Image")
+                {
+                    Vector2 normalizedClick = new Vector2(UI_Element.screenPosition.x / UI_Element.gameObject.GetComponent<RectTransform>().rect.width, UI_Element.screenPosition.y / UI_Element.gameObject.GetComponent<RectTransform>().rect.height);
+                    Debug.Log("Clicked minimap at " + UI_Element.screenPosition + "  |  " + "Normalized location: " + normalizedClick);
+                    cameraScript.MoveCameraToNormalizedPosition(normalizedClick);
+                }
+            }
+
+            //If we did not click on a UI element, start drawing our ship selection box
+            if (clickedUIElements.Count <= 0)
+            {
+                startPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                mouseDown = true;
+            }
         }
 
         if (Input.GetMouseButton(0))
         {
-            UpdateBox(Input.mousePosition);
+            if (mouseDown)
+            {
+                UpdateBox(Input.mousePosition);
+            }
         }
 
         if (Input.GetMouseButtonUp(0))
         {
             ReleaseBox();
+            mouseDown = false;
         }
     }
 
@@ -108,25 +152,6 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
         }
     }
 
-    // Ship movement / selection
-    Transform selectionBox;
-
-    private Vector2 startPos;
-    private Vector2 curPos;
-
-    private float curWidth;
-    private float curHeight;
-
-    public List<Collider2D> hitColliders = new List<Collider2D>();
-    public List<Ship> shipsFromHit = new List<Ship>();
-
-    float xMax;
-    float yMax;
-    float xMin;
-    float yMin;
-    float xDiff;
-    float yDiff;
-    Vector2 shipCenter;
     void SetDestinationInFormation(bool rotateOnly)
     {
         if (selectedShips.Count == 0) 
