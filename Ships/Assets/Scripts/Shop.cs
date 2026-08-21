@@ -20,7 +20,7 @@ public class Shop : Singleton<Shop>
         Debug.Log("Setup Shop: " + playerId);
         transform.Find("Toggle Window Button").GetComponent<Button>().onClick.AddListener(() => ToggleShop()); ;
 
-        Color playerColor = GameManager.Singleton.playerColors[playerId];
+        Color playerColor = GameManager.Singleton.playerColors[playerId]; // Update this to change ship colors
         foreach (NetworkPrefab prefab in GameManager.Singleton.shipList.PrefabList)
         {
             Transform shipPrefab = prefab.Prefab.transform;

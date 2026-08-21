@@ -11,7 +11,8 @@ public class Ship : NetworkBehaviour
         Goliath,
         Lightning,
         Drone,
-        Scout
+        Scout,
+        Mothership
     }
 
     // Ship Variables
