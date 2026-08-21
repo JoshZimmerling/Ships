@@ -35,6 +35,8 @@ public class Camera_Control : MonoBehaviour
                 currentZoomLevel = maxZoomIn;
 
             cam.orthographicSize = currentZoomLevel;
+
+            MoveViewport();
         }
 
         //Moving camera around
@@ -60,8 +62,11 @@ public class Camera_Control : MonoBehaviour
             camMoveDirection += Vector3.left;
         }
 
-        transform.Translate(camMoveDirection.normalized * camMoveSpeed * currentZoomLevel * Time.deltaTime);
-        MoveViewport();
+        if (camMoveDirection != Vector3.zero)
+        {
+            transform.Translate(camMoveDirection.normalized * camMoveSpeed * currentZoomLevel * Time.deltaTime);
+            MoveViewport();
+        }
     }
 
     public void ToggleLockState()
@@ -72,9 +77,21 @@ public class Camera_Control : MonoBehaviour
             camLocked = true;
     }
 
+    public void MoveCameraToWorldSpace(Vector2 position)
+    {
+        gameObject.transform.position = new Vector3(position.x, position.y, gameObject.transform.position.z);
+        MoveViewport();
+    }
+
+    public void MoveCameraToNormalizedPosition(Vector2 normalizedPositionVector)
+    {
+        gameObject.transform.position = new Vector3(-125f + (250f * normalizedPositionVector.x), -125f + (250f * normalizedPositionVector.y), gameObject.transform.position.z);
+        MoveViewport();
+    }
+
     private void MoveViewport()
     {
-        minimapViewportRectangle.anchoredPosition = new Vector2(transform.position.x, transform.position.y) * 1.215f;
+        minimapViewportRectangle.anchoredPosition = new Vector2(transform.position.x, transform.position.y) * 1.21f;
 
         minimapViewportRectangle.transform.localScale = new Vector3(0.5f + ((currentZoomLevel-maxZoomIn) / (maxZoomOut - maxZoomIn) * 1.9f), 0.5f + ((currentZoomLevel - maxZoomIn) / (maxZoomOut - maxZoomIn) * 1.9f), 1f);
     }
