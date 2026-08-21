@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEditor;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -16,7 +17,7 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
     private Vector2 startPos;
     private Vector2 curPos;
     private bool mouseDownInGame = false;
-    private bool mouseDownInMinmap = false;
+    private bool mouseDownInMinimap = false;
 
     private float curWidth;
     private float curHeight;
@@ -52,13 +53,29 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
         // Setting the target destination for the ships
         if (Input.GetMouseButtonDown(1))
         {
-            DirectShips(false);
+            UIClicks ui_click = DidClickUI();
+            if (ui_click == UIClicks.MINIMAP)
+            {
+                DirectShips(GetMinimapMouseLocation() * 0.83f, false);
+            }
+            else if (ui_click == UIClicks.NONE)
+            {
+                DirectShips(Camera.main.ScreenToWorldPoint(Input.mousePosition), false);
+            }
         }
 
         // Rotate only ships
         if (Input.GetMouseButtonDown(2))
         {
-            DirectShips(true);
+            UIClicks ui_click = DidClickUI();
+            if (ui_click == UIClicks.MINIMAP)
+            {
+                DirectShips(GetMinimapMouseLocation() * 0.83f, true);
+            }
+            else if (ui_click == UIClicks.NONE)
+            {
+                DirectShips(Camera.main.ScreenToWorldPoint(Input.mousePosition), true);
+            }
         }
 
         if (Input.GetKeyDown(KeyCode.Q))
@@ -89,21 +106,12 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
 
         if (Input.GetMouseButtonDown(0))
         {
-            PointerEventData pointerData = new PointerEventData(eventSystem);
-            pointerData.position = Input.mousePosition;
-            List<RaycastResult> clickedUIElements = new List<RaycastResult>();
-            raycaster.Raycast(pointerData, clickedUIElements);
-
-            foreach (RaycastResult UI_Element in clickedUIElements)
+            UIClicks ui_click = DidClickUI();
+            if (ui_click == UIClicks.MINIMAP)
             {
-                if (UI_Element.gameObject.name == "Minimap Image")
-                {
-                    mouseDownInMinmap = true;
-                }
+                mouseDownInMinimap = true;
             }
-
-            //If we did not click on a UI element, start drawing our ship selection box
-            if (clickedUIElements.Count <= 0)
+            else if (ui_click == UIClicks.NONE) //If we did not click on a UI element, start drawing our ship selection box
             {
                 startPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 mouseDownInGame = true;
@@ -116,13 +124,9 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
             {
                 UpdateBox(Input.mousePosition);
             }
-            else if (mouseDownInMinmap)
+            else if (mouseDownInMinimap)
             {
-                Vector2 localClickPos;
-
-                // Directly translate the shifting mouse position into the target's coordinates
-                RectTransformUtility.ScreenPointToLocalPointInRectangle(minimapTransform, Input.mousePosition, null, out localClickPos);
-                Vector2 normalizedClick = new Vector2(((minimapTransform.rect.width / 2) + localClickPos.x) / minimapTransform.rect.width, ((minimapTransform.rect.height / 2) + localClickPos.y) / minimapTransform.rect.height);
+                Vector2 normalizedClick = new Vector2(((minimapTransform.rect.width / 2) + GetMinimapMouseLocation().x) / minimapTransform.rect.width, ((minimapTransform.rect.height / 2) + GetMinimapMouseLocation().y) / minimapTransform.rect.height);
 
                 if (normalizedClick.x <= 0)
                 {
@@ -153,7 +157,7 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
             }
 
             mouseDownInGame = false;
-            mouseDownInMinmap = false;
+            mouseDownInMinimap = false;
         }
     }
 
@@ -168,25 +172,21 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
         }
     }
 
-    private void DirectShips(bool rotateOnly)
+    private void DirectShips(Vector2 directPosition, bool rotateOnly)
     {
         VerifySelection();
 
-        Vector3 mousePos = Input.mousePosition;
-        mousePos.z = 0;
-        Vector3 worldPosition = Camera.main.ScreenToWorldPoint(mousePos);
-
         if (selectedShips.Count == 1)
         {
-            selectedShips[0].GetComponent<Movement>().SetTargetDestinationServerRPC(worldPosition, rotateOnly);
+            selectedShips[0].GetComponent<Movement>().SetTargetDestinationServerRPC(directPosition, rotateOnly);
         }
         else
         {
-            SetDestinationInFormation(rotateOnly);
+            SetDestinationInFormation(directPosition, rotateOnly);
         }
     }
 
-    void SetDestinationInFormation(bool rotateOnly)
+    void SetDestinationInFormation(Vector2 target, bool rotateOnly)
     {
         if (selectedShips.Count == 0) 
         {
@@ -213,13 +213,9 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
 
         shipCenter = new Vector2(xMin + (xDiff / 2), yMin + (yDiff / 2)); 
 
-        Vector3 mousePos = Input.mousePosition;
-        mousePos.z = 0;
-        Vector3 worldPosition = Camera.main.ScreenToWorldPoint(mousePos);
-
         foreach (Ship ship in selectedShips)
         {
-            ship.GetComponent<Movement>().SetTargetDestinationServerRPC((Vector2) worldPosition + ((Vector2) ship.transform.position - shipCenter), rotateOnly);
+            ship.GetComponent<Movement>().SetTargetDestinationServerRPC(target + ((Vector2) ship.transform.position - shipCenter), rotateOnly);
         }
 
     }
@@ -296,5 +292,43 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
         {
             return true;
         }
+    }
+
+    private enum UIClicks
+    {
+        NONE,
+        MINIMAP,
+        OTHER_NON_MINIMAP_UI
+    }
+
+    private UIClicks DidClickUI()
+    {
+        PointerEventData pointerData = new PointerEventData(eventSystem);
+        pointerData.position = Input.mousePosition;
+        List<RaycastResult> clickedUIElements = new List<RaycastResult>();
+        raycaster.Raycast(pointerData, clickedUIElements);
+
+        foreach (RaycastResult UI_Element in clickedUIElements)
+        {
+            if (UI_Element.gameObject.name == "Minimap Image")
+            {
+                return UIClicks.MINIMAP;
+            }
+        }
+
+        if (clickedUIElements.Count > 0)
+        {
+            return UIClicks.OTHER_NON_MINIMAP_UI;
+        }
+
+        return UIClicks.NONE;
+    }
+
+    private Vector2 GetMinimapMouseLocation()
+    {
+        Vector2 localClickPos;
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(minimapTransform, Input.mousePosition, null, out localClickPos);
+
+        return localClickPos;
     }
 }
