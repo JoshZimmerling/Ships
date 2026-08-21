@@ -421,6 +421,10 @@ public class MenuManager : MonoBehaviour
 
     private void StartGame()
     {
+        PlayerData[] playerDataList = FindObjectsByType<PlayerData>(FindObjectsSortMode.None);
+        foreach (PlayerData data in playerDataList)
+            data.playerColor = playerColors[data.playerColorIndex.Value];
+
         NetworkManager.Singleton.SceneManager.LoadScene("Multiplayer Scene", LoadSceneMode.Single);
     }
 

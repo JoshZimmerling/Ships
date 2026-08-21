@@ -51,7 +51,6 @@ public class Shop : Singleton<Shop>
         {
             playerGold -= cost;
             GameManager.Singleton.players[playerId].SpawnShipServerRPC(type);
-            Debug.Log(playerId);
         }
 
         UpdateGold();

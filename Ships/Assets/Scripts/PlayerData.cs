@@ -11,7 +11,7 @@ public class PlayerData : NetworkBehaviour
     private GameObject spawnPlatform;
 
     public NetworkVariable<int> playerColorIndex = new NetworkVariable<int>(0, writePerm : NetworkVariableWritePermission.Owner);
-    private Color playerColor;
+    public Color playerColor;
 
     public NetworkVariable<FixedString32Bytes> authenticationServicePlayerId = new NetworkVariable<FixedString32Bytes>(writePerm: NetworkVariableWritePermission.Owner);
 
@@ -27,7 +27,6 @@ public class PlayerData : NetworkBehaviour
         gameManager = GameManager.Singleton;
 
         gameManager.AddPlayer(this);
-        playerColor = gameManager.playerColors[OwnerClientId];
         spawnPlatform = gameManager.playerSpawns[OwnerClientId];
         Color _color = playerColor;
         _color.a = 0.1f;
