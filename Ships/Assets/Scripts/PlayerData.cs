@@ -39,7 +39,7 @@ public class PlayerData : NetworkBehaviour
 
         if (!IsOwner) return;
 
-        Camera.main.transform.position = new Vector3(spawnPlatform.transform.position.x, spawnPlatform.transform.position.y, Camera.main.transform.position.z);
+        Camera.main.gameObject.GetComponent<Camera_Control>().MoveCameraToWorldSpace(new Vector2(spawnPlatform.transform.position.x, spawnPlatform.transform.position.y));
     }
 
     [Rpc(SendTo.Server)]

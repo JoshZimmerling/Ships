@@ -15,7 +15,8 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
 
     private Vector2 startPos;
     private Vector2 curPos;
-    private bool mouseDown = false; //Used for not having weird issues when holding down mouse and sliding off of minimap
+    private bool mouseDownInGame = false;
+    private bool mouseDownInMinmap = false;
 
     private float curWidth;
     private float curHeight;
@@ -31,6 +32,7 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
     float yDiff;
     Vector2 shipCenter;
 
+    private RectTransform minimapTransform;
     [SerializeField] private GraphicRaycaster raycaster;
     [SerializeField] private EventSystem eventSystem;
 
@@ -40,6 +42,8 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
 
         cameraScript = Camera.main.GetComponent<Camera_Control>();
         selectionBox = transform.Find("Selection Box");
+
+        minimapTransform = GameObject.Find("Minimap Image").GetComponent<RectTransform>();
     }
 
     // Update is called once per frame
@@ -94,9 +98,7 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
             {
                 if (UI_Element.gameObject.name == "Minimap Image")
                 {
-                    Vector2 normalizedClick = new Vector2(UI_Element.screenPosition.x / UI_Element.gameObject.GetComponent<RectTransform>().rect.width, UI_Element.screenPosition.y / UI_Element.gameObject.GetComponent<RectTransform>().rect.height);
-                    Debug.Log("Clicked minimap at " + UI_Element.screenPosition + "  |  " + "Normalized location: " + normalizedClick);
-                    cameraScript.MoveCameraToNormalizedPosition(normalizedClick);
+                    mouseDownInMinmap = true;
                 }
             }
 
@@ -104,22 +106,54 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
             if (clickedUIElements.Count <= 0)
             {
                 startPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                mouseDown = true;
+                mouseDownInGame = true;
             }
         }
 
         if (Input.GetMouseButton(0))
         {
-            if (mouseDown)
+            if (mouseDownInGame)
             {
                 UpdateBox(Input.mousePosition);
+            }
+            else if (mouseDownInMinmap)
+            {
+                Vector2 localClickPos;
+
+                // Directly translate the shifting mouse position into the target's coordinates
+                RectTransformUtility.ScreenPointToLocalPointInRectangle(minimapTransform, Input.mousePosition, null, out localClickPos);
+                Vector2 normalizedClick = new Vector2(((minimapTransform.rect.width / 2) + localClickPos.x) / minimapTransform.rect.width, ((minimapTransform.rect.height / 2) + localClickPos.y) / minimapTransform.rect.height);
+
+                if (normalizedClick.x <= 0)
+                {
+                    normalizedClick.x = 0;
+                }
+                if (normalizedClick.x >= 1)
+                {
+                    normalizedClick.x = 1;
+                }
+                if (normalizedClick.y <= 0)
+                {
+                    normalizedClick.y = 0;
+                }
+                if (normalizedClick.y >= 1)
+                {
+                    normalizedClick.y = 1;
+                }
+
+                cameraScript.MoveCameraToNormalizedPosition(normalizedClick);
             }
         }
 
         if (Input.GetMouseButtonUp(0))
         {
-            ReleaseBox();
-            mouseDown = false;
+            if (mouseDownInGame)
+            {
+                ReleaseBox();
+            }
+
+            mouseDownInGame = false;
+            mouseDownInMinmap = false;
         }
     }
 

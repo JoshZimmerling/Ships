@@ -77,6 +77,12 @@ public class Camera_Control : MonoBehaviour
             camLocked = true;
     }
 
+    public void MoveCameraToWorldSpace(Vector2 position)
+    {
+        gameObject.transform.position = new Vector3(position.x, position.y, gameObject.transform.position.z);
+        MoveViewport();
+    }
+
     public void MoveCameraToNormalizedPosition(Vector2 normalizedPositionVector)
     {
         gameObject.transform.position = new Vector3(-125f + (250f * normalizedPositionVector.x), -125f + (250f * normalizedPositionVector.y), gameObject.transform.position.z);
