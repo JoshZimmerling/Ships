@@ -34,6 +34,8 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
     Vector2 shipCenter;
 
     private RectTransform minimapTransform;
+    private float minimapWidth;
+    private float mapWidth;
     [SerializeField] private GraphicRaycaster raycaster;
     [SerializeField] private EventSystem eventSystem;
 
@@ -45,6 +47,8 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
         selectionBox = transform.Find("Selection Box");
 
         minimapTransform = GameObject.Find("Minimap Image").GetComponent<RectTransform>();
+        minimapWidth = minimapTransform.rect.width;
+        mapWidth = GameObject.Find("Map_1").GetComponent<RectTransform>().rect.width;
     }
 
     // Update is called once per frame
@@ -56,7 +60,7 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
             UIClicks ui_click = DidClickUI();
             if (ui_click == UIClicks.MINIMAP)
             {
-                DirectShips(GetMinimapMouseLocation() * 0.83f, false);
+                DirectShips(GetMinimapMouseLocation() * (mapWidth/minimapWidth), false);
             }
             else if (ui_click == UIClicks.NONE)
             {
@@ -70,7 +74,7 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
             UIClicks ui_click = DidClickUI();
             if (ui_click == UIClicks.MINIMAP)
             {
-                DirectShips(GetMinimapMouseLocation() * 0.83f, true);
+                DirectShips(GetMinimapMouseLocation() * (mapWidth / minimapWidth), true);
             }
             else if (ui_click == UIClicks.NONE)
             {

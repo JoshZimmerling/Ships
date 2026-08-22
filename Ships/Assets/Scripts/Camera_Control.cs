@@ -13,6 +13,8 @@ public class Camera_Control : MonoBehaviour
     Camera cam;
 
     [SerializeField] RectTransform minimapViewportRectangle;
+    private float minimapWidth;
+    private float mapWidth;
 
     // Start is called before the first frame update
     void Start()
@@ -20,6 +22,9 @@ public class Camera_Control : MonoBehaviour
         cam = this.gameObject.GetComponent<Camera>();
         currentZoomLevel = cam.orthographicSize;
         camLocked = true;
+
+        minimapWidth = GameObject.Find("Minimap").GetComponent<RectTransform>().rect.width;
+        mapWidth = GameObject.Find("Map_1").GetComponent<RectTransform>().rect.width;
     }
 
     void Update()
@@ -41,22 +46,22 @@ public class Camera_Control : MonoBehaviour
 
         //Moving camera around
         Vector3 camMoveDirection = Vector3.zero;
-        if (((Input.mousePosition.y >= (Screen.height * (1 - moveCamBorderSize)) && !camLocked) || Input.GetKey(KeyCode.W)) && transform.position.y <= 125)
+        if (((Input.mousePosition.y >= (Screen.height * (1 - moveCamBorderSize)) && !camLocked) || Input.GetKey(KeyCode.W)) && transform.position.y <= (mapWidth/2))
         {
             //Move cam up
             camMoveDirection += Vector3.up;
         }
-        if (((Input.mousePosition.y <= (Screen.height * moveCamBorderSize) && !camLocked) || Input.GetKey(KeyCode.S)) && transform.position.y >= -125)
+        if (((Input.mousePosition.y <= (Screen.height * moveCamBorderSize) && !camLocked) || Input.GetKey(KeyCode.S)) && transform.position.y >= (-mapWidth/2))
         {
             //Move cam down
             camMoveDirection += Vector3.down;
         }
-        if (((Input.mousePosition.x >= (Screen.width * (1 - moveCamBorderSize)) && !camLocked) || Input.GetKey(KeyCode.D)) && transform.position.x <= 125)
+        if (((Input.mousePosition.x >= (Screen.width * (1 - moveCamBorderSize)) && !camLocked) || Input.GetKey(KeyCode.D)) && transform.position.x <= (mapWidth / 2))
         {
             //Move cam right
             camMoveDirection += Vector3.right;
         }
-        if (((Input.mousePosition.x <= (Screen.width * moveCamBorderSize) && !camLocked) || Input.GetKey(KeyCode.A)) && transform.position.x >= -125)
+        if (((Input.mousePosition.x <= (Screen.width * moveCamBorderSize) && !camLocked) || Input.GetKey(KeyCode.A)) && transform.position.x >= (-mapWidth / 2))
         {
             //Move cam left
             camMoveDirection += Vector3.left;
@@ -85,13 +90,13 @@ public class Camera_Control : MonoBehaviour
 
     public void MoveCameraToNormalizedPosition(Vector2 normalizedPositionVector)
     {
-        gameObject.transform.position = new Vector3(-125f + (250f * normalizedPositionVector.x), -125f + (250f * normalizedPositionVector.y), gameObject.transform.position.z);
+        gameObject.transform.position = new Vector3((-mapWidth / 2) + (mapWidth * normalizedPositionVector.x), (-mapWidth / 2) + (mapWidth * normalizedPositionVector.y), gameObject.transform.position.z);
         MoveViewport();
     }
 
     private void MoveViewport()
     {
-        minimapViewportRectangle.anchoredPosition = new Vector2(transform.position.x, transform.position.y) * 1.21f;
+        minimapViewportRectangle.anchoredPosition = new Vector2(transform.position.x, transform.position.y) * (minimapWidth/mapWidth);
 
         minimapViewportRectangle.transform.localScale = new Vector3(0.5f + ((currentZoomLevel-maxZoomIn) / (maxZoomOut - maxZoomIn) * 1.9f), 0.5f + ((currentZoomLevel - maxZoomIn) / (maxZoomOut - maxZoomIn) * 1.9f), 1f);
     }
