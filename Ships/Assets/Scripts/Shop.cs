@@ -18,7 +18,6 @@ public class Shop : Singleton<Shop>
     public void SetupShop()
     {
         playerId = NetworkManager.Singleton.LocalClientId;
-        Debug.Log("Setup Shop: " + playerId);
         transform.Find("Toggle Window Button").GetComponent<Button>().onClick.AddListener(() => ToggleShop()); ;
 
         PlayerData[] playerDataList = FindObjectsByType<PlayerData>(FindObjectsSortMode.None);

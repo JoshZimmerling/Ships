@@ -29,7 +29,7 @@ public class Save : MonoBehaviour
 
     private static void SaveFile(string fileName, SaveData data)
     {
-        Debug.Log("Saving file");
+        Debug.Log("Saving file " + fileName);
         File.WriteAllText(saveFilePath + fileName, JsonConvert.SerializeObject(data));
     }
 
@@ -73,7 +73,6 @@ public class Save : MonoBehaviour
             data.AssignUniqueId();
         }
 
-        Debug.Log(data.ToString());
         SaveFile(fileName, data);
     }
 }

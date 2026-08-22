@@ -50,7 +50,6 @@ public class GameManager : Singleton<GameManager>
 
     public void ChangeState(GameState newState)
     {
-        Debug.Log(newState);
         if (State == newState) return;
 
         OnBeforeStateChange?.Invoke(newState);
