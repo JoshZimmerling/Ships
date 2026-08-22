@@ -25,6 +25,8 @@ public class Ship : NetworkBehaviour
     private Transform hpBar;
     private SpriteRenderer outlineSprite;
 
+    private PlayerData playerData;
+
     public override void OnNetworkSpawn()
     {
         // Finding ship components
@@ -79,7 +81,7 @@ public class Ship : NetworkBehaviour
                 PlayerData[] playerDataList = FindObjectsByType<PlayerData>(FindObjectsSortMode.None);
                 foreach (PlayerData data in playerDataList)
                     if (data.OwnerClientId == OwnerClientId)
-                        data.motherShip = this;
+                        data.SetMothership(this);
                 break;
         }
     }
@@ -103,6 +105,13 @@ public class Ship : NetworkBehaviour
         if (currentShipHP.Value <= 0)
         {
             this.GetComponent<NetworkObject>().Despawn();
+
+            if (shipType == ShipTypes.Mothership)
+            {
+                playerData.KillMothership();
+                //Add a message that you died maybe?
+            }
+
             Destroy(this.gameObject);
         }
     }
@@ -129,5 +138,10 @@ public class Ship : NetworkBehaviour
     public float GetShipCost()
     {
         return shipCost;
+    }
+
+    public void SetPlayerData(PlayerData pd)
+    {
+        playerData = pd;
     }
 }

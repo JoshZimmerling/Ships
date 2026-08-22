@@ -9,6 +9,7 @@ public class Shop : Singleton<Shop>
     private GameObject shopButtonPrefab;
     private bool shopOpen = false;
     private ulong playerId;
+    private PlayerData playerData;
 
     // TODO: build in autofind functionality
     [SerializeField] RectTransform buttonContainer;
@@ -19,6 +20,11 @@ public class Shop : Singleton<Shop>
         playerId = NetworkManager.Singleton.LocalClientId;
         Debug.Log("Setup Shop: " + playerId);
         transform.Find("Toggle Window Button").GetComponent<Button>().onClick.AddListener(() => ToggleShop()); ;
+
+        PlayerData[] playerDataList = FindObjectsByType<PlayerData>(FindObjectsSortMode.None);
+        foreach (PlayerData data in playerDataList)
+            if (data.OwnerClientId == playerId)
+                playerData = data;
 
         Color playerColor = GameManager.Singleton.playerColors[playerId]; // Update this to change ship colors
         foreach (NetworkPrefab prefab in GameManager.Singleton.shipList.PrefabList)
@@ -50,7 +56,7 @@ public class Shop : Singleton<Shop>
 
     private void BuyShip(Ship.ShipTypes type, float cost)
     {
-        if (playerGold >= cost)
+        if (playerGold >= cost && playerData.IsMothershipAlive())
         {
             playerGold -= cost;
             GameManager.Singleton.players[playerId].SpawnShipServerRPC(type);
