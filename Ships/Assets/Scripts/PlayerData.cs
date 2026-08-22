@@ -1,4 +1,5 @@
 using Unity.Collections;
+using Unity.Collections.LowLevel.Unsafe;
 using Unity.Netcode;
 using Unity.Services.Authentication;
 using UnityEngine;
@@ -18,9 +19,11 @@ public class PlayerData : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
-        Debug.Log("Player: " + OwnerClientId);
-        Debug.Log("Count on spawn: " + PlayerDataList.Singleton.players.Count);
+        //Debug.Log("Player: " + OwnerClientId);
+        //Debug.Log("Count on spawn: " + PlayerDataList.Singleton.players.Count);
         PlayerDataList.Singleton.players.Add(OwnerClientId, this);
+
+        playerColor = MenuManager.Singleton.playerColors[playerColorIndex.Value];
         playerColorIndex.OnValueChanged += (int previousValue, int newValue) =>
         {
             playerColor = MenuManager.Singleton.playerColors[newValue];
@@ -82,7 +85,7 @@ public class PlayerData : NetworkBehaviour
     public void KillMothershipRPC()
     {
         foreach (Transform child in transform)
-            if (child.gameObject.GetComponent<Ship>() != null)
+            if (child.gameObject.GetComponent<Ship>() != null && child.gameObject.GetComponent<Ship>().GetShipType() != Ship.ShipTypes.Mothership)
                 child.gameObject.GetComponent<Ship>().DestroyShipRPC();
 
         mapFogRemover.SetActive(true);

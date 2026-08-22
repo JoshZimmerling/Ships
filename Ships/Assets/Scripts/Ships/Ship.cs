@@ -30,6 +30,7 @@ public class Ship : NetworkBehaviour
     public override void OnNetworkSpawn()
     {
         playerData = PlayerDataList.Singleton.players[OwnerClientId];
+        Debug.Log(PlayerDataList.Singleton.players.Count);
 
         // Finding ship components
         hpBar = transform.Find("Health Bar/Health");
@@ -115,7 +116,8 @@ public class Ship : NetworkBehaviour
         {
             playerData.KillMothershipRPC();
         }
-        this.GetComponent<NetworkObject>().Despawn();
+        
+        GetComponent<NetworkObject>().Despawn();
         Destroy(this.gameObject);
     }
 
