@@ -29,6 +29,9 @@ public class Ship : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
+        playerData = PlayerDataList.Singleton.players[OwnerClientId];
+        Debug.Log(PlayerDataList.Singleton.players.Count);
+
         // Finding ship components
         hpBar = transform.Find("Health Bar/Health");
         outlineSprite = transform.Find("Outline").GetComponent<SpriteRenderer>();
@@ -51,7 +54,7 @@ public class Ship : NetworkBehaviour
         }
 
         // Set the team color
-        Color teamColor = GameManager.Singleton.playerColors[OwnerClientId]; // Update this
+        Color teamColor = playerData.playerColor;
         transform.Find("Ship Accent").GetComponent<SpriteRenderer>().color = teamColor;
         transform.Find("Minimap Marker").GetComponent<SpriteRenderer>().color = teamColor;
         transform.Find("Minimap Scout Marker").GetComponent<SpriteRenderer>().color = teamColor;
@@ -103,17 +106,19 @@ public class Ship : NetworkBehaviour
     {
         currentShipHP.Value -= damage;
         if (currentShipHP.Value <= 0)
+            DestroyShipRPC();
+    }
+
+    [Rpc(SendTo.Server)]
+    public void DestroyShipRPC()
+    {
+        if (shipType == ShipTypes.Mothership)
         {
-            this.GetComponent<NetworkObject>().Despawn();
-
-            if (shipType == ShipTypes.Mothership)
-            {
-                playerData.KillMothership();
-                //Add a message that you died maybe?
-            }
-
-            Destroy(this.gameObject);
+            playerData.KillMothershipRPC();
         }
+        
+        GetComponent<NetworkObject>().Despawn();
+        Destroy(this.gameObject);
     }
 
     public void SelectShip()
@@ -138,10 +143,5 @@ public class Ship : NetworkBehaviour
     public float GetShipCost()
     {
         return shipCost;
-    }
-
-    public void SetPlayerData(PlayerData pd)
-    {
-        playerData = pd;
     }
 }

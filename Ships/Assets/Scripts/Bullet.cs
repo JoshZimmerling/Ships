@@ -11,7 +11,7 @@ public class Bullet : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
-        GetComponent<SpriteRenderer>().color = GameManager.Singleton.playerColors[OwnerClientId];
+        GetComponent<SpriteRenderer>().color = PlayerDataList.Singleton.players[OwnerClientId].playerColor;
     }
 
     float bulletLifetime = 0;

@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class GameManager : Singleton<GameManager>
 {
-    public readonly Dictionary<ulong, PlayerData> players = new();
+    //public readonly Dictionary<ulong, PlayerData> players = new();
     public NetworkPrefabsList shipList;
 
     //public Shop shop;
@@ -13,27 +13,17 @@ public class GameManager : Singleton<GameManager>
 
     // TODO: Get rid of these
     public Transform bulletContainer;
-    public Color[] playerColors = new Color[8];
     public GameObject[] playerSpawns = new GameObject[8];
 
     public void Start()
     {
-        PlayerData[] playerDataList = FindObjectsByType<PlayerData>(FindObjectsSortMode.None);
-        //TODO: populatye thje dictionary (actually, move this into menu manager somewhere to keep track of players and then pass into game manager)
-        foreach (PlayerData data in playerDataList)
-            data.PlayerSetup();
+        foreach (var (id, player) in PlayerDataList.Singleton.players)
+            player.PlayerSetup();
     }
 
     public GameObject GetShipPrefab(int shipNum)
     {
         return shipList.PrefabList[shipNum].Prefab;
-    }
-
-    public void AddPlayer(PlayerData player)
-    {
-        players.Add(player.OwnerClientId, player);
-
-        if (!player.IsLocalPlayer) return; // TODO: move this somewhere else or somthing, I hate it
     }
 
     // TODO: make this better
