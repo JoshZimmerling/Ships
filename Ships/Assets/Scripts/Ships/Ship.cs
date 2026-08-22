@@ -27,6 +27,10 @@ public class Ship : NetworkBehaviour
 
     private PlayerData playerData;
 
+    private GameObject scoutMarker;
+    private GameObject minimapMarker;
+    private GameObject minimapScoutMarker;
+
     public override void OnNetworkSpawn()
     {
         playerData = PlayerDataList.Singleton.players[OwnerClientId];
@@ -64,12 +68,21 @@ public class Ship : NetworkBehaviour
 
         //Ship specific setup
         SetupBasedOnShipType();
+
+        scoutMarker = transform.Find("Scout Marker").gameObject;
+        minimapMarker = transform.Find("Minimap Marker").gameObject;
+        minimapScoutMarker = transform.Find("Minimap Scout Marker").gameObject;
     }
 
     public void FixedUpdate()
     {
         //Ship specific updates
         UpdateBasedOnShipType();
+
+        //Don't rotate minimap icons
+        scoutMarker.transform.rotation = Quaternion.Euler(0, 0, -transform.rotation.z);
+        minimapMarker.transform.rotation = Quaternion.Euler(0, 0, -transform.rotation.z);
+        minimapScoutMarker.transform.rotation = Quaternion.Euler(0, 0, -transform.rotation.z);
     }
 
     public void SetupBasedOnShipType()

@@ -382,13 +382,21 @@ public class MenuManager : Singleton<MenuManager>
                 if (playerData.authenticationServicePlayerId.Value == playerId)
                     kickId = id;
             PlayerDataList.Singleton.players.Remove(kickId);
+
+            // Remove reference to lobby if you leave
+            if (playerId == AuthenticationService.Instance.PlayerId)
+            {
+                PlayerDataList.Singleton.players = new();
+                NetworkManager.Singleton.Shutdown();
+                currentLobby = null;
+                ChangeScreen(ScreenNames.LobbyListScreen);
+            }
         }
         catch (LobbyServiceException e)
         {
             Debug.Log(e);
         }
         RefreshLobbyVisuals();
-        InLobbyCheck();
     }
 
     private Player GetLocalPlayer()
