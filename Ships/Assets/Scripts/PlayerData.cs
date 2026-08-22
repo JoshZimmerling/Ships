@@ -18,32 +18,30 @@ public class PlayerData : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
-        MenuManager.Singleton.playerDatas.Add(this);
-        playerColorIndex.OnValueChanged += UpdateColor;
+        Debug.Log("Player: " + OwnerClientId);
+        Debug.Log("Count on spawn: " + PlayerDataList.Singleton.players.Count);
+        PlayerDataList.Singleton.players.Add(OwnerClientId, this);
+        playerColorIndex.OnValueChanged += (int previousValue, int newValue) =>
+        {
+            playerColor = MenuManager.Singleton.playerColors[newValue];
+        };
 
         if (!IsOwner) return;
 
-        // Ensure the NetworkManager is initialized before subscribing
-        if (NetworkManager.Singleton != null && NetworkManager.Singleton.SceneManager != null)
-        {
-            NetworkManager.Singleton.SceneManager.OnSceneEvent += OnSceneEventReceived;
-        }
+        // Change screen after syncronize is complete
+        NetworkManager.Singleton.SceneManager.OnSceneEvent += (SceneEvent sceneEvent) => {
+            if (sceneEvent.SceneEventType == SceneEventType.SynchronizeComplete)
+                MenuManager.Singleton.ChangeScreen(MenuManager.ScreenNames.LobbyScreen);
+        };
 
         authenticationServicePlayerId.Value = AuthenticationService.Instance.PlayerId;
         MenuManager.Singleton.ChangePlayerColor(AuthenticationService.Instance.PlayerId);
-    }
-
-    private void UpdateColor(int previousValue, int newValue)
-    {
-        playerColor = MenuManager.Singleton.playerColors[newValue];
     }
 
     public void PlayerSetup()
     {
         gameManager = GameManager.Singleton;
         spawnPlatform = gameManager.playerSpawns[OwnerClientId];
-
-        gameManager.AddPlayer(this);
 
         GameManager.Singleton.ChangeState(GameState.Gameplay);
 
@@ -53,22 +51,6 @@ public class PlayerData : NetworkBehaviour
 
             mapFogRemover = GameObject.Find("MapFogRemover");
             mapFogRemover.SetActive(false);
-        }
-    }
-    public override void OnDestroy()
-    {
-        if (NetworkManager.Singleton != null && NetworkManager.Singleton.SceneManager != null)
-        {
-            NetworkManager.Singleton.SceneManager.OnSceneEvent -= OnSceneEventReceived;
-        }
-    }
-
-    private void OnSceneEventReceived(SceneEvent sceneEvent)
-    {
-        // Check if the event type is SynchronizeComplete
-        if (sceneEvent.SceneEventType == SceneEventType.SynchronizeComplete)
-        {
-            MenuManager.Singleton.ChangeScreen(MenuManager.ScreenNames.LobbyScreen);
         }
     }
 
@@ -84,7 +66,6 @@ public class PlayerData : NetworkBehaviour
         GameObject ship = Instantiate(gameManager.GetShipPrefab((int)shipType), spawnPos, Quaternion.LookRotation(new Vector3(0, 0, 1), -spawnPos));
         ship.GetComponent<NetworkObject>().SpawnWithOwnership(OwnerClientId);
         ship.transform.parent = transform;
-        ship.GetComponent<Ship>().SetPlayerData(this);
     }
 
     public void SetMothership(Ship ms)
@@ -97,12 +78,15 @@ public class PlayerData : NetworkBehaviour
         return motherShip != null;
     }
 
-    public void KillMothership()
+    [Rpc(SendTo.Owner)]
+    public void KillMothershipRPC()
     {
         foreach (Transform child in transform)
             if (child.gameObject.GetComponent<Ship>() != null)
                 Destroy(child.gameObject);
 
         mapFogRemover.SetActive(true);
+
+        //Add a message that you died maybe?
     }
 }

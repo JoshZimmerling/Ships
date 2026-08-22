@@ -63,8 +63,8 @@ public class PlayerRepeater : MonoBehaviour
                 leaveKickLobbyImage.gameObject.SetActive(false);
         }
 
-        foreach (PlayerData data in MenuManager.Singleton.playerDatas)
-            if (data.authenticationServicePlayerId.Value == playerId)
-                backgroundColor.color = menuManager.playerColors[data.playerColorIndex.Value];
+        foreach (var (id, playerData) in PlayerDataList.Singleton.players)
+            if (playerData.authenticationServicePlayerId.Value == playerId)
+                backgroundColor.color = menuManager.playerColors[playerData.playerColorIndex.Value];
     }
 }

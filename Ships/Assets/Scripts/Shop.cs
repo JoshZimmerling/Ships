@@ -18,15 +18,12 @@ public class Shop : Singleton<Shop>
     public void SetupShop()
     {
         playerId = NetworkManager.Singleton.LocalClientId;
-        Debug.Log("Setup Shop: " + playerId);
+
         transform.Find("Toggle Window Button").GetComponent<Button>().onClick.AddListener(() => ToggleShop()); ;
 
-        PlayerData[] playerDataList = FindObjectsByType<PlayerData>(FindObjectsSortMode.None);
-        foreach (PlayerData data in playerDataList)
-            if (data.OwnerClientId == playerId)
-                playerData = data;
+        playerData = PlayerDataList.Singleton.players[playerId];
 
-        Color playerColor = GameManager.Singleton.playerColors[playerId]; // Update this to change ship colors
+        Color playerColor = playerData.playerColor;
         foreach (NetworkPrefab prefab in GameManager.Singleton.shipList.PrefabList)
         {
             Transform shipPrefab = prefab.Prefab.transform;
@@ -56,10 +53,11 @@ public class Shop : Singleton<Shop>
 
     private void BuyShip(Ship.ShipTypes type, float cost)
     {
+        Debug.Log("test");
         if (playerGold >= cost && playerData.IsMothershipAlive())
         {
             playerGold -= cost;
-            GameManager.Singleton.players[playerId].SpawnShipServerRPC(type);
+            PlayerDataList.Singleton.players[playerId].SpawnShipServerRPC(type);
         }
 
         UpdateGold();

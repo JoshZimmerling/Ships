@@ -44,7 +44,7 @@ public class MenuManager : Singleton<MenuManager>
 
     private string playerName;
 
-    public List<PlayerData> playerDatas = new List<PlayerData>();
+    //public List<PlayerData> playerDatas = new List<PlayerData>();
 
     void Start()
     {
@@ -312,31 +312,14 @@ public class MenuManager : Singleton<MenuManager>
                 if (player.Id == AuthenticationService.Instance.PlayerId) inLobby = true;
         if (!inLobby)
         {
+            PlayerDataList.Singleton.players = new();
             NetworkManager.Singleton.Shutdown();
             currentLobby = null;
 
             ChangeScreen(ScreenNames.LobbyListScreen);
         }
     }
-    private void OnSceneEventReceived(SceneEvent sceneEvent)
-    {
-        // Check if the event type is SynchronizeComplete
-        if (sceneEvent.SceneEventType == SceneEventType.SynchronizeComplete)
-        {
-            // Both the server and the connecting client receive this notification
-            Debug.Log($"Client {sceneEvent.ClientId} has completed synchronization!");
 
-            if (NetworkManager.Singleton.IsServer)
-            {
-                // Execute server-only code (e.g., safely spawning player prefabs)
-            }
-
-            if (sceneEvent.ClientId == NetworkManager.Singleton.LocalClientId)
-            {
-                // Execute local client-only code (e.g., hiding a loading screen)
-            }
-        }
-    }
     private void RefreshLobbyVisuals()
     {
         if (currentLobby == null) return;
@@ -393,12 +376,12 @@ public class MenuManager : Singleton<MenuManager>
 
             // Remove from lobby
             await LobbyService.Instance.RemovePlayerAsync(currentLobby.Id, playerId);
-            // Remove reference to lobby if you leave
-            if (playerId == AuthenticationService.Instance.PlayerId)
-            {
-                currentLobby = null;
-                ChangeScreen(ScreenNames.LobbyListScreen);
-            }
+
+            ulong kickId = new ulong();
+            foreach (var (id, playerData) in PlayerDataList.Singleton.players)
+                if (playerData.authenticationServicePlayerId.Value == playerId)
+                    kickId = id;
+            PlayerDataList.Singleton.players.Remove(kickId);
         }
         catch (LobbyServiceException e)
         {
@@ -424,8 +407,8 @@ public class MenuManager : Singleton<MenuManager>
     private int GetAvailableColor(int colorValue)
     {
         List<int> colors = new List<int>();
-        foreach (PlayerData data in playerDatas)
-            colors.Add(data.playerColorIndex.Value);
+        foreach (var (id, player) in PlayerDataList.Singleton.players)
+            colors.Add(player.playerColorIndex.Value);
 
         
         while (true)
@@ -445,10 +428,9 @@ public class MenuManager : Singleton<MenuManager>
     
     public void ChangePlayerColor(string playerId)
     {
-        foreach (PlayerData data in playerDatas)
-            if (data.authenticationServicePlayerId.Value == playerId)
-                data.playerColorIndex.Value = GetAvailableColor(data.playerColorIndex.Value);
-        //RefreshLobbyVisuals();
+        foreach (var (id, player) in PlayerDataList.Singleton.players)
+            if (player.authenticationServicePlayerId.Value == playerId)
+                player.playerColorIndex.Value = GetAvailableColor(player.playerColorIndex.Value);
     }
 
     private void StartGame()
