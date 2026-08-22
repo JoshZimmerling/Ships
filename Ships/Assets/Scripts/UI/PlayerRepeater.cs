@@ -63,9 +63,7 @@ public class PlayerRepeater : MonoBehaviour
                 leaveKickLobbyImage.gameObject.SetActive(false);
         }
 
-        // TODO: A better way to sync the colors
-        PlayerData[] playerDataList = FindObjectsByType<PlayerData>(FindObjectsSortMode.None);
-        foreach (PlayerData data in playerDataList)
+        foreach (PlayerData data in MenuManager.Singleton.playerDatas)
             if (data.authenticationServicePlayerId.Value == playerId)
                 backgroundColor.color = menuManager.playerColors[data.playerColorIndex.Value];
     }

@@ -1,19 +1,19 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using TMPro;
-using Unity.Netcode.Transports.UTP;
+using Unity.Collections;
 using Unity.Netcode;
+using Unity.Netcode.Transports.UTP;
 using Unity.Services.Authentication;
 using Unity.Services.Lobbies;
 using Unity.Services.Lobbies.Models;
-using Unity.Services.Relay.Models;
 using Unity.Services.Relay;
+using Unity.Services.Relay.Models;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using System.Threading.Tasks;
-using Unity.Collections;
 
-public class MenuManager : MonoBehaviour
+public class MenuManager : Singleton<MenuManager>
 {
     // Reference variables
     // Username screen
@@ -37,12 +37,14 @@ public class MenuManager : MonoBehaviour
     private Button startGameButton;
 
     // Runtime variables
-    private enum ScreenNames { LobbyListScreen, LobbyScreen };
+    public enum ScreenNames { LobbyListScreen, LobbyScreen };
     private ScreenNames currentScreen;
 
     private Lobby currentLobby;
 
     private string playerName;
+
+    public List<PlayerData> playerDatas = new List<PlayerData>();
 
     void Start()
     {
@@ -97,7 +99,6 @@ public class MenuManager : MonoBehaviour
     void FixedUpdate()
     {
         lobbyRefreshTimer -= Time.deltaTime;
-        lobbyVisualTimer -= Time.deltaTime;
 
         switch (currentScreen)
         {
@@ -112,6 +113,7 @@ public class MenuManager : MonoBehaviour
                 {
                     RefreshLobbyInfo();
                 }
+                lobbyVisualTimer -= Time.deltaTime;
                 if (lobbyVisualTimer < 0f)
                 {
                     RefreshLobbyVisuals();
@@ -138,7 +140,7 @@ public class MenuManager : MonoBehaviour
     }
 
     // Handles changing the menu screens
-    private void ChangeScreen(ScreenNames newScreen)
+    public void ChangeScreen(ScreenNames newScreen)
     {
         currentScreen = newScreen;
         lobbyRefreshTimer = 0f; //Starts immediately data refresh
@@ -195,12 +197,14 @@ public class MenuManager : MonoBehaviour
             currentLobby = await LobbyService.Instance.CreateLobbyAsync(lobbyName, maxPlayers, options);
 
             //Debug.Log("Created Lobby! " + currentLobby.Name + " " + currentLobby.MaxPlayers);
+            currentLobby = await LobbyService.Instance.GetLobbyAsync(currentLobby.Id);
         }
         catch (LobbyServiceException e)
         {
             Debug.Log(e);
         }
-
+        foreach (Player player in currentLobby.Players)
+            Debug.Log("Player Id: " + player.Id);
         ChangeScreen(ScreenNames.LobbyScreen);
     }
 
@@ -236,7 +240,7 @@ public class MenuManager : MonoBehaviour
         }
 
         await RefreshLobbyInfo();
-        ChangeScreen(ScreenNames.LobbyScreen);
+        //ChangeScreen(MenuManager.ScreenNames.LobbyScreen);
     }
 
     private async void RefreshLobbyList()
@@ -284,20 +288,23 @@ public class MenuManager : MonoBehaviour
         lobbyRefreshTimer = lobbyRefreshTimeMax;
 
         // Checks are in an active lobby
-        if (currentLobby == null) //TODO: maybe verify lobby still exists
+        if (currentLobby == null)
             return;
         // Gets updated lobby info
-        try {
+        try
+        {
             currentLobby = await LobbyService.Instance.GetLobbyAsync(currentLobby.Id);
-        } catch (LobbyServiceException e) {
+        }
+        catch (LobbyServiceException e)
+        {
             Debug.Log(e);
         }
+
+        InLobbyCheck();
     }
 
-    private void RefreshLobbyVisuals()
+    private void InLobbyCheck()
     {
-        lobbyVisualTimer = lobbyVisualTimeMax;
-
         // Verifies if player is still in lobby
         bool inLobby = false;
         if (currentLobby != null)
@@ -309,8 +316,32 @@ public class MenuManager : MonoBehaviour
             currentLobby = null;
 
             ChangeScreen(ScreenNames.LobbyListScreen);
-            return;
         }
+    }
+    private void OnSceneEventReceived(SceneEvent sceneEvent)
+    {
+        // Check if the event type is SynchronizeComplete
+        if (sceneEvent.SceneEventType == SceneEventType.SynchronizeComplete)
+        {
+            // Both the server and the connecting client receive this notification
+            Debug.Log($"Client {sceneEvent.ClientId} has completed synchronization!");
+
+            if (NetworkManager.Singleton.IsServer)
+            {
+                // Execute server-only code (e.g., safely spawning player prefabs)
+            }
+
+            if (sceneEvent.ClientId == NetworkManager.Singleton.LocalClientId)
+            {
+                // Execute local client-only code (e.g., hiding a loading screen)
+            }
+        }
+    }
+    private void RefreshLobbyVisuals()
+    {
+        if (currentLobby == null) return;
+
+        lobbyVisualTimer = lobbyVisualTimeMax;
 
         // Checks if new players have entered lobby
         foreach (Player player in currentLobby.Players)
@@ -374,6 +405,7 @@ public class MenuManager : MonoBehaviour
             Debug.Log(e);
         }
         RefreshLobbyVisuals();
+        InLobbyCheck();
     }
 
     private Player GetLocalPlayer()
@@ -389,14 +421,14 @@ public class MenuManager : MonoBehaviour
     public Color[] playerColors = new Color[12];
 
     
-    private int GetAvailableColor(int colorValue, PlayerData[] playerDataList)
+    private int GetAvailableColor(int colorValue)
     {
         List<int> colors = new List<int>();
-        foreach (PlayerData data in playerDataList)
+        foreach (PlayerData data in playerDatas)
             colors.Add(data.playerColorIndex.Value);
 
         
-        while (colorValue < playerColors.Length)
+        while (true)
         {
             if (colors.Contains(colorValue))
                 if (colorValue == playerColors.Length - 1)
@@ -413,18 +445,16 @@ public class MenuManager : MonoBehaviour
     
     public void ChangePlayerColor(string playerId)
     {
-        PlayerData[] playerDataList = FindObjectsByType<PlayerData>(FindObjectsSortMode.None);
-        foreach (PlayerData data in playerDataList)
+        foreach (PlayerData data in playerDatas)
             if (data.authenticationServicePlayerId.Value == playerId)
-                data.playerColorIndex.Value = GetAvailableColor(data.playerColorIndex.Value, playerDataList);
-        RefreshLobbyVisuals();
+                data.playerColorIndex.Value = GetAvailableColor(data.playerColorIndex.Value);
+        //RefreshLobbyVisuals();
     }
 
     private void StartGame()
     {
-        PlayerData[] playerDataList = FindObjectsByType<PlayerData>(FindObjectsSortMode.None);
-        foreach (PlayerData data in playerDataList)
-            data.playerColor = playerColors[data.playerColorIndex.Value];
+        //foreach (PlayerData data in playerDatas)
+        //    data.playerColor = playerColors[data.playerColorIndex.Value];
 
         NetworkManager.Singleton.SceneManager.LoadScene("Multiplayer Scene", LoadSceneMode.Single);
     }
