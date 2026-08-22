@@ -83,7 +83,7 @@ public class PlayerData : NetworkBehaviour
     {
         foreach (Transform child in transform)
             if (child.gameObject.GetComponent<Ship>() != null)
-                Destroy(child.gameObject);
+                child.gameObject.GetComponent<Ship>().DestroyShipRPC();
 
         mapFogRemover.SetActive(true);
 

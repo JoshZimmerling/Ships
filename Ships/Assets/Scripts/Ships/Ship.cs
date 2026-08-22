@@ -105,16 +105,18 @@ public class Ship : NetworkBehaviour
     {
         currentShipHP.Value -= damage;
         if (currentShipHP.Value <= 0)
+            DestroyShipRPC();
+    }
+
+    [Rpc(SendTo.Server)]
+    public void DestroyShipRPC()
+    {
+        if (shipType == ShipTypes.Mothership)
         {
-            this.GetComponent<NetworkObject>().Despawn();
-
-            if (shipType == ShipTypes.Mothership)
-            {
-                playerData.KillMothershipRPC();
-            }
-
-            Destroy(this.gameObject);
+            playerData.KillMothershipRPC();
         }
+        this.GetComponent<NetworkObject>().Despawn();
+        Destroy(this.gameObject);
     }
 
     public void SelectShip()
