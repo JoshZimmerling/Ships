@@ -1,3 +1,4 @@
+using Unity.Netcode;
 using UnityEngine;
 
 public class Camera_Control : MonoBehaviour
@@ -70,6 +71,13 @@ public class Camera_Control : MonoBehaviour
         if (camMoveDirection != Vector3.zero)
         {
             transform.Translate(camMoveDirection.normalized * camMoveSpeed * currentZoomLevel * Time.deltaTime);
+            MoveViewport();
+        }
+
+        if (Input.GetKey(KeyCode.Space))
+        {
+            //Center camera on mothership
+            MoveCameraToWorldSpace(PlayerDataList.Singleton.GetLocalPlayer().GetMothership().gameObject.transform.position);
             MoveViewport();
         }
     }

@@ -53,7 +53,6 @@ public class Shop : Singleton<Shop>
 
     private void BuyShip(Ship.ShipTypes type, float cost)
     {
-        Debug.Log("test");
         if (playerGold >= cost && playerData.IsMothershipAlive())
         {
             playerGold -= cost;
