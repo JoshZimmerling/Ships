@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Netcode;
 using Unity.Services.Authentication;
@@ -10,7 +8,8 @@ public class PlayerData : NetworkBehaviour
     private GameManager gameManager;
     private GameObject spawnPlatform;
 
-    public Ship motherShip;
+    private Ship motherShip;
+    private GameObject mapFogRemover;
 
     public NetworkVariable<int> playerColorIndex = new NetworkVariable<int>(0, writePerm : NetworkVariableWritePermission.Owner);
     public Color playerColor;
@@ -41,6 +40,9 @@ public class PlayerData : NetworkBehaviour
         if (IsOwner){
             SpawnShipServerRPC(Ship.ShipTypes.Mothership);
             Camera.main.gameObject.GetComponent<Camera_Control>().MoveCameraToWorldSpace(new Vector2(spawnPlatform.transform.position.x, spawnPlatform.transform.position.y));
+
+            mapFogRemover = GameObject.Find("MapFogRemover");
+            mapFogRemover.SetActive(false);
         }
     }
 
@@ -56,6 +58,25 @@ public class PlayerData : NetworkBehaviour
         GameObject ship = Instantiate(gameManager.GetShipPrefab((int)shipType), spawnPos, Quaternion.LookRotation(new Vector3(0, 0, 1), -spawnPos));
         ship.GetComponent<NetworkObject>().SpawnWithOwnership(OwnerClientId);
         ship.transform.parent = transform;
-        ship.GetComponent<Ship>();
+        ship.GetComponent<Ship>().SetPlayerData(this);
+    }
+
+    public void SetMothership(Ship ms)
+    {
+        motherShip = ms;
+    }
+
+    public bool IsMothershipAlive()
+    {
+        return motherShip != null;
+    }
+
+    public void KillMothership()
+    {
+        foreach (Transform child in transform)
+            if (child.gameObject.GetComponent<Ship>() != null)
+                Destroy(child.gameObject);
+
+        mapFogRemover.SetActive(true);
     }
 }
