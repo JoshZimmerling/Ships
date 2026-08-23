@@ -40,6 +40,7 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
     [SerializeField] private EventSystem eventSystem;
 
     private GameObject controlsWindow;
+    private GameObject playersWindow;
     private Button leaveGameButton;
 
     protected override void Awake()
@@ -55,6 +56,13 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
 
         controlsWindow = GameObject.Find("Controls Window");
         controlsWindow.gameObject.SetActive(false);
+        playersWindow = GameObject.Find("Players Window");
+        foreach (var (id, player) in PlayerDataList.Singleton.players)
+        {
+            Debug.Log(player.name + " has color " + player.playerColor);
+        }
+        //Initialize player window
+        playersWindow.gameObject.SetActive(false);
         leaveGameButton = GameObject.Find("Leave Game Button").GetComponent<Button>();
         leaveGameButton.onClick.AddListener(LeaveGame);
         leaveGameButton.gameObject.SetActive(false);
