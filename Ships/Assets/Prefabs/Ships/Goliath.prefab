@@ -8,6 +8,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 7477242118427507681}
     m_Modifications:
+    - target: {fileID: 1281296594994837668, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
+      propertyPath: damage
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1281296594994837668, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
+      propertyPath: projectileSpeed
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 4740312332221088000, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
       propertyPath: m_Points.m_Paths.Array.data[0].Array.size
       value: 16
@@ -250,6 +258,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 7477242118427507681}
     m_Modifications:
+    - target: {fileID: 1281296594994837668, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
+      propertyPath: damage
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1281296594994837668, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
+      propertyPath: projectileSpeed
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 4740312332221088000, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
       propertyPath: m_Points.m_Paths.Array.data[0].Array.size
       value: 15
@@ -484,6 +500,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 7477242118427507681}
     m_Modifications:
+    - target: {fileID: 1281296594994837668, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
+      propertyPath: damage
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1281296594994837668, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
+      propertyPath: projectileSpeed
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 4740312332221088000, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
       propertyPath: m_Points.m_Paths.Array.data[0].Array.size
       value: 15
@@ -706,6 +730,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 7477242118427507681}
     m_Modifications:
+    - target: {fileID: 1281296594994837668, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
+      propertyPath: damage
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1281296594994837668, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
+      propertyPath: projectileSpeed
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 4740312332221088000, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
       propertyPath: m_Points.m_Paths.Array.data[0].Array.size
       value: 15
@@ -948,6 +980,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 7477242118427507681}
     m_Modifications:
+    - target: {fileID: 1281296594994837668, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
+      propertyPath: damage
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1281296594994837668, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
+      propertyPath: projectileSpeed
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 4740312332221088000, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
       propertyPath: m_Points.m_Paths.Array.data[0].Array.size
       value: 16
@@ -1182,6 +1222,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 7477242118427507681}
     m_Modifications:
+    - target: {fileID: 1281296594994837668, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
+      propertyPath: damage
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1281296594994837668, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
+      propertyPath: projectileSpeed
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 4740312332221088000, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
       propertyPath: m_Points.m_Paths.Array.data[0].Array.size
       value: 15
