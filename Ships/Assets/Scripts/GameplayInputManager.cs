@@ -246,7 +246,7 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
     {
         VerifySelection();
 
-        foreach (Ship ship in this.selectedShips)
+        foreach (Ship ship in selectedShips)
         {
             ship.UnselectShip();
         }
@@ -256,11 +256,18 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
             ship.SelectShip(); 
         }
 
-        this.selectedShips.Clear(); 
+        selectedShips.Clear(); 
         foreach (Ship newShip in ships)
         {
-            this.selectedShips.Add(newShip);
+            selectedShips.Add(newShip);
         }
+    }
+
+    //Used to select ships on spawn
+    public void AddNewSelectedShip(Ship ship)
+    {
+        ship.SelectShip();
+        selectedShips.Add(ship);
     }
 
     void UpdateBox(Vector2 mousePos)

@@ -1,9 +1,6 @@
-using NUnit.Framework;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using Unity.Netcode;
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
 
 public class Turret : NetworkBehaviour
 {
@@ -39,6 +36,8 @@ public class Turret : NetworkBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        if (!IsHost) return;
+        
         Ship s = collision.gameObject.GetComponent<Ship>();
         if (s != null && s.OwnerClientId != OwnerClientId)
                 targets.Add(collision.transform);
@@ -46,6 +45,8 @@ public class Turret : NetworkBehaviour
 
     private void OnTriggerExit2D(Collider2D collision)
     {
+        if (!IsHost) return;
+
         Ship s = collision.gameObject.GetComponent<Ship>();
         if (s != null && s.OwnerClientId != OwnerClientId)
            targets.Remove(collision.transform);
