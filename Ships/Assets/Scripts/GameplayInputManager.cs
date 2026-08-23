@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEditor;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class GameplayInputManager : Singleton<GameplayInputManager>
@@ -39,6 +39,9 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
     [SerializeField] private GraphicRaycaster raycaster;
     [SerializeField] private EventSystem eventSystem;
 
+    private GameObject controlsWindow;
+    private Button leaveGameButton;
+
     protected override void Awake()
     {
         base.Awake();
@@ -49,6 +52,12 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
         minimapTransform = GameObject.Find("Minimap Image").GetComponent<RectTransform>();
         minimapWidth = minimapTransform.rect.width;
         mapWidth = GameObject.Find("Map_1").GetComponent<RectTransform>().rect.width;
+
+        controlsWindow = GameObject.Find("Controls Window");
+        controlsWindow.gameObject.SetActive(false);
+        leaveGameButton = GameObject.Find("Leave Game Button").GetComponent<Button>();
+        leaveGameButton.onClick.AddListener(LeaveGame);
+        leaveGameButton.gameObject.SetActive(false);
     }
 
     // Update is called once per frame
@@ -106,6 +115,15 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
         if (Input.GetKeyDown(KeyCode.E))
         {
             cameraScript.ToggleLockState();
+        }
+
+        if (Input.GetKeyDown(KeyCode.Tab))
+        {
+            controlsWindow.gameObject.SetActive(true);
+        }
+        if (Input.GetKeyUp(KeyCode.Tab))
+        {
+            controlsWindow.gameObject.SetActive(false);
         }
 
         if (Input.GetMouseButtonDown(0))
@@ -334,5 +352,17 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
         RectTransformUtility.ScreenPointToLocalPointInRectangle(minimapTransform, Input.mousePosition, null, out localClickPos);
 
         return localClickPos;
+    }
+
+    public void ShowLeaveGameButton()
+    {
+        leaveGameButton.gameObject.SetActive(true);
+    }
+
+    private void LeaveGame()
+    {
+        NetworkManager.Singleton.Shutdown();
+        PlayerDataList.Singleton.players = new();
+        SceneManager.LoadScene("Main Menu");
     }
 }

@@ -1,5 +1,4 @@
 using Unity.Collections;
-using Unity.Collections.LowLevel.Unsafe;
 using Unity.Netcode;
 using Unity.Services.Authentication;
 using UnityEngine;
@@ -19,8 +18,6 @@ public class PlayerData : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
-        //Debug.Log("Player: " + OwnerClientId);
-        //Debug.Log("Count on spawn: " + PlayerDataList.Singleton.players.Count);
         PlayerDataList.Singleton.players.Add(OwnerClientId, this);
 
         playerColor = MenuManager.Singleton.playerColors[playerColorIndex.Value];
@@ -76,6 +73,11 @@ public class PlayerData : NetworkBehaviour
         motherShip = ms;
     }
 
+    public Ship GetMothership()
+    {
+        return motherShip;
+    }
+
     public bool IsMothershipAlive()
     {
         return motherShip != null;
@@ -89,7 +91,29 @@ public class PlayerData : NetworkBehaviour
                 child.gameObject.GetComponent<Ship>().DestroyShipRPC();
 
         mapFogRemover.SetActive(true);
+        Shop.Singleton.gameObject.SetActive(false);
 
-        //Add a message that you died maybe?
+        if (!IsHost)
+            GameplayInputManager.Singleton.ShowLeaveGameButton();
+
+        //Check if you are last mothership standing, if so show the leave lobby button
+        int numMothershipsLeft = 0;
+        foreach (Ship ship in FindObjectsByType(typeof(Ship), FindObjectsSortMode.None))
+        {
+            if (ship.GetShipType() == Ship.ShipTypes.Mothership)
+            {
+                numMothershipsLeft++;
+            }
+        }
+
+        //Set to 2 since this runs right before destroying our own 
+        if (numMothershipsLeft <= 2)
+            ShowAllPlayersLeaveButtonRPC();
+    }
+
+    [Rpc(SendTo.ClientsAndHost)]
+    public void ShowAllPlayersLeaveButtonRPC()
+    {
+        GameplayInputManager.Singleton.ShowLeaveGameButton();
     }
 }
