@@ -124,6 +124,14 @@ public class MenuManager : Singleton<MenuManager>
         HandleLobbyHeartbeat();
     }
 
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Return))
+            Debug.Log("Enter key pressed " + usernameScreen.activeSelf);
+        if (usernameScreen.activeSelf && Input.GetKeyDown(KeyCode.Return))
+            SetUsername();
+    }
+
     // Pings lobby to keep it active
     private async void HandleLobbyHeartbeat()
     {
@@ -410,7 +418,6 @@ public class MenuManager : Singleton<MenuManager>
     }
 
     public Color[] playerColors = new Color[12];
-
     
     private int GetAvailableColor(int colorValue)
     {
@@ -433,7 +440,6 @@ public class MenuManager : Singleton<MenuManager>
         return colorValue;
     }
     
-    
     public void ChangePlayerColor(string playerId)
     {
         foreach (var (id, player) in PlayerDataList.Singleton.players)
@@ -453,6 +459,7 @@ public class MenuManager : Singleton<MenuManager>
     {
         usernameScreen.SetActive(true);
         usernameTextInput.text = "";
+        usernameTextInput.ActivateInputField();
 
         if (playerName == null)
         {
@@ -468,21 +475,19 @@ public class MenuManager : Singleton<MenuManager>
 
     private void SetUsername()
     {
-        if (usernameTextInput != null)
+        if (usernameTextInput.text != "")
         {
-            string newUsername = usernameTextInput.text;
-
+            //This is at the top to recognize if this was a first time username setup
             if (playerName == null)
-            {
-                Debug.Log("Finished first time username setup");
                 ChangeScreen(ScreenNames.LobbyListScreen);
-            }
 
+            string newUsername = usernameTextInput.text;
             playerName = newUsername;
             Save.myGlobalSaveData.UpdateUsername(newUsername);
 
             usernameScreen.SetActive(false);
 
+            //Switch statement for if we want different screens to have change username functionality
             switch (currentScreen)
             {
                 case ScreenNames.LobbyListScreen:
