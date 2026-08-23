@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using TMPro;
 using Unity.Netcode;
 using UnityEditor;
 using UnityEngine;
@@ -41,6 +42,8 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
 
     private GameObject controlsWindow;
     private GameObject playersWindow;
+    [SerializeField] private GameObject playersInfoPrefab;
+
     private Button leaveGameButton;
 
     protected override void Awake()
@@ -57,12 +60,16 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
         controlsWindow = GameObject.Find("Controls Window");
         controlsWindow.gameObject.SetActive(false);
         playersWindow = GameObject.Find("Players Window");
+        //Initialize player window
         foreach (var (id, player) in PlayerDataList.Singleton.players)
         {
-            Debug.Log(player.name + " has color " + player.playerColor);
+            GameObject playersMenuItem = Instantiate(playersInfoPrefab);
+            playersMenuItem.transform.parent = playersWindow.transform.Find("Players List");
+            playersMenuItem.transform.Find("Players Color Image").GetComponent<Image>().color = player.playerColor;
+            playersMenuItem.transform.Find("Players Name Text").GetComponent<TMP_Text>().text = "- " + player.playerUsername.Value;//PlayerDataList.Singleton.playerUsernames[id];
         }
-        //Initialize player window
         playersWindow.gameObject.SetActive(false);
+
         leaveGameButton = GameObject.Find("Leave Game Button").GetComponent<Button>();
         leaveGameButton.onClick.AddListener(LeaveGame);
         leaveGameButton.gameObject.SetActive(false);
@@ -128,10 +135,12 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
         if (Input.GetKeyDown(KeyCode.Tab))
         {
             controlsWindow.gameObject.SetActive(true);
+            playersWindow.gameObject.SetActive(true);
         }
         if (Input.GetKeyUp(KeyCode.Tab))
         {
             controlsWindow.gameObject.SetActive(false);
+            playersWindow.gameObject.SetActive(false);
         }
 
         if (Input.GetMouseButtonDown(0))

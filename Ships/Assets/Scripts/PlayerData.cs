@@ -1,6 +1,7 @@
 using Unity.Collections;
 using Unity.Netcode;
 using Unity.Services.Authentication;
+using Unity.Services.Lobbies.Models;
 using UnityEngine;
 
 public class PlayerData : NetworkBehaviour
@@ -14,12 +15,12 @@ public class PlayerData : NetworkBehaviour
     public Color playerColor;
 
     public NetworkVariable<FixedString32Bytes> authenticationServicePlayerId = new NetworkVariable<FixedString32Bytes>(writePerm: NetworkVariableWritePermission.Owner);
+    public NetworkVariable<FixedString32Bytes> playerUsername = new NetworkVariable<FixedString32Bytes>(writePerm: NetworkVariableWritePermission.Owner);
 
     public override void OnNetworkSpawn()
     {
         PlayerDataList.Singleton.players.Add(OwnerClientId, this);
 
-        playerColor = MenuScreenManager.Singleton.playerColors[playerColorIndex.Value];
         playerColorIndex.OnValueChanged += (int previousValue, int newValue) =>
         {
             playerColor = MenuScreenManager.Singleton.playerColors[newValue];
@@ -34,6 +35,7 @@ public class PlayerData : NetworkBehaviour
         };
 
         authenticationServicePlayerId.Value = AuthenticationService.Instance.PlayerId;
+        playerUsername.Value = Save.myGlobalSaveData.username;
         MenuScreenManager.Singleton.ChangePlayerColor(AuthenticationService.Instance.PlayerId);
     }
 

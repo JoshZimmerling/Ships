@@ -42,7 +42,7 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
     public enum ScreenNames { LobbyListScreen, LobbyScreen };
     private ScreenNames currentScreen;
 
-    private Lobby currentLobby;
+    public Lobby currentLobby;
 
     private string playerName;
 
