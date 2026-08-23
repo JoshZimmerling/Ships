@@ -6,7 +6,6 @@ using UnityEngine;
 public class PlayerData : NetworkBehaviour
 {
     private GameManager gameManager;
-    private GameObject spawnPlatform;
 
     private Ship motherShip;
     private GameObject mapFogRemover;
@@ -41,13 +40,11 @@ public class PlayerData : NetworkBehaviour
     public void PlayerSetup()
     {
         gameManager = GameManager.Singleton;
-        spawnPlatform = gameManager.playerSpawns[OwnerClientId];
 
         GameManager.Singleton.ChangeState(GameState.Gameplay);
 
         if (IsOwner){
             SpawnShipServerRPC(Ship.ShipTypes.Mothership);
-            Camera.main.gameObject.GetComponent<Camera_Control>().MoveCameraToWorldSpace(new Vector2(spawnPlatform.transform.position.x, spawnPlatform.transform.position.y));
 
             mapFogRemover = GameObject.Find("MapFogRemover");
             mapFogRemover.SetActive(false);
@@ -60,10 +57,15 @@ public class PlayerData : NetworkBehaviour
         Vector3 spawnPos;
         Vector2 offset = Random.onUnitCircle * 15;
         if (motherShip == null)
-            spawnPos = spawnPlatform.transform.position;
+        {
+            GameObject spawnerPlatform = gameManager.playerSpawns[Random.Range(0, gameManager.playerSpawns.Count)];
+            spawnPos = spawnerPlatform.transform.position;
+            gameManager.playerSpawns.Remove(spawnerPlatform);
+        }
         else
             spawnPos = motherShip.transform.position + new Vector3(offset.x, offset.y);
         GameObject ship = Instantiate(gameManager.GetShipPrefab((int)shipType), spawnPos, Quaternion.LookRotation(new Vector3(0, 0, 1), -spawnPos));
+
         ship.GetComponent<NetworkObject>().SpawnWithOwnership(OwnerClientId);
         ship.transform.parent = transform;
     }
@@ -71,6 +73,9 @@ public class PlayerData : NetworkBehaviour
     public void SetMothership(Ship ms)
     {
         motherShip = ms;
+
+        if (IsOwner)
+            Camera.main.gameObject.GetComponent<Camera_Control>().MoveCameraToWorldSpace(new Vector2(ms.transform.position.x, ms.transform.position.y));
     }
 
     public Ship GetMothership()

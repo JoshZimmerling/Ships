@@ -5,15 +5,11 @@ using UnityEngine;
 
 public class GameManager : Singleton<GameManager>
 {
-    //public readonly Dictionary<ulong, PlayerData> players = new();
     public NetworkPrefabsList shipList;
-
-    //public Shop shop;
-    //public ulong playerId;
 
     // TODO: Get rid of these
     public Transform bulletContainer;
-    public GameObject[] playerSpawns = new GameObject[8];
+    public List<GameObject> playerSpawns = new List<GameObject>();
 
     public void Start()
     {
