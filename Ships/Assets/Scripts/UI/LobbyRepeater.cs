@@ -9,7 +9,6 @@ public class LobbyRepeater : MonoBehaviour
 
     private TextMeshProUGUI lobbyName;
     private TextMeshProUGUI lobbyCapacity;
-    private Image lobbyConnection;
     private Button lobbyJoinButton;
     private string lobbyJoinCode;
 
@@ -18,7 +17,6 @@ public class LobbyRepeater : MonoBehaviour
     {
         lobbyName = transform.Find("Lobby Name").GetComponent<TextMeshProUGUI>();
         lobbyCapacity = transform.Find("Player Count").GetComponent<TextMeshProUGUI>();
-        lobbyConnection = transform.Find("Connection Strength").GetComponent<Image>();
         lobbyJoinButton = transform.Find("Join Button").GetComponent<Button>();
         lobbyJoinButton.onClick.AddListener(() => JoinLobby());
     }
