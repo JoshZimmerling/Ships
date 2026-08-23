@@ -16,6 +16,7 @@ using UnityEngine.UI;
 public class MenuScreenManager : Singleton<MenuScreenManager>
 {
     // Reference variables
+    private GameObject spinner;
     // Username screen
     private GameObject usernameScreen;
     private TMP_Text usernameTitleText;
@@ -51,8 +52,10 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
         // Activate all ui elements (for if they are disabled for testing)
         for (int i = 0; i < transform.childCount; i++)
             transform.GetChild(i).gameObject.SetActive(true);
-        
+
         // Initialize Variables
+        spinner = transform.Find("Spinner").gameObject;
+
         usernameScreen = transform.Find("Choose Username Screen").gameObject;
         usernameTitleText = transform.Find("Choose Username Screen").Find("Header").GetComponentInChildren<TMP_Text>();
         closeUsernameScreenButton = transform.Find("Choose Username Screen").Find("Close Button").GetComponent<Button>();
@@ -155,6 +158,7 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
 
         // Updates screen state
         usernameScreen.SetActive(false);
+        spinner.SetActive(false);
         lobbyListScreen.SetActive(currentScreen == ScreenNames.LobbyListScreen);
         lobbyScreen.SetActive(currentScreen == ScreenNames.LobbyScreen);
 
@@ -171,6 +175,7 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
 
     private async void CreateLobby()
     {
+        spinner.SetActive(true);
         // Create relay and start real time connection
         string relayCode = null;
         try
@@ -217,6 +222,7 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
 
     public async void JoinLobby(string lobbyId)
     {
+        spinner.SetActive(true);
         // Join lobby
         try
         {
@@ -448,6 +454,7 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
 
     private void StartGame()
     {
+        spinner.SetActive(true);
         try
         {
             UpdateLobbyOptions options = new UpdateLobbyOptions
