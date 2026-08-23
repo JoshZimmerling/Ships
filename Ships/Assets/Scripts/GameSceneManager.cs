@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
-public class GameManager : Singleton<GameManager>
+public class GameSceneManager : Singleton<GameSceneManager>
 {
     public NetworkPrefabsList shipList;
 
     // TODO: Get rid of these
     public Transform bulletContainer;
     public List<GameObject> playerSpawns = new List<GameObject>();
+    public List<GameObject> shipsInScene = new List<GameObject>();
 
     public void Start()
     {

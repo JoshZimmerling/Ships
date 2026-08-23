@@ -24,7 +24,7 @@ public class Shop : Singleton<Shop>
         playerData = PlayerDataList.Singleton.players[playerId];
 
         Color playerColor = playerData.playerColor;
-        foreach (NetworkPrefab prefab in GameManager.Singleton.shipList.PrefabList)
+        foreach (NetworkPrefab prefab in GameSceneManager.Singleton.shipList.PrefabList)
         {
             Transform shipPrefab = prefab.Prefab.transform;
             float shipCost = shipPrefab.GetComponent<Ship>().GetShipCost();

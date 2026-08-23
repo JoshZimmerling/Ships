@@ -98,10 +98,9 @@ public class Ship : NetworkBehaviour
                     transform.Find("Scout Radar").gameObject.SetActive(true);
                 break;
             case ShipTypes.Mothership:
-                PlayerData[] playerDataList = FindObjectsByType<PlayerData>(FindObjectsSortMode.None);
-                foreach (PlayerData data in playerDataList)
-                    if (data.OwnerClientId == OwnerClientId)
-                        data.SetMothership(this);
+                foreach (var (id, player) in PlayerDataList.Singleton.players)
+                    if (player.OwnerClientId == OwnerClientId)
+                        player.SetMothership(this);
                 break;
         }
     }
@@ -133,7 +132,9 @@ public class Ship : NetworkBehaviour
         {
             playerData.KillMothershipRPC();
         }
-        
+
+        GameSceneManager.Singleton.shipsInScene.Remove(gameObject);
+
         GetComponent<NetworkObject>().Despawn();
         Destroy(this.gameObject);
     }

@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class PlayerData : NetworkBehaviour
 {
-    private GameManager gameManager;
+    private GameSceneManager gameManager;
 
     private Ship motherShip;
     private GameObject mapFogRemover;
@@ -39,9 +39,9 @@ public class PlayerData : NetworkBehaviour
 
     public void PlayerSetup()
     {
-        gameManager = GameManager.Singleton;
+        gameManager = GameSceneManager.Singleton;
 
-        GameManager.Singleton.ChangeState(GameState.Gameplay);
+        GameSceneManager.Singleton.ChangeState(GameState.Gameplay);
 
         if (IsOwner){
             SpawnShipServerRPC(Ship.ShipTypes.Mothership);
@@ -68,6 +68,8 @@ public class PlayerData : NetworkBehaviour
 
         ship.GetComponent<NetworkObject>().SpawnWithOwnership(OwnerClientId);
         ship.transform.parent = transform;
+
+        GameSceneManager.Singleton.shipsInScene.Add(ship);
     }
 
     public void SetMothership(Ship ms)

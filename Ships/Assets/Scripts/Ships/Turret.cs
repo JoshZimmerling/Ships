@@ -24,32 +24,10 @@ public class Turret : NetworkBehaviour
     [SerializeField] private int projectileSpeed;
     [SerializeField] private float counter = 0;
 
-    private Collider2D targettingCollider;
-    //private List<Ship> targets = new List<Ship>();
-    private List<Transform> targets = new List<Transform>();
-
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public override void OnNetworkSpawn()
     {
-        targettingCollider = GetComponent<Collider2D>();
-    }
 
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (!IsHost) return;
-        
-        Ship s = collision.gameObject.GetComponent<Ship>();
-        if (s != null && s.OwnerClientId != OwnerClientId)
-                targets.Add(collision.transform);
-    }
-
-    private void OnTriggerExit2D(Collider2D collision)
-    {
-        if (!IsHost) return;
-
-        Ship s = collision.gameObject.GetComponent<Ship>();
-        if (s != null && s.OwnerClientId != OwnerClientId)
-           targets.Remove(collision.transform);
     }
 
     private void FixedUpdate()
@@ -58,8 +36,14 @@ public class Turret : NetworkBehaviour
         if (!IsHost) return;
 
         counter -= Time.deltaTime;
-        if (counter > 0 || targets.Count == 0) return;
+        if (counter > 0) return;
 
+        foreach (GameObject ship in GameSceneManager.Singleton.shipsInScene)
+        {
+            float dSqrToTarget = (ship.transform.position - transform.position).sqrMagnitude;
+        }
+
+        /*
         // Find closest
         Transform bestTarget = null;
         float closestDistanceSqr = Mathf.Infinity;
@@ -74,6 +58,7 @@ public class Turret : NetworkBehaviour
                 bestTarget = potentialTarget;
             }
         }
+
         // Determine future position
         float timeToTarget = Mathf.Sqrt(closestDistanceSqr) / projectileSpeed;
         Vector2 targetedPos = new Vector2(bestTarget.transform.position.x, bestTarget.transform.position.y);// + bestTarget.GetComponent<Movement>().GetFuturePosition(timeToTarget); //TODO: FIX
@@ -84,8 +69,10 @@ public class Turret : NetworkBehaviour
         GameObject bullet = Instantiate(bulletPrefab, transform.position, Quaternion.LookRotation(new Vector3(0, 0, 1), shootDirection));
         bullet.GetComponent<NetworkObject>().SpawnWithOwnership(OwnerClientId);
         bullet.GetComponent<Bullet>().SetupBullet(range / projectileSpeed, damage, projectileSpeed);
-        bullet.transform.parent = GameManager.Singleton.bulletContainer;
+        bullet.transform.parent = GameSceneManager.Singleton.bulletContainer;
 
         counter = 1 / fireRate;
+        
+        */
     }
 }
