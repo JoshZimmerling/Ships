@@ -415,9 +415,8 @@ GameObject:
   - component: {fileID: 6956426341357070569}
   - component: {fileID: 3985505458702315912}
   - component: {fileID: 4275652453864163433}
-  - component: {fileID: 1563128425230990010}
+  - component: {fileID: 1993422899511674839}
   - component: {fileID: 4637950062562444113}
-  - component: {fileID: 105496700895673721}
   m_Layer: 11
   m_Name: _ShipBase
   m_TagString: Untagged
@@ -445,6 +444,7 @@ Transform:
   - {fileID: 7998052403546193370}
   - {fileID: 1773063785906303312}
   - {fileID: 7296890363596327140}
+  - {fileID: 813458412376552807}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &5248488840569974850
@@ -459,7 +459,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 3017748935
+  GlobalObjectIdHash: 1620766169
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -651,7 +651,7 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!114 &1563128425230990010
+--- !u!114 &1993422899511674839
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -662,11 +662,11 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 86373f9a087ba2a4cad036a5e8b47a94, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier: Assembly-CSharp::Ship
   ShowTopMostFoldoutHeaderGroup: 1
-  shipType: 0
-  shipCost: 0
-  maxShipHP: 0
+  shipType: 6
+  shipCost: 10
+  maxShipHP: 10
 --- !u!114 &4637950062562444113
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -684,25 +684,6 @@ MonoBehaviour:
   shipMaxSpeed: 0
   shipTurnRate: 0
   distToStop: 2
---- !u!114 &105496700895673721
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5167211490098671168}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 33b656d80d1b19d4384e3e78ba4cb4d1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ShowTopMostFoldoutHeaderGroup: 1
-  bulletLifetime: 0
-  bulletSpeed: 0
-  bulletsPerSecond: 0
-  bulletDamage: 0
-  BulletPrefab: {fileID: 9135911124565628530, guid: a02ebc28117ec194c9dcdaecc201af8b, type: 3}
-  bulletSpawnerList: []
 --- !u!1 &6055569452642492732
 GameObject:
   m_ObjectHideFlags: 0
@@ -1075,3 +1056,34 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!1 &8655475781681200166
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 813458412376552807}
+  m_Layer: 11
+  m_Name: Turrets
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &813458412376552807
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8655475781681200166}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6010934806082289777}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

@@ -258,13 +258,13 @@ public class MenuManager : Singleton<MenuManager>
 
         foreach (Lobby lobby in lobbyList.Results)
         {
-            Transform t = lobbyViewerObject.transform.Find(lobby.Name);
+            Transform t = lobbyViewerObject.transform.Find(lobby.Id);
             GameObject lobbyObject = null;
             if (t == null)
             {
                 lobbyObject = Instantiate(lobbyRepeaterPrefab, lobbyViewerObject.transform);
                 lobbyObject.GetComponent<LobbyRepeater>().menuManager = this;
-                lobbyObject.name = lobby.Name;
+                lobbyObject.name = lobby.Id;
             }
             else
                 lobbyObject = t.gameObject;
@@ -276,7 +276,7 @@ public class MenuManager : Singleton<MenuManager>
             Transform child = lobbyViewerObject.transform.GetChild(i);
             bool exists = false;
             foreach (Lobby lobby in lobbyList.Results)
-                if (child.name == lobby.Name)
+                if (child.name == lobby.Id)
                     exists = true;
             if (!exists)
                 Destroy(child.gameObject);

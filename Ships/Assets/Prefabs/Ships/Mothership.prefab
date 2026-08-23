@@ -44,6 +44,18 @@ PrefabInstance:
       propertyPath: m_LocalScale.y
       value: 0.3
       objectReference: {fileID: 0}
+    - target: {fileID: 1993422899511674839, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
+      propertyPath: shipCost
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1993422899511674839, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
+      propertyPath: shipType
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 1993422899511674839, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
+      propertyPath: maxShipHP
+      value: 500
+      objectReference: {fileID: 0}
     - target: {fileID: 2584582384227705070, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: m_AnchorMax.x
       value: 1
@@ -114,7 +126,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4637950062562444113, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: shipMaxSpeed
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4637950062562444113, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: shipTurnRate

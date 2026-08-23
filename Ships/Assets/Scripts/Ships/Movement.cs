@@ -123,6 +123,11 @@ public class Movement : NetworkBehaviour
         }
     }
 
+    public Vector2 GetFuturePosition(float seconds)
+    {
+        return transform.rotation * Vector2.up * totalVelocity * seconds;
+    }
+
     [ServerRpc]
     public void BackupServerRPC()
     {
