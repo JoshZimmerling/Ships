@@ -17,6 +17,7 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
 {
     // Reference variables
     private GameObject spinner;
+    private bool canClickButtons = true;
     // Username screen
     private GameObject usernameScreen;
     private TMP_Text usernameTitleText;
@@ -159,6 +160,7 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
         // Updates screen state
         usernameScreen.SetActive(false);
         spinner.SetActive(false);
+        canClickButtons = true;
         lobbyListScreen.SetActive(currentScreen == ScreenNames.LobbyListScreen);
         lobbyScreen.SetActive(currentScreen == ScreenNames.LobbyScreen);
 
@@ -175,7 +177,10 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
 
     private async void CreateLobby()
     {
+        if (!canClickButtons) return;
+
         spinner.SetActive(true);
+        canClickButtons = false;
         // Create relay and start real time connection
         string relayCode = null;
         try
@@ -222,7 +227,10 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
 
     public async void JoinLobby(string lobbyId)
     {
+        if (!canClickButtons) return;
+
         spinner.SetActive(true);
+        canClickButtons = false;
         // Join lobby
         try
         {
@@ -454,7 +462,10 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
 
     private void StartGame()
     {
+        if (!canClickButtons) return;
+
         spinner.SetActive(true);
+        canClickButtons = false;
         try
         {
             UpdateLobbyOptions options = new UpdateLobbyOptions
