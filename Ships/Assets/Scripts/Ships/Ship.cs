@@ -71,6 +71,11 @@ public class Ship : NetworkBehaviour
         scoutMarker = transform.Find("Scout Marker").gameObject;
         minimapMarker = transform.Find("Minimap Marker").gameObject;
         minimapScoutMarker = transform.Find("Minimap Scout Marker").gameObject;
+
+        if (IsOwner)
+        {
+            GameplayInputManager.Singleton.AddNewSelectedShip(this);
+        }
     }
 
     public void FixedUpdate()
