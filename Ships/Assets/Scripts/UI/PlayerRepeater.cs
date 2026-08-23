@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class PlayerRepeater : MonoBehaviour
 {
-    public MenuManager menuManager;
+    public MenuScreenManager menuManager;
 
     private Button changeColorButton;
     private TextMeshProUGUI playerName;

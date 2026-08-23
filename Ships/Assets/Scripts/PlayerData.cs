@@ -20,10 +20,10 @@ public class PlayerData : NetworkBehaviour
     {
         PlayerDataList.Singleton.players.Add(OwnerClientId, this);
 
-        playerColor = MenuManager.Singleton.playerColors[playerColorIndex.Value];
+        playerColor = MenuScreenManager.Singleton.playerColors[playerColorIndex.Value];
         playerColorIndex.OnValueChanged += (int previousValue, int newValue) =>
         {
-            playerColor = MenuManager.Singleton.playerColors[newValue];
+            playerColor = MenuScreenManager.Singleton.playerColors[newValue];
         };
 
         if (!IsOwner) return;
@@ -31,11 +31,11 @@ public class PlayerData : NetworkBehaviour
         // Change screen after syncronize is complete
         NetworkManager.Singleton.SceneManager.OnSceneEvent += (SceneEvent sceneEvent) => {
             if (sceneEvent.SceneEventType == SceneEventType.SynchronizeComplete)
-                MenuManager.Singleton.ChangeScreen(MenuManager.ScreenNames.LobbyScreen);
+                MenuScreenManager.Singleton.ChangeScreen(MenuScreenManager.ScreenNames.LobbyScreen);
         };
 
         authenticationServicePlayerId.Value = AuthenticationService.Instance.PlayerId;
-        MenuManager.Singleton.ChangePlayerColor(AuthenticationService.Instance.PlayerId);
+        MenuScreenManager.Singleton.ChangePlayerColor(AuthenticationService.Instance.PlayerId);
     }
 
     public void PlayerSetup()

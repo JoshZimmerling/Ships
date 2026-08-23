@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class LobbyRepeater : MonoBehaviour
 {
-    public MenuManager menuManager;
+    public MenuScreenManager menuManager;
 
     private TextMeshProUGUI lobbyName;
     private TextMeshProUGUI lobbyCapacity;

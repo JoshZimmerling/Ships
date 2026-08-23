@@ -13,7 +13,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class MenuManager : Singleton<MenuManager>
+public class MenuScreenManager : Singleton<MenuScreenManager>
 {
     // Reference variables
     // Username screen
@@ -211,8 +211,7 @@ public class MenuManager : Singleton<MenuManager>
         {
             Debug.Log(e);
         }
-        foreach (Player player in currentLobby.Players)
-            Debug.Log("Player Id: " + player.Id);
+
         ChangeScreen(ScreenNames.LobbyScreen);
     }
 
@@ -248,7 +247,7 @@ public class MenuManager : Singleton<MenuManager>
         }
 
         await RefreshLobbyInfo();
-        //ChangeScreen(MenuManager.ScreenNames.LobbyScreen);
+        //ChangeScreen(MenuScreenManager.ScreenNames.LobbyScreen);
     }
 
     private async void RefreshLobbyList()
@@ -449,8 +448,20 @@ public class MenuManager : Singleton<MenuManager>
 
     private void StartGame()
     {
-        //foreach (PlayerData data in playerDatas)
-        //    data.playerColor = playerColors[data.playerColorIndex.Value];
+        try
+        {
+            UpdateLobbyOptions options = new UpdateLobbyOptions
+            {
+                IsLocked = true,
+                IsPrivate = true
+            };
+
+            LobbyService.Instance.UpdateLobbyAsync(currentLobby.Id, options);
+        }
+        catch (LobbyServiceException e)
+        {
+            Debug.Log(e);
+        }
 
         NetworkManager.Singleton.SceneManager.LoadScene("Multiplayer Scene", LoadSceneMode.Single);
     }
