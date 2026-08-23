@@ -39,6 +39,7 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
     [SerializeField] private GraphicRaycaster raycaster;
     [SerializeField] private EventSystem eventSystem;
 
+    private GameObject controlsWindow;
     private Button leaveGameButton;
 
     protected override void Awake()
@@ -52,6 +53,8 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
         minimapWidth = minimapTransform.rect.width;
         mapWidth = GameObject.Find("Map_1").GetComponent<RectTransform>().rect.width;
 
+        controlsWindow = GameObject.Find("Controls Window");
+        controlsWindow.gameObject.SetActive(false);
         leaveGameButton = GameObject.Find("Leave Game Button").GetComponent<Button>();
         leaveGameButton.onClick.AddListener(LeaveGame);
         leaveGameButton.gameObject.SetActive(false);
@@ -112,6 +115,15 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
         if (Input.GetKeyDown(KeyCode.E))
         {
             cameraScript.ToggleLockState();
+        }
+
+        if (Input.GetKeyDown(KeyCode.Tab))
+        {
+            controlsWindow.gameObject.SetActive(true);
+        }
+        if (Input.GetKeyUp(KeyCode.Tab))
+        {
+            controlsWindow.gameObject.SetActive(false);
         }
 
         if (Input.GetMouseButtonDown(0))
