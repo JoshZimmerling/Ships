@@ -259,6 +259,10 @@ PrefabInstance:
       propertyPath: spawnPointList.Array.size
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 1993422899511674839, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
+      propertyPath: correctionFactor
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3985505458702315912, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: m_Size.y
       value: 3
@@ -416,8 +420,20 @@ PrefabInstance:
     m_TransformParent: {fileID: 2700797076871236739}
     m_Modifications:
     - target: {fileID: 1281296594994837668, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
+      propertyPath: aimPoint
+      value: 270
+      objectReference: {fileID: 0}
+    - target: {fileID: 1281296594994837668, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
       propertyPath: fireRate
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1281296594994837668, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
+      propertyPath: arcSpread
+      value: 190
+      objectReference: {fileID: 0}
+    - target: {fileID: 4740312332221088000, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5041462843359167817, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
       propertyPath: m_Name
@@ -437,7 +453,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8803343432320127095, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.7071068
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8803343432320127095, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
       propertyPath: m_LocalRotation.x
@@ -449,7 +465,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8803343432320127095, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.7071068
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8803343432320127095, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -461,7 +477,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8803343432320127095, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 90
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -484,6 +500,14 @@ PrefabInstance:
     - target: {fileID: 3907542364246273763, guid: 43a2939fe795a084fb7eae8696978de9, type: 3}
       propertyPath: damage
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3907542364246273763, guid: 43a2939fe795a084fb7eae8696978de9, type: 3}
+      propertyPath: aimPoint
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 3907542364246273763, guid: 43a2939fe795a084fb7eae8696978de9, type: 3}
+      propertyPath: arcSpread
+      value: 80
       objectReference: {fileID: 0}
     - target: {fileID: 6762637872082208304, guid: 43a2939fe795a084fb7eae8696978de9, type: 3}
       propertyPath: m_LocalPosition.x
@@ -528,6 +552,10 @@ PrefabInstance:
     - target: {fileID: 7062957977223090958, guid: 43a2939fe795a084fb7eae8696978de9, type: 3}
       propertyPath: m_Name
       value: Medium Turret
+      objectReference: {fileID: 0}
+    - target: {fileID: 7366355817099220807, guid: 43a2939fe795a084fb7eae8696978de9, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7366355817099220807, guid: 43a2939fe795a084fb7eae8696978de9, type: 3}
       propertyPath: m_Points.m_Paths.Array.data[0].Array.size

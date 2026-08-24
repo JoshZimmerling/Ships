@@ -96,6 +96,10 @@ PrefabInstance:
       propertyPath: maxShipHP
       value: 40
       objectReference: {fileID: 0}
+    - target: {fileID: 1993422899511674839, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
+      propertyPath: correctionFactor
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2211049490574980914, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: m_SizeDelta.x
       value: 3
@@ -270,6 +274,10 @@ PrefabInstance:
       propertyPath: fireRate
       value: 0.5
       objectReference: {fileID: 0}
+    - target: {fileID: 3907542364246273763, guid: 43a2939fe795a084fb7eae8696978de9, type: 3}
+      propertyPath: arcSpread
+      value: 360
+      objectReference: {fileID: 0}
     - target: {fileID: 6762637872082208304, guid: 43a2939fe795a084fb7eae8696978de9, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -313,6 +321,10 @@ PrefabInstance:
     - target: {fileID: 7062957977223090958, guid: 43a2939fe795a084fb7eae8696978de9, type: 3}
       propertyPath: m_Name
       value: Medium Turret
+      objectReference: {fileID: 0}
+    - target: {fileID: 7366355817099220807, guid: 43a2939fe795a084fb7eae8696978de9, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7366355817099220807, guid: 43a2939fe795a084fb7eae8696978de9, type: 3}
       propertyPath: m_Points.m_Paths.Array.data[0].Array.size

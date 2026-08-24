@@ -57,8 +57,16 @@ PrefabInstance:
       value: 25
       objectReference: {fileID: 0}
     - target: {fileID: 7709267848172825610, guid: e346d0a53ff39734ca77a7b2bf7a716d, type: 3}
+      propertyPath: aimPoint
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 7709267848172825610, guid: e346d0a53ff39734ca77a7b2bf7a716d, type: 3}
       propertyPath: fireRate
       value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7709267848172825610, guid: e346d0a53ff39734ca77a7b2bf7a716d, type: 3}
+      propertyPath: arcSpread
+      value: 20
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -197,6 +205,10 @@ PrefabInstance:
     - target: {fileID: 1993422899511674839, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: maxShipHP
       value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 1993422899511674839, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
+      propertyPath: correctionFactor
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3499485431793801839, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: m_IsActive
@@ -399,8 +411,16 @@ PrefabInstance:
       value: 25
       objectReference: {fileID: 0}
     - target: {fileID: 7709267848172825610, guid: e346d0a53ff39734ca77a7b2bf7a716d, type: 3}
+      propertyPath: aimPoint
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 7709267848172825610, guid: e346d0a53ff39734ca77a7b2bf7a716d, type: 3}
       propertyPath: fireRate
       value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7709267848172825610, guid: e346d0a53ff39734ca77a7b2bf7a716d, type: 3}
+      propertyPath: arcSpread
+      value: 20
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

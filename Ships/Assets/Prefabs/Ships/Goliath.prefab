@@ -13,8 +13,20 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1281296594994837668, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
+      propertyPath: aimPoint
+      value: 180
+      objectReference: {fileID: 0}
+    - target: {fileID: 1281296594994837668, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
+      propertyPath: arcSpread
+      value: 140
+      objectReference: {fileID: 0}
+    - target: {fileID: 1281296594994837668, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
       propertyPath: projectileSpeed
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 4740312332221088000, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4740312332221088000, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
       propertyPath: m_Points.m_Paths.Array.data[0].Array.size
@@ -200,6 +212,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Light Turret ML
       objectReference: {fileID: 0}
+    - target: {fileID: 5041462843359167817, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8803343432320127095, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.7
@@ -263,8 +279,20 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1281296594994837668, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
+      propertyPath: aimPoint
+      value: 330
+      objectReference: {fileID: 0}
+    - target: {fileID: 1281296594994837668, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
+      propertyPath: arcSpread
+      value: 125
+      objectReference: {fileID: 0}
+    - target: {fileID: 1281296594994837668, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
       propertyPath: projectileSpeed
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 4740312332221088000, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4740312332221088000, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
       propertyPath: m_Points.m_Paths.Array.data[0].Array.size
@@ -442,6 +470,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Light Turret BR
       objectReference: {fileID: 0}
+    - target: {fileID: 5041462843359167817, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8803343432320127095, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.63
@@ -505,8 +537,20 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1281296594994837668, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
+      propertyPath: aimPoint
+      value: 35
+      objectReference: {fileID: 0}
+    - target: {fileID: 1281296594994837668, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
+      propertyPath: arcSpread
+      value: 125
+      objectReference: {fileID: 0}
+    - target: {fileID: 1281296594994837668, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
       propertyPath: projectileSpeed
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 4740312332221088000, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4740312332221088000, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
       propertyPath: m_Points.m_Paths.Array.data[0].Array.size
@@ -672,6 +716,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Light Turret TR
       objectReference: {fileID: 0}
+    - target: {fileID: 5041462843359167817, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8803343432320127095, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.7
@@ -735,8 +783,20 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1281296594994837668, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
+      propertyPath: aimPoint
+      value: 210
+      objectReference: {fileID: 0}
+    - target: {fileID: 1281296594994837668, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
+      propertyPath: arcSpread
+      value: 125
+      objectReference: {fileID: 0}
+    - target: {fileID: 1281296594994837668, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
       propertyPath: projectileSpeed
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 4740312332221088000, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4740312332221088000, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
       propertyPath: m_Points.m_Paths.Array.data[0].Array.size
@@ -922,6 +982,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Light Turret BL
       objectReference: {fileID: 0}
+    - target: {fileID: 5041462843359167817, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8803343432320127095, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.7
@@ -985,8 +1049,16 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1281296594994837668, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
+      propertyPath: arcSpread
+      value: 140
+      objectReference: {fileID: 0}
+    - target: {fileID: 1281296594994837668, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
       propertyPath: projectileSpeed
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 4740312332221088000, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4740312332221088000, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
       propertyPath: m_Points.m_Paths.Array.data[0].Array.size
@@ -1164,6 +1236,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Light Turret MR
       objectReference: {fileID: 0}
+    - target: {fileID: 5041462843359167817, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8803343432320127095, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.7
@@ -1227,8 +1303,20 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1281296594994837668, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
+      propertyPath: aimPoint
+      value: 145
+      objectReference: {fileID: 0}
+    - target: {fileID: 1281296594994837668, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
+      propertyPath: arcSpread
+      value: 125
+      objectReference: {fileID: 0}
+    - target: {fileID: 1281296594994837668, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
       propertyPath: projectileSpeed
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 4740312332221088000, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4740312332221088000, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
       propertyPath: m_Points.m_Paths.Array.data[0].Array.size
@@ -1389,6 +1477,10 @@ PrefabInstance:
     - target: {fileID: 5041462843359167817, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
       propertyPath: m_Name
       value: Light Turret TL
+      objectReference: {fileID: 0}
+    - target: {fileID: 5041462843359167817, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8803343432320127095, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1663,6 +1755,10 @@ PrefabInstance:
     - target: {fileID: 1993422899511674839, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: maxShipHP
       value: 170
+      objectReference: {fileID: 0}
+    - target: {fileID: 1993422899511674839, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
+      propertyPath: correctionFactor
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 3985505458702315912, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: m_Size.x

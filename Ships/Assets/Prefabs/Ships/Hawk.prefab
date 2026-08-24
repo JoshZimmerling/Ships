@@ -108,6 +108,10 @@ PrefabInstance:
       propertyPath: maxShipHP
       value: 20
       objectReference: {fileID: 0}
+    - target: {fileID: 1993422899511674839, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
+      propertyPath: correctionFactor
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 3985505458702315912, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: m_Size.x
       value: 1
@@ -301,9 +305,21 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4250341171446601134, guid: e346d0a53ff39734ca77a7b2bf7a716d, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4522205061077193191, guid: e346d0a53ff39734ca77a7b2bf7a716d, type: 3}
       propertyPath: m_Name
       value: Heavy Turret
+      objectReference: {fileID: 0}
+    - target: {fileID: 7709267848172825610, guid: e346d0a53ff39734ca77a7b2bf7a716d, type: 3}
+      propertyPath: aimPoint
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 7709267848172825610, guid: e346d0a53ff39734ca77a7b2bf7a716d, type: 3}
+      propertyPath: arcSpread
+      value: 20
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

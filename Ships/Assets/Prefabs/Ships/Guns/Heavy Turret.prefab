@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 80787718427002073}
   - component: {fileID: 7709267848172825610}
-  - component: {fileID: 4250341171446601134}
   m_Layer: 11
   m_Name: Heavy Turret
   m_TagString: Untagged
@@ -51,57 +50,7 @@ MonoBehaviour:
   damage: 20
   fireRate: 0.3
   range: 30
+  aimPoint: 0
+  arcSpread: 0
   projectileSpeed: 8
   counter: 0
---- !u!60 &4250341171446601134
-PolygonCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4522205061077193191}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 2048
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 2048
-  m_IsTrigger: 1
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0, y: 0}
-    oldSize: {x: 0, y: 0}
-    newSize: {x: 0, y: 0}
-    adaptiveTilingThreshold: 0
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  m_Points:
-    m_Paths:
-    - - {x: 5.2, y: 29.5}
-      - {x: 0.5, y: 0}
-      - {x: -0.5, y: 0}
-      - {x: -5.2, y: 29.5}
-      - {x: 0, y: 30}
-  m_UseDelaunayMesh: 1

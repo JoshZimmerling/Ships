@@ -8,6 +8,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 8811438501680361406}
     m_Modifications:
+    - target: {fileID: 3907542364246273763, guid: 43a2939fe795a084fb7eae8696978de9, type: 3}
+      propertyPath: aimPoint
+      value: 110
+      objectReference: {fileID: 0}
+    - target: {fileID: 3907542364246273763, guid: 43a2939fe795a084fb7eae8696978de9, type: 3}
+      propertyPath: maxAngle
+      value: 140
+      objectReference: {fileID: 0}
+    - target: {fileID: 3907542364246273763, guid: 43a2939fe795a084fb7eae8696978de9, type: 3}
+      propertyPath: minAngle
+      value: 80
+      objectReference: {fileID: 0}
+    - target: {fileID: 3907542364246273763, guid: 43a2939fe795a084fb7eae8696978de9, type: 3}
+      propertyPath: arcSpread
+      value: 60
+      objectReference: {fileID: 0}
     - target: {fileID: 6762637872082208304, guid: 43a2939fe795a084fb7eae8696978de9, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.8
@@ -51,6 +67,14 @@ PrefabInstance:
     - target: {fileID: 7062957977223090958, guid: 43a2939fe795a084fb7eae8696978de9, type: 3}
       propertyPath: m_Name
       value: Medium Turret L
+      objectReference: {fileID: 0}
+    - target: {fileID: 7062957977223090958, guid: 43a2939fe795a084fb7eae8696978de9, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7366355817099220807, guid: 43a2939fe795a084fb7eae8696978de9, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7366355817099220807, guid: 43a2939fe795a084fb7eae8696978de9, type: 3}
       propertyPath: m_Points.m_Paths.Array.data[0].Array.data[0].x
@@ -138,13 +162,37 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4250341171446601134, guid: e346d0a53ff39734ca77a7b2bf7a716d, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4522205061077193191, guid: e346d0a53ff39734ca77a7b2bf7a716d, type: 3}
       propertyPath: m_Name
       value: Heavy Turret
       objectReference: {fileID: 0}
+    - target: {fileID: 4522205061077193191, guid: e346d0a53ff39734ca77a7b2bf7a716d, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7709267848172825610, guid: e346d0a53ff39734ca77a7b2bf7a716d, type: 3}
+      propertyPath: aimPoint
+      value: 90
+      objectReference: {fileID: 0}
     - target: {fileID: 7709267848172825610, guid: e346d0a53ff39734ca77a7b2bf7a716d, type: 3}
       propertyPath: fireRate
       value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7709267848172825610, guid: e346d0a53ff39734ca77a7b2bf7a716d, type: 3}
+      propertyPath: maxAngle
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 7709267848172825610, guid: e346d0a53ff39734ca77a7b2bf7a716d, type: 3}
+      propertyPath: minAngle
+      value: 80
+      objectReference: {fileID: 0}
+    - target: {fileID: 7709267848172825610, guid: e346d0a53ff39734ca77a7b2bf7a716d, type: 3}
+      propertyPath: arcSpread
+      value: 20
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -164,6 +212,26 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 8811438501680361406}
     m_Modifications:
+    - target: {fileID: 1281296594994837668, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
+      propertyPath: aimPoint
+      value: 220
+      objectReference: {fileID: 0}
+    - target: {fileID: 1281296594994837668, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
+      propertyPath: maxAngle
+      value: 275
+      objectReference: {fileID: 0}
+    - target: {fileID: 1281296594994837668, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
+      propertyPath: minAngle
+      value: 120
+      objectReference: {fileID: 0}
+    - target: {fileID: 1281296594994837668, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
+      propertyPath: arcSpread
+      value: 115
+      objectReference: {fileID: 0}
+    - target: {fileID: 4740312332221088000, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4740312332221088000, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
       propertyPath: m_Points.m_Paths.Array.data[0].Array.size
       value: 22
@@ -342,7 +410,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5041462843359167817, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
       propertyPath: m_Name
-      value: Small Turret BR
+      value: Small Turret BL
+      objectReference: {fileID: 0}
+    - target: {fileID: 5041462843359167817, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8803343432320127095, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
       propertyPath: m_LocalPosition.x
@@ -402,9 +474,33 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 8811438501680361406}
     m_Modifications:
+    - target: {fileID: 1281296594994837668, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
+      propertyPath: aimPoint
+      value: 140
+      objectReference: {fileID: 0}
+    - target: {fileID: 1281296594994837668, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
+      propertyPath: maxAngle
+      value: 240
+      objectReference: {fileID: 0}
+    - target: {fileID: 1281296594994837668, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
+      propertyPath: minAngle
+      value: 85
+      objectReference: {fileID: 0}
+    - target: {fileID: 1281296594994837668, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
+      propertyPath: arcSpread
+      value: 115
+      objectReference: {fileID: 0}
+    - target: {fileID: 4740312332221088000, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5041462843359167817, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
       propertyPath: m_Name
-      value: Small Turret TR
+      value: Small Turret TL
+      objectReference: {fileID: 0}
+    - target: {fileID: 5041462843359167817, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8803343432320127095, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
       propertyPath: m_LocalPosition.x
@@ -464,6 +560,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 8811438501680361406}
     m_Modifications:
+    - target: {fileID: 3907542364246273763, guid: 43a2939fe795a084fb7eae8696978de9, type: 3}
+      propertyPath: aimPoint
+      value: 70
+      objectReference: {fileID: 0}
+    - target: {fileID: 3907542364246273763, guid: 43a2939fe795a084fb7eae8696978de9, type: 3}
+      propertyPath: maxAngle
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 3907542364246273763, guid: 43a2939fe795a084fb7eae8696978de9, type: 3}
+      propertyPath: minAngle
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 3907542364246273763, guid: 43a2939fe795a084fb7eae8696978de9, type: 3}
+      propertyPath: arcSpread
+      value: 60
+      objectReference: {fileID: 0}
     - target: {fileID: 6762637872082208304, guid: 43a2939fe795a084fb7eae8696978de9, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.8
@@ -508,6 +620,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Medium Turret R
       objectReference: {fileID: 0}
+    - target: {fileID: 7062957977223090958, guid: 43a2939fe795a084fb7eae8696978de9, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7366355817099220807, guid: 43a2939fe795a084fb7eae8696978de9, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -526,6 +646,26 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 8811438501680361406}
     m_Modifications:
+    - target: {fileID: 1281296594994837668, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
+      propertyPath: aimPoint
+      value: 320
+      objectReference: {fileID: 0}
+    - target: {fileID: 1281296594994837668, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
+      propertyPath: maxAngle
+      value: 60
+      objectReference: {fileID: 0}
+    - target: {fileID: 1281296594994837668, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
+      propertyPath: minAngle
+      value: 265
+      objectReference: {fileID: 0}
+    - target: {fileID: 1281296594994837668, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
+      propertyPath: arcSpread
+      value: 115
+      objectReference: {fileID: 0}
+    - target: {fileID: 4740312332221088000, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4740312332221088000, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
       propertyPath: m_Points.m_Paths.Array.data[0].Array.size
       value: 22
@@ -704,7 +844,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5041462843359167817, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
       propertyPath: m_Name
-      value: Small Turret BL
+      value: Small Turret BR
+      objectReference: {fileID: 0}
+    - target: {fileID: 5041462843359167817, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8803343432320127095, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
       propertyPath: m_LocalPosition.x
@@ -940,6 +1084,10 @@ PrefabInstance:
       propertyPath: maxShipHP
       value: 50
       objectReference: {fileID: 0}
+    - target: {fileID: 1993422899511674839, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
+      propertyPath: correctionFactor
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 3499485431793801839, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: m_IsActive
       value: 1
@@ -1097,6 +1245,26 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 8811438501680361406}
     m_Modifications:
+    - target: {fileID: 1281296594994837668, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
+      propertyPath: aimPoint
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 1281296594994837668, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
+      propertyPath: maxAngle
+      value: 95
+      objectReference: {fileID: 0}
+    - target: {fileID: 1281296594994837668, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
+      propertyPath: minAngle
+      value: 300
+      objectReference: {fileID: 0}
+    - target: {fileID: 1281296594994837668, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
+      propertyPath: arcSpread
+      value: 115
+      objectReference: {fileID: 0}
+    - target: {fileID: 4740312332221088000, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4740312332221088000, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
       propertyPath: m_Points.m_Paths.Array.data[0].Array.size
       value: 22
@@ -1275,7 +1443,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5041462843359167817, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
       propertyPath: m_Name
-      value: Small Turret TL
+      value: Small Turret TR
+      objectReference: {fileID: 0}
+    - target: {fileID: 5041462843359167817, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8803343432320127095, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
       propertyPath: m_LocalPosition.x

@@ -20,6 +20,7 @@ public class Ship : NetworkBehaviour
     [SerializeField] private float shipCost;
     [SerializeField] protected float maxShipHP;
     protected NetworkVariable<float> currentShipHP = new NetworkVariable<float>();
+    public int correctionFactor;
 
     // Ship Components
     private Transform hpBar;
