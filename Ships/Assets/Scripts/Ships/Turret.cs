@@ -36,13 +36,13 @@ public class Turret : NetworkBehaviour
 
     // Find closest
     Transform bestTarget;
-    float closestDistanceSqr;
+    float closestShipDistance;
 
 
     float maxRadians;
     Vector2 fireAngle;
 
-    float dSqrToTarget;
+    float distanceToTarget;
 
     private void FixedUpdate()
     {
@@ -54,7 +54,7 @@ public class Turret : NetworkBehaviour
 
 
         bestTarget = null;
-        closestDistanceSqr = Mathf.Infinity;
+        closestShipDistance = Mathf.Infinity;
 
         maxRadians = (aimPoint + transform.rotation.eulerAngles.z) * Mathf.Deg2Rad;
         fireAngle = new Vector2(Mathf.Cos(maxRadians), Mathf.Sin(maxRadians));
@@ -62,9 +62,9 @@ public class Turret : NetworkBehaviour
         foreach (GameObject enemyShip in GameSceneManager.Singleton.shipsInScene)
         {
             // Finds the closest
-            if (IsValidTarget(enemyShip) && closestDistanceSqr > dSqrToTarget)
+            if (IsValidTarget(enemyShip) && closestShipDistance > distanceToTarget)
             {
-                closestDistanceSqr = dSqrToTarget;
+                closestShipDistance = distanceToTarget;
                 bestTarget = enemyShip.transform;
             }
         }
@@ -72,34 +72,30 @@ public class Turret : NetworkBehaviour
         if (bestTarget != null)
         {
             // Determine future position
-            float timeToTarget = Mathf.Sqrt(closestDistanceSqr) / projectileSpeed;
+            float timeToTarget = closestShipDistance / projectileSpeed;
             Vector2 targetedPos = new Vector2(bestTarget.transform.position.x, bestTarget.transform.position.y);// + bestTarget.GetComponent<Movement>().GetFuturePosition(timeToTarget); //TODO: FIX
 
-            // Determine future position
-            Vector2 shootDirection = targetedPos - new Vector2(transform.position.x, transform.position.y);
+            // Determine the shot direction
+            Vector2 shootDirection = (targetedPos - new Vector2(transform.position.x, transform.position.y)).normalized;
 
+            //Clamping shot angle to inside the bounds of our spread
+            if (arcSpread != 360)
+            {
+                Vector2 leftEdgeVector = RotateVector(fireAngle, arcSpread * 0.5f).normalized;
+                Vector2 rightEdgeVector = RotateVector(fireAngle, -arcSpread * 0.5f).normalized;
 
-
-            /*
-            // Clamp to angles
-            float angle = Mathf.Atan2(shootDirection.y, shootDirection.x) * Mathf.Rad2Deg;
-            float minAngle = aimPoint - arcSpread * 0.5f;
-            float maxAngle = aimPoint + arcSpread * 0.5f;
-            float angleDiff = Mathf.DeltaAngle(minAngle, angle);
-            float maxDiff = Mathf.DeltaAngle(minAngle, maxAngle);
-
-            // Check if the angle falls within the allowed span
-            if (angleDiff < 0 || angleDiff > maxDiff)
-                if (Mathf.Abs(angleDiff) < Mathf.Abs(Mathf.DeltaAngle(maxAngle, angle)))
-                    angle = minAngle;
+                if (leftEdgeVector.x < rightEdgeVector.x)
+                    shootDirection.x = Mathf.Clamp(shootDirection.x, leftEdgeVector.x, rightEdgeVector.x);
                 else
-                    angle = minAngle;
+                    shootDirection.x = Mathf.Clamp(shootDirection.x, rightEdgeVector.x, leftEdgeVector.x);
 
+                if (leftEdgeVector.y < rightEdgeVector.y)
+                    shootDirection.y = Mathf.Clamp(shootDirection.y, leftEdgeVector.y, rightEdgeVector.y);
+                else
+                    shootDirection.y = Mathf.Clamp(shootDirection.y, rightEdgeVector.y, leftEdgeVector.y);
+            }
 
-            angle = angle * Mathf.Deg2Rad;
-            shootDirection = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
-            */
-
+            //Fire the bullet at the angle calculated
             GameObject bullet = Instantiate(bulletPrefab, transform.position, Quaternion.LookRotation(new Vector3(0, 0, 1), shootDirection));
             bullet.GetComponent<NetworkObject>().SpawnWithOwnership(OwnerClientId);
             bullet.GetComponent<Bullet>().SetupBullet(range / projectileSpeed, damage, projectileSpeed);
@@ -114,13 +110,15 @@ public class Turret : NetworkBehaviour
 
         int corrVal = enemyShip.GetComponent<Ship>().correctionFactor;
         Vector2 delta = enemyShip.transform.position - transform.position;
-        dSqrToTarget = delta.sqrMagnitude;
-        if (dSqrToTarget > (range + corrVal) * (range + corrVal)) return false; // Is out of range
+        distanceToTarget = delta.magnitude - corrVal;
+        if (distanceToTarget > range) return false; // Is out of range     d^2 > (r+c)^2     = d > r+c = (d-c) > r = (d-c)^2 > r^2
+
+        if (arcSpread == 360) return true;
 
         float dot = Vector2.Dot(delta.normalized, fireAngle);
         float halfAngleRad = (arcSpread * 0.5f) * Mathf.Deg2Rad;
         float cosHalfAngle = Mathf.Cos(halfAngleRad);
-        if (dot >= cosHalfAngle && dSqrToTarget <= (range + corrVal) * (range + corrVal)) return true; // Center of ship in sector (extended)
+        if (dot >= cosHalfAngle && distanceToTarget <= range) return true; // Center of ship in sector (extended)
 
         Vector2 leftEdgeDir = RotateVector(fireAngle, arcSpread * 0.5f).normalized;
         Vector2 rightEdgeDir = RotateVector(fireAngle, -arcSpread * 0.5f).normalized;
