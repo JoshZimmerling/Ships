@@ -50,7 +50,8 @@ MonoBehaviour:
   damage: 20
   fireRate: 0.3
   range: 30
-  aimPoint: 0
-  arcSpread: 0
-  projectileSpeed: 8
+  aimDirection: 0
+  firingArc: 0
+  firingSpread: 2
+  projectileSpeed: 20
   counter: 0
