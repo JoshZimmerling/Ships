@@ -64,14 +64,17 @@ public class Bullet : NetworkBehaviour
         turretType = type;
         switch (type)
         {
+            case Turret.TurretType.MissilePods:
+                transform.localScale = new Vector3(1f, 1f, 1);
+                break;
             case Turret.TurretType.HeavyTurret:
-                transform.localScale = new Vector3(0.3f, 0.3f, 1);
+                transform.localScale = new Vector3(0.6f, 0.6f, 1);
                 break;
             case Turret.TurretType.MediumTurret:
-                transform.localScale = new Vector3(0.2f, 0.2f, 1);
+                transform.localScale = new Vector3(0.4f, 0.4f, 1);
                 break;
             case Turret.TurretType.LightTurret:
-                transform.localScale = new Vector3(0.1f, 0.1f, 1);
+                transform.localScale = new Vector3(0.2f, 0.2f, 1);
                 break;
         }
     }

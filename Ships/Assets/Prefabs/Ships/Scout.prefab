@@ -260,6 +260,10 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 1993422899511674839, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
+      propertyPath: maxShipHP
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 1993422899511674839, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: correctionFactor
       value: 1
       objectReference: {fileID: 0}
