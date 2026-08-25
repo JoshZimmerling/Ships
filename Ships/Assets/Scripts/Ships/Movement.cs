@@ -125,7 +125,7 @@ public class Movement : NetworkBehaviour
 
     public Vector2 GetFuturePosition(float seconds)
     {
-        return transform.rotation * Vector2.up * totalVelocity * seconds;
+        return transform.position + transform.rotation * Vector2.up * totalVelocity * seconds;
     }
 
     [ServerRpc]

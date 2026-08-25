@@ -86,7 +86,8 @@ public class Turret : NetworkBehaviour
             {
                 // Determine future position
                 float timeToTarget = closestShipDistance / projectileSpeed;
-                Vector2 targetedPos = new Vector2(bestTarget.transform.position.x, bestTarget.transform.position.y);// + bestTarget.GetComponent<Movement>().GetFuturePosition(timeToTarget); //TODO: FIX
+                Vector2 targetedPos = Vector2.Lerp(new Vector2(bestTarget.transform.position.x, bestTarget.transform.position.y), bestTarget.GetComponent<Movement>().GetFuturePosition(timeToTarget), .8f); //This somewhat leads the ship, but not fully
+                //Vector2 targetedPos = bestTarget.GetComponent<Movement>().GetFuturePosition(timeToTarget); //This fully leads to where it expects the other ship to land
 
                 // Determine the shot direction
                 Vector2 shootDirection = (targetedPos - new Vector2(transform.position.x, transform.position.y));
