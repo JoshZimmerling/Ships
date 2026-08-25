@@ -74,27 +74,38 @@ public class Turret : NetworkBehaviour
 
         if (bestTarget != null)
         {
-            // Determine future position
-            float timeToTarget = closestShipDistance / projectileSpeed;
-            Vector2 targetedPos = new Vector2(bestTarget.transform.position.x, bestTarget.transform.position.y);// + bestTarget.GetComponent<Movement>().GetFuturePosition(timeToTarget); //TODO: FIX
+            if (turretType == TurretType.MissilePods)
+            {
+                // Fire the bullet at the angle calculated
+                GameObject bullet = Instantiate(bulletPrefab, transform.position, Quaternion.identity);
+                bullet.GetComponent<NetworkObject>().SpawnWithOwnership(OwnerClientId);
+                bullet.GetComponent<Bullet>().SetupBullet(range / projectileSpeed, damage, projectileSpeed, turretType, bestTarget);
+                bullet.transform.parent = GameSceneManager.Singleton.bulletContainer;
+            }
+            else
+            {
+                // Determine future position
+                float timeToTarget = closestShipDistance / projectileSpeed;
+                Vector2 targetedPos = new Vector2(bestTarget.transform.position.x, bestTarget.transform.position.y);// + bestTarget.GetComponent<Movement>().GetFuturePosition(timeToTarget); //TODO: FIX
 
-            // Determine the shot direction
-            Vector2 shootDirection = (targetedPos - new Vector2(transform.position.x, transform.position.y));
-            float angleDiff = Vector2.SignedAngle(shootDirection, fireVector);
+                // Determine the shot direction
+                Vector2 shootDirection = (targetedPos - new Vector2(transform.position.x, transform.position.y));
+                float angleDiff = Vector2.SignedAngle(shootDirection, fireVector);
 
-            // Clamping shot angle to inside the bounds of our spread
-            if (firingArc != 360 && Mathf.Abs(angleDiff) > firingArc / 2)
-                angleDiff = firingArc / 2 * Mathf.Sign(angleDiff);
+                // Clamping shot angle to inside the bounds of our spread
+                if (firingArc != 360 && Mathf.Abs(angleDiff) > firingArc / 2)
+                    angleDiff = firingArc / 2 * Mathf.Sign(angleDiff);
 
-            // Calculate final fiire angle
-            float fireAngle = (aimDirection + transform.rotation.eulerAngles.z - angleDiff + Random.Range(-firingSpread / 2, firingSpread / 2)) * Mathf.Deg2Rad;
-            fireVector = new Vector2(Mathf.Cos(fireAngle), Mathf.Sin(fireAngle));
+                // Calculate final fiire angle
+                float fireAngle = (aimDirection + transform.rotation.eulerAngles.z - angleDiff + Random.Range(-firingSpread / 2, firingSpread / 2)) * Mathf.Deg2Rad;
+                fireVector = new Vector2(Mathf.Cos(fireAngle), Mathf.Sin(fireAngle));
 
-            // Fire the bullet at the angle calculated
-            GameObject bullet = Instantiate(bulletPrefab, transform.position, Quaternion.LookRotation(new Vector3(0, 0, 1), fireVector));
-            bullet.GetComponent<NetworkObject>().SpawnWithOwnership(OwnerClientId);
-            bullet.GetComponent<Bullet>().SetupBullet(range / projectileSpeed, damage, projectileSpeed, turretType);
-            bullet.transform.parent = GameSceneManager.Singleton.bulletContainer;
+                // Fire the bullet at the angle calculated
+                GameObject bullet = Instantiate(bulletPrefab, transform.position, Quaternion.LookRotation(new Vector3(0, 0, 1), fireVector));
+                bullet.GetComponent<NetworkObject>().SpawnWithOwnership(OwnerClientId);
+                bullet.GetComponent<Bullet>().SetupBullet(range / projectileSpeed, damage, projectileSpeed, turretType);
+                bullet.transform.parent = GameSceneManager.Singleton.bulletContainer;
+            }
             counter = 1 / fireRate;
         }
     }
@@ -167,6 +178,9 @@ public class Turret : NetworkBehaviour
                 break;
             case TurretType.LightTurret:
                 Gizmos.color = Color.green;
+                break;
+            case TurretType.MissilePods:
+                Gizmos.color = Color.blue;
                 break;
         }
 

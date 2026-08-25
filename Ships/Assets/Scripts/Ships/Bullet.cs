@@ -9,6 +9,7 @@ public class Bullet : NetworkBehaviour
     float maxbulletLifetime;
     float bulletSpeed;
     Turret.TurretType turretType;
+    Transform target;
 
     public override void OnNetworkSpawn()
     {
@@ -20,8 +21,19 @@ public class Bullet : NetworkBehaviour
     {
         if (!IsHost) return;
 
+        if (turretType == Turret.TurretType.MissilePods && target != null)
+        {
+            //transform.LookAt(target, new Vector3(0, 0, 1)); 
+            //transform.Translate((target.position - transform.position).normalized * bulletSpeed * Time.deltaTime);
+
+            Vector2 direction = target.position - transform.position;
+            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+            transform.rotation = Quaternion.Euler(0, 0, angle - 90);
+        }
+        //else
+        
         transform.Translate(new Vector2(0, 1) * bulletSpeed * Time.deltaTime);
-        bulletLifetime += Time.deltaTime;
+        bulletLifetime += Time.deltaTime;    
 
         if (bulletLifetime > maxbulletLifetime)
         {
@@ -41,7 +53,7 @@ public class Bullet : NetworkBehaviour
                 collision.GetComponent<Ship>().DoDamage(dmg);
 
         GetComponent<NetworkObject>().Despawn();
-        Destroy(this.gameObject);
+        Destroy(this);
     }
 
     public void SetupBullet(float lifetime, float damage, float speed, Turret.TurretType type)
@@ -62,6 +74,18 @@ public class Bullet : NetworkBehaviour
                 transform.localScale = new Vector3(0.1f, 0.1f, 1);
                 break;
         }
+    }
+
+    public void SetupBullet(float lifetime, float damage, float speed, Turret.TurretType type, Transform ship)
+    {
+        Debug.Log("spawned missile");
+        Debug.Log("Target: " + ship.position);
+        maxbulletLifetime = lifetime;
+        dmg = damage;
+        bulletSpeed = speed;
+        turretType = type;
+        target = ship;
+        transform.localScale = new Vector3(1, 1, 1);
     }
     /*
     [ClientRpc]
