@@ -8,6 +8,7 @@ public class Bullet : NetworkBehaviour
     float dmg;
     float maxbulletLifetime;
     float bulletSpeed;
+    Turret.TurretType turretType;
 
     public override void OnNetworkSpawn()
     {
@@ -43,11 +44,24 @@ public class Bullet : NetworkBehaviour
         Destroy(this.gameObject);
     }
 
-    public void SetupBullet(float lifetime, float damage, float speed)
+    public void SetupBullet(float lifetime, float damage, float speed, Turret.TurretType type)
     {
         maxbulletLifetime = lifetime;
         dmg = damage;
         bulletSpeed = speed;
+        turretType = type;
+        switch (type)
+        {
+            case Turret.TurretType.HeavyTurret:
+                transform.localScale = new Vector3(0.3f, 0.3f, 1);
+                break;
+            case Turret.TurretType.MediumTurret:
+                transform.localScale = new Vector3(0.2f, 0.2f, 1);
+                break;
+            case Turret.TurretType.LightTurret:
+                transform.localScale = new Vector3(0.1f, 0.1f, 1);
+                break;
+        }
     }
     /*
     [ClientRpc]

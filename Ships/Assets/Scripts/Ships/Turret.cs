@@ -7,7 +7,7 @@ public class Turret : NetworkBehaviour
 {
     [SerializeField] private GameObject bulletPrefab;
 
-    private enum TurretType
+    public enum TurretType
     {
         HeavyTurret,
         MediumTurret,
@@ -93,7 +93,7 @@ public class Turret : NetworkBehaviour
             // Fire the bullet at the angle calculated
             GameObject bullet = Instantiate(bulletPrefab, transform.position, Quaternion.LookRotation(new Vector3(0, 0, 1), fireVector));
             bullet.GetComponent<NetworkObject>().SpawnWithOwnership(OwnerClientId);
-            bullet.GetComponent<Bullet>().SetupBullet(range / projectileSpeed, damage, projectileSpeed);
+            bullet.GetComponent<Bullet>().SetupBullet(range / projectileSpeed, damage, projectileSpeed, turretType);
             bullet.transform.parent = GameSceneManager.Singleton.bulletContainer;
             counter = 1 / fireRate;
         }

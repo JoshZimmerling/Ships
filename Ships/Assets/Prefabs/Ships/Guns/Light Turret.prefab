@@ -48,7 +48,7 @@ MonoBehaviour:
   bulletPrefab: {fileID: 9135911124565628530, guid: a02ebc28117ec194c9dcdaecc201af8b, type: 3}
   turretType: 2
   damage: 1
-  fireRate: 2
+  fireRate: 3
   range: 15
   aimDirection: 0
   firingArc: 0

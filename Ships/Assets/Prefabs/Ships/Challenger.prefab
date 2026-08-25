@@ -400,7 +400,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7062957977223090958, guid: 43a2939fe795a084fb7eae8696978de9, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7366355817099220807, guid: 43a2939fe795a084fb7eae8696978de9, type: 3}
       propertyPath: m_Points.m_Paths.Array.data[0].Array.size
@@ -518,7 +518,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7062957977223090958, guid: 43a2939fe795a084fb7eae8696978de9, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7366355817099220807, guid: 43a2939fe795a084fb7eae8696978de9, type: 3}
       propertyPath: m_Points.m_Paths.Array.data[0].Array.size
@@ -636,7 +636,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7062957977223090958, guid: 43a2939fe795a084fb7eae8696978de9, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7366355817099220807, guid: 43a2939fe795a084fb7eae8696978de9, type: 3}
       propertyPath: m_Points.m_Paths.Array.data[0].Array.size
@@ -754,7 +754,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7062957977223090958, guid: 43a2939fe795a084fb7eae8696978de9, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7366355817099220807, guid: 43a2939fe795a084fb7eae8696978de9, type: 3}
       propertyPath: m_Points.m_Paths.Array.data[0].Array.size

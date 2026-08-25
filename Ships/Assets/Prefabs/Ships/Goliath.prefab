@@ -1830,7 +1830,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5248488840569974850, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: GlobalObjectIdHash
-      value: 377156705
+      value: 2802166650
       objectReference: {fileID: 0}
     - target: {fileID: 5548237794063707659, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: m_Sprite
