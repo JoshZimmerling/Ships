@@ -111,7 +111,7 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
                 {
                     RefreshLobbyList();
                 }
-                return;
+                break;
             case ScreenNames.LobbyScreen:
                 if (lobbyRefreshTimer < 0f)
                 {
@@ -122,7 +122,7 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
                 {
                     RefreshLobbyVisuals();
                 }
-                return;
+                break;
         }
 
         HandleLobbyHeartbeat();
