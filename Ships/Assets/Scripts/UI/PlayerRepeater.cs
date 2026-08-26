@@ -1,7 +1,6 @@
 using TMPro;
 using Unity.Services.Authentication;
 using Unity.Services.Lobbies.Models;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -64,7 +63,7 @@ public class PlayerRepeater : MonoBehaviour
         }
 
         foreach (var (id, playerData) in PlayerDataList.Singleton.players)
-            if (playerData.authenticationServicePlayerId.Value == playerId)
+            if (playerData.authenticationServicePlayerId.Value == playerId && playerData.playerColorIndex.Value != -1)
                 backgroundColor.color = menuManager.playerColors[playerData.playerColorIndex.Value];
     }
 }

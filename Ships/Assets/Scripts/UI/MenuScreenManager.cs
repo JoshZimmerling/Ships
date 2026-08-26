@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using TMPro;
-using Unity.Collections;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
 using Unity.Services.Authentication;
@@ -214,7 +213,6 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
             
             currentLobby = await LobbyService.Instance.CreateLobbyAsync(lobbyName, maxPlayers, options);
 
-            //Debug.Log("Created Lobby! " + currentLobby.Name + " " + currentLobby.MaxPlayers);
             currentLobby = await LobbyService.Instance.GetLobbyAsync(currentLobby.Id);
         }
         catch (LobbyServiceException e)
@@ -261,7 +259,6 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
         }
 
         await RefreshLobbyInfo();
-        //ChangeScreen(MenuScreenManager.ScreenNames.LobbyScreen);
     }
 
     private async void RefreshLobbyList()

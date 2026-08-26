@@ -1,7 +1,6 @@
 using Unity.Collections;
 using Unity.Netcode;
 using Unity.Services.Authentication;
-using Unity.Services.Lobbies.Models;
 using UnityEngine;
 
 public class PlayerData : NetworkBehaviour
@@ -26,17 +25,20 @@ public class PlayerData : NetworkBehaviour
             playerColor = MenuScreenManager.Singleton.playerColors[newValue];
         };
 
-        if (!IsOwner) return;
+        if (IsOwner) 
+        {
+            authenticationServicePlayerId.Value = AuthenticationService.Instance.PlayerId;
+            MenuScreenManager.Singleton.ChangePlayerColor(AuthenticationService.Instance.PlayerId);
+            playerUsername.Value = Save.myGlobalSaveData.username;
 
-        // Change screen after syncronize is complete
-        NetworkManager.Singleton.SceneManager.OnSceneEvent += (SceneEvent sceneEvent) => {
-            if (sceneEvent.SceneEventType == SceneEventType.SynchronizeComplete)
-                MenuScreenManager.Singleton.ChangeScreen(MenuScreenManager.ScreenNames.LobbyScreen);
-        };
+            // Change screen after syncronize is complete
+            NetworkManager.Singleton.SceneManager.OnSceneEvent += (SceneEvent sceneEvent) => {
+                if (sceneEvent.SceneEventType == SceneEventType.SynchronizeComplete)
+                    MenuScreenManager.Singleton.ChangeScreen(MenuScreenManager.ScreenNames.LobbyScreen);
+            };
+        }
 
-        authenticationServicePlayerId.Value = AuthenticationService.Instance.PlayerId;
-        playerUsername.Value = Save.myGlobalSaveData.username;
-        MenuScreenManager.Singleton.ChangePlayerColor(AuthenticationService.Instance.PlayerId);
+        if (playerColorIndex.Value != -1) playerColor = MenuScreenManager.Singleton.playerColors[playerColorIndex.Value];
     }
 
     public void PlayerSetup()
