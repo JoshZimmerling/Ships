@@ -129,8 +129,6 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Return))
-            Debug.Log("Enter key pressed " + usernameScreen.activeSelf);
         if (usernameScreen.activeSelf && Input.GetKeyDown(KeyCode.Return))
             SetUsername();
     }
