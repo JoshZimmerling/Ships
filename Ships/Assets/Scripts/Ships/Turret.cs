@@ -169,6 +169,7 @@ public class Turret : NetworkBehaviour
     {
         float shipRotationZ = gameObject.transform.rotation.eulerAngles.z;
 
+
         switch (turretType)
         {
             case TurretType.HeavyTurret:
@@ -187,11 +188,11 @@ public class Turret : NetworkBehaviour
 
         float max = aimDirection + firingArc / 2 + shipRotationZ;
         float maxRadians = max * Mathf.Deg2Rad;
-        Gizmos.DrawLine(transform.position, transform.position + new Vector3(Mathf.Cos(maxRadians), Mathf.Sin(maxRadians)) * range);
+        Gizmos.DrawLine(transform.position + new Vector3(Mathf.Cos(maxRadians), Mathf.Sin(maxRadians)) * range * 0.9f, transform.position + new Vector3(Mathf.Cos(maxRadians), Mathf.Sin(maxRadians)) * range);
 
         float min = aimDirection - firingArc / 2 + shipRotationZ;
         float minRadians = min * Mathf.Deg2Rad;
-        Gizmos.DrawLine(transform.position, transform.position + new Vector3(Mathf.Cos(minRadians), Mathf.Sin(minRadians)) * range);
+        Gizmos.DrawLine(transform.position + new Vector3(Mathf.Cos(minRadians), Mathf.Sin(minRadians)) * range * 0.9f, transform.position + new Vector3(Mathf.Cos(minRadians), Mathf.Sin(minRadians)) * range);
 
         for (float a = min; a < max - 1; a += 5)
         {
@@ -201,6 +202,7 @@ public class Turret : NetworkBehaviour
         }
 
         // Draw spread
+        /*
         Gizmos.color = Color.white;
 
         max = aimDirection + firingSpread / 2 + shipRotationZ;
@@ -216,5 +218,6 @@ public class Turret : NetworkBehaviour
             maxRadians = (a + 1) * Mathf.Deg2Rad;
             Gizmos.DrawLine(transform.position + new Vector3(Mathf.Cos(minRadians), Mathf.Sin(minRadians)) * 10, transform.position + new Vector3(Mathf.Cos(maxRadians), Mathf.Sin(maxRadians)) * 10);
         }
+        */
     }
 }
