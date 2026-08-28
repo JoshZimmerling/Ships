@@ -9,6 +9,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 8811438501680361406}
     m_Modifications:
     - target: {fileID: 3907542364246273763, guid: 43a2939fe795a084fb7eae8696978de9, type: 3}
+      propertyPath: range
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 3907542364246273763, guid: 43a2939fe795a084fb7eae8696978de9, type: 3}
       propertyPath: aimPoint
       value: 110
       objectReference: {fileID: 0}
@@ -191,6 +195,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7709267848172825610, guid: e346d0a53ff39734ca77a7b2bf7a716d, type: 3}
+      propertyPath: range
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 7709267848172825610, guid: e346d0a53ff39734ca77a7b2bf7a716d, type: 3}
       propertyPath: aimPoint
       value: 90
       objectReference: {fileID: 0}
@@ -208,10 +216,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7709267848172825610, guid: e346d0a53ff39734ca77a7b2bf7a716d, type: 3}
       propertyPath: arcSpread
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 7709267848172825610, guid: e346d0a53ff39734ca77a7b2bf7a716d, type: 3}
-      propertyPath: firingArc
       value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 7709267848172825610, guid: e346d0a53ff39734ca77a7b2bf7a716d, type: 3}
@@ -512,7 +516,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 6461518517610360253, guid: 79fb5aa85ab1dfc4e8e50251b3f5cd1c, type: 3}
       propertyPath: m_Name
-      value: Missiile Pods L
+      value: Missile Pods L
+      objectReference: {fileID: 0}
+    - target: {fileID: 6461518517610360253, guid: 79fb5aa85ab1dfc4e8e50251b3f5cd1c, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7383353965258389635, guid: 79fb5aa85ab1dfc4e8e50251b3f5cd1c, type: 3}
       propertyPath: m_LocalPosition.x
@@ -667,6 +675,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 8811438501680361406}
     m_Modifications:
     - target: {fileID: 3907542364246273763, guid: 43a2939fe795a084fb7eae8696978de9, type: 3}
+      propertyPath: range
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 3907542364246273763, guid: 43a2939fe795a084fb7eae8696978de9, type: 3}
       propertyPath: aimPoint
       value: 70
       objectReference: {fileID: 0}
@@ -762,7 +774,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 6461518517610360253, guid: 79fb5aa85ab1dfc4e8e50251b3f5cd1c, type: 3}
       propertyPath: m_Name
-      value: Missiile Pods R
+      value: Missile Pods R
+      objectReference: {fileID: 0}
+    - target: {fileID: 6461518517610360253, guid: 79fb5aa85ab1dfc4e8e50251b3f5cd1c, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7383353965258389635, guid: 79fb5aa85ab1dfc4e8e50251b3f5cd1c, type: 3}
       propertyPath: m_LocalPosition.x

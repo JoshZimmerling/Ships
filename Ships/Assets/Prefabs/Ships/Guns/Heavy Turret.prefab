@@ -51,7 +51,7 @@ MonoBehaviour:
   fireRate: 0.3
   range: 30
   aimDirection: 0
-  firingArc: 0
+  firingArc: 10
   firingSpread: 2
   projectileSpeed: 20
   counter: 0
