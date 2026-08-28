@@ -6,6 +6,7 @@ using UnityEngine;
 public class Turret : NetworkBehaviour
 {
     [SerializeField] private GameObject bulletPrefab;
+    [SerializeField] private GameObject missilePrefab;
 
     public enum TurretType
     {
@@ -36,11 +37,9 @@ public class Turret : NetworkBehaviour
 
     }
 
-
     // Find closest
     Transform bestTarget;
     float closestShipDistance;
-
 
     float maxRadians;
     Vector2 fireVector;
@@ -76,11 +75,11 @@ public class Turret : NetworkBehaviour
         {
             if (turretType == TurretType.MissilePods)
             {
-                // Fire the bullet at the angle calculated
-                GameObject bullet = Instantiate(bulletPrefab, transform.position, Quaternion.identity);
-                bullet.GetComponent<NetworkObject>().SpawnWithOwnership(OwnerClientId);
-                bullet.GetComponent<Bullet>().SetupBullet(range / projectileSpeed, damage, projectileSpeed, turretType, bestTarget);
-                bullet.transform.parent = GameSceneManager.Singleton.bulletContainer;
+                // Fire the missile
+                GameObject missile = Instantiate(missilePrefab, transform.position, Quaternion.identity);
+                missile.GetComponent<NetworkObject>().SpawnWithOwnership(OwnerClientId);
+                missile.GetComponent<Missile>().SetupMissile(damage, projectileSpeed, bestTarget);
+                missile.transform.parent = GameSceneManager.Singleton.bulletContainer;
             }
             else
             {

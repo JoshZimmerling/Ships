@@ -46,6 +46,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Turret
   ShowTopMostFoldoutHeaderGroup: 1
   bulletPrefab: {fileID: 9135911124565628530, guid: a02ebc28117ec194c9dcdaecc201af8b, type: 3}
+  missilePrefab: {fileID: 9135911124565628530, guid: e5a1ff53ba3f17241b5c3657d7e6ffe4, type: 3}
   turretType: 0
   damage: 20
   fireRate: 0.3
