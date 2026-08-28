@@ -28,6 +28,7 @@ public class Turret : NetworkBehaviour
     [SerializeField] private int firingSpread;
 
     [SerializeField] private int projectileSpeed;
+    [SerializeField] private float missileTurningSpeed = 60f;
     [SerializeField] private float counter = 0;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -112,7 +113,7 @@ public class Turret : NetworkBehaviour
                 GameObject missile = Instantiate(missilePrefab, transform.position, Quaternion.identity);
                 GameSceneManager.Singleton.missilesInScene.Add(missile);
                 missile.GetComponent<NetworkObject>().SpawnWithOwnership(OwnerClientId);
-                missile.GetComponent<Missile>().SetupMissile(damage, projectileSpeed, bestTarget);
+                missile.GetComponent<Missile>().SetupMissile(damage, projectileSpeed, missileTurningSpeed, bestTarget);
                 missile.transform.parent = GameSceneManager.Singleton.bulletContainer;
             }
             else
@@ -127,7 +128,8 @@ public class Turret : NetworkBehaviour
                 }
                 else if (bestTarget.GetComponent<Missile>() != null)
                 {
-                    targetedPos = new Vector2(bestTarget.transform.position.x, bestTarget.transform.position.y);
+                    //targetedPos = new Vector2(bestTarget.transform.position.x, bestTarget.transform.position.y);
+                    targetedPos = bestTarget.GetComponent<Missile>().GetFuturePosition(timeToTarget);
                     //targetedPos = Vector2.Lerp(new Vector2(bestTarget.transform.position.x, bestTarget.transform.position.y), bestTarget.GetComponent<Missile>().GetFuturePosition(timeToTarget), .8f); //This somewhat leads the ship, but not fully
                 }
 

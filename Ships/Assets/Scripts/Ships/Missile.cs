@@ -5,6 +5,7 @@ public class Missile : NetworkBehaviour
 {
     float dmg;
     float bulletSpeed;
+    float missileTurnRate;
 
     Transform missileTarget;
 
@@ -21,9 +22,27 @@ public class Missile : NetworkBehaviour
 
         Vector2 direction = missileTarget.position - transform.position;
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-        transform.rotation = Quaternion.Euler(0, 0, angle - 90);
+        Quaternion targetRotation = Quaternion.Euler(0, 0, angle - 90);
 
-        transform.Translate(Vector2.up * bulletSpeed * Time.deltaTime);
+        float degreesOff = Quaternion.Angle(transform.rotation, targetRotation);
+        if (degreesOff > 70) //Rotate faster if we are far off of our target
+        {
+            transform.rotation = Quaternion.RotateTowards(
+                transform.rotation,
+                targetRotation,
+                missileTurnRate * 5 * Time.deltaTime
+            );
+            transform.Translate(Vector2.up * bulletSpeed * .5f * Time.deltaTime);
+        }
+        else
+        {
+            transform.rotation = Quaternion.RotateTowards(
+                transform.rotation,
+                targetRotation,
+                missileTurnRate * Time.deltaTime
+            );
+            transform.Translate(Vector2.up * bulletSpeed * Time.deltaTime);
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -56,19 +75,21 @@ public class Missile : NetworkBehaviour
     public Vector2 GetFuturePosition(float seconds)
     {
         //TODO: MIGHT NEED FIX
-        //Vector2 direction = missileTarget.position - transform.position;
-        //float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-
-        //return transform.position + Quaternion.Euler(0, 0, angle - 90) * Vector2.up * bulletSpeed * seconds;
         return transform.position + transform.rotation * Vector2.up * bulletSpeed * seconds;
     }
 
-    public void SetupMissile(float damage, float speed, Transform target)
+    public void SetupMissile(float damage, float speed, float turnRate, Transform target)
     {
         dmg = damage;
         bulletSpeed = speed;
+        missileTurnRate = turnRate;
         missileTarget = target;
         transform.localScale = new Vector3(.75f, .75f, .75f);
+
+        //Set initial rotation
+        Vector2 direction = missileTarget.position - transform.position;
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        transform.rotation = Quaternion.Euler(0, 0, angle + (Random.Range(0,2) * 180)); //Will randomly start either directly left or directly right of where we are aiming
     }
 
     public void DestroyMissile()
