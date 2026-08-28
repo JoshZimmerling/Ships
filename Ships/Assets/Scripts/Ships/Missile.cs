@@ -15,13 +15,15 @@ public class Missile : NetworkBehaviour
 
     void FixedUpdate()
     {
-        if (!IsHost || missileTarget == null) return;
+        if (!IsHost) return;
         
+        if (missileTarget == null) DestroyMissile();
+
         Vector2 direction = missileTarget.position - transform.position;
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
         transform.rotation = Quaternion.Euler(0, 0, angle - 90);
 
-        transform.Translate(new Vector2(0, 1) * bulletSpeed * Time.deltaTime);
+        transform.Translate(Vector2.up * bulletSpeed * Time.deltaTime);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -40,8 +42,6 @@ public class Missile : NetworkBehaviour
         {
             if (collision.GetComponent<Missile>().OwnerClientId == this.OwnerClientId)
                 return;
-            else
-                collision.GetComponent<Missile>().DestroyMissile();
         }
 
         if (collision.gameObject.layer == LayerMask.NameToLayer("Bullet"))
@@ -51,6 +51,16 @@ public class Missile : NetworkBehaviour
         }
 
         DestroyMissile();
+    }
+
+    public Vector2 GetFuturePosition(float seconds)
+    {
+        //TODO: MIGHT NEED FIX
+        //Vector2 direction = missileTarget.position - transform.position;
+        //float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+
+        //return transform.position + Quaternion.Euler(0, 0, angle - 90) * Vector2.up * bulletSpeed * seconds;
+        return transform.position + transform.rotation * Vector2.up * bulletSpeed * seconds;
     }
 
     public void SetupMissile(float damage, float speed, Transform target)
@@ -63,7 +73,10 @@ public class Missile : NetworkBehaviour
 
     public void DestroyMissile()
     {
+        if (!IsHost) return;
+
+        GameSceneManager.Singleton.missilesInScene.Remove(gameObject);
         GetComponent<NetworkObject>().Despawn();
-        Destroy(gameObject);
+        Destroy(this);
     }
 }

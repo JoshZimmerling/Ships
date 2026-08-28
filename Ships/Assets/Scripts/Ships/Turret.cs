@@ -1,7 +1,6 @@
-using System.Collections.Generic;
 using Unity.Netcode;
-using Unity.VisualScripting;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 public class Turret : NetworkBehaviour
 {
@@ -39,7 +38,7 @@ public class Turret : NetworkBehaviour
 
     // Find closest
     Transform bestTarget;
-    float closestShipDistance;
+    float bestTargetDistance;
 
     float maxRadians;
     Vector2 fireVector;
@@ -56,18 +55,52 @@ public class Turret : NetworkBehaviour
 
 
         bestTarget = null;
-        closestShipDistance = Mathf.Infinity;
+        bestTargetDistance = Mathf.Infinity;
 
         maxRadians = (aimDirection + transform.rotation.eulerAngles.z) * Mathf.Deg2Rad;
         fireVector = new Vector2(Mathf.Cos(maxRadians), Mathf.Sin(maxRadians));
 
         foreach (GameObject enemyShip in GameSceneManager.Singleton.shipsInScene)
         {
-            // Finds the closest
-            if (IsValidTarget(enemyShip) && closestShipDistance > distanceToTarget)
+            // Finds the closest ship
+            if (IsValidTarget(enemyShip) && bestTargetDistance > distanceToTarget)
             {
-                closestShipDistance = distanceToTarget;
+                bestTargetDistance = distanceToTarget;
                 bestTarget = enemyShip.transform;
+            }
+        }
+        foreach (GameObject enemyMissiles in GameSceneManager.Singleton.missilesInScene)
+        {
+            // Determines if it should target the missile
+            if (IsValidTarget(enemyMissiles))
+            {
+                switch (turretType)
+                {
+                    case TurretType.LightTurret:
+                        if (bestTarget == null || bestTarget.GetComponent<Missile>() == null) // We want light turret to prio missiles over ships
+                        {
+                            bestTargetDistance = distanceToTarget;
+                            bestTarget = enemyMissiles.transform;
+                        }
+                        else if (bestTargetDistance > distanceToTarget) //If this missile is closer than the current best target
+                        {
+                            bestTargetDistance = distanceToTarget;
+                            bestTarget = enemyMissiles.transform;
+                        }
+                        break;
+                    default:
+                        if (bestTarget == null) // We want other turrets to only target missiles if there is no ship nearby
+                        {
+                            bestTargetDistance = distanceToTarget;
+                            bestTarget = enemyMissiles.transform;
+                        }
+                        else if (bestTarget.GetComponent<Missile>() != null && bestTargetDistance > distanceToTarget) //If this missile is closer than the current best target missile
+                        {
+                            bestTargetDistance = distanceToTarget;
+                            bestTarget = enemyMissiles.transform;
+                        }
+                        break;
+                }
             }
         }
 
@@ -77,6 +110,7 @@ public class Turret : NetworkBehaviour
             {
                 // Fire the missile
                 GameObject missile = Instantiate(missilePrefab, transform.position, Quaternion.identity);
+                GameSceneManager.Singleton.missilesInScene.Add(missile);
                 missile.GetComponent<NetworkObject>().SpawnWithOwnership(OwnerClientId);
                 missile.GetComponent<Missile>().SetupMissile(damage, projectileSpeed, bestTarget);
                 missile.transform.parent = GameSceneManager.Singleton.bulletContainer;
@@ -84,9 +118,18 @@ public class Turret : NetworkBehaviour
             else
             {
                 // Determine future position
-                float timeToTarget = closestShipDistance / projectileSpeed;
-                Vector2 targetedPos = Vector2.Lerp(new Vector2(bestTarget.transform.position.x, bestTarget.transform.position.y), bestTarget.GetComponent<Movement>().GetFuturePosition(timeToTarget), .8f); //This somewhat leads the ship, but not fully
-                //Vector2 targetedPos = bestTarget.GetComponent<Movement>().GetFuturePosition(timeToTarget); //This fully leads to where it expects the other ship to land
+                float timeToTarget = bestTargetDistance / projectileSpeed;
+                Vector2 targetedPos = Vector2.zero;
+
+                if (bestTarget.GetComponent<Ship>() != null)
+                {
+                    targetedPos = Vector2.Lerp(new Vector2(bestTarget.transform.position.x, bestTarget.transform.position.y), bestTarget.GetComponent<Movement>().GetFuturePosition(timeToTarget), .8f); //This somewhat leads the ship, but not fully
+                }
+                else if (bestTarget.GetComponent<Missile>() != null)
+                {
+                    targetedPos = new Vector2(bestTarget.transform.position.x, bestTarget.transform.position.y);
+                    //targetedPos = Vector2.Lerp(new Vector2(bestTarget.transform.position.x, bestTarget.transform.position.y), bestTarget.GetComponent<Missile>().GetFuturePosition(timeToTarget), .8f); //This somewhat leads the ship, but not fully
+                }
 
                 // Determine the shot direction
                 Vector2 shootDirection = (targetedPos - new Vector2(transform.position.x, transform.position.y));
@@ -110,12 +153,21 @@ public class Turret : NetworkBehaviour
         }
     }
 
-    private bool IsValidTarget(GameObject enemyShip)
+    private bool IsValidTarget(GameObject target)
     {
-        if (enemyShip.GetComponent<Ship>().OwnerClientId == OwnerClientId) return false; // Is owned by me
+        int corrVal = 0;
 
-        int corrVal = enemyShip.GetComponent<Ship>().correctionFactor;
-        Vector2 delta = enemyShip.transform.position - transform.position;
+        if (target.GetComponent<Ship>() != null)
+        {
+            if (target.GetComponent<Ship>().OwnerClientId == OwnerClientId) return false; // Is owned by me
+            corrVal = target.GetComponent<Ship>().correctionFactor;
+        }
+        else if (target.GetComponent<Missile>() != null)
+        {
+            if (target.GetComponent<Missile>().OwnerClientId == OwnerClientId) return false; // Is owned by me
+        }
+
+        Vector2 delta = target.transform.position - transform.position;
         distanceToTarget = delta.magnitude - corrVal;
         if (distanceToTarget > range) return false; // Is out of range
 
@@ -124,13 +176,13 @@ public class Turret : NetworkBehaviour
         float dot = Vector2.Dot(delta.normalized, fireVector);
         float halfAngleRad = (firingArc * 0.5f) * Mathf.Deg2Rad;
         float cosHalfAngle = Mathf.Cos(halfAngleRad);
-        if (dot >= cosHalfAngle && distanceToTarget <= range) return true; // Center of ship in sector (extended)
+        if (dot >= cosHalfAngle && distanceToTarget <= range) return true; // Center of target in sector (extended)
 
         Vector2 leftEdgeDir = RotateVector(fireVector, firingArc * 0.5f).normalized;
         Vector2 rightEdgeDir = RotateVector(fireVector, -firingArc * 0.5f).normalized;
 
-        if (LineSegmentIntersectsCircle(transform.position, (Vector2)transform.position + leftEdgeDir * range, enemyShip.transform.position, corrVal)) return true;
-        if (LineSegmentIntersectsCircle(transform.position, (Vector2)transform.position + rightEdgeDir * range, enemyShip.transform.position, corrVal)) return true;
+        if (LineSegmentIntersectsCircle(transform.position, (Vector2)transform.position + leftEdgeDir * range, target.transform.position, corrVal)) return true;
+        if (LineSegmentIntersectsCircle(transform.position, (Vector2)transform.position + rightEdgeDir * range, target.transform.position, corrVal)) return true;
 
         return false;
     }

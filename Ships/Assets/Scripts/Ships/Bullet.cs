@@ -43,8 +43,6 @@ public class Bullet : NetworkBehaviour
         {
             if (collision.GetComponent<Missile>().OwnerClientId == this.OwnerClientId)
                 return;
-            else
-                collision.GetComponent<Missile>().DestroyMissile();
         }
 
         GetComponent<NetworkObject>().Despawn();

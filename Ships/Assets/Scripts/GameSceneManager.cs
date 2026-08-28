@@ -11,6 +11,7 @@ public class GameSceneManager : Singleton<GameSceneManager>
     public Transform bulletContainer;
     public List<GameObject> playerSpawns = new List<GameObject>();
     public List<GameObject> shipsInScene = new List<GameObject>();
+    public List<GameObject> missilesInScene = new List<GameObject>();
 
     public void Start()
     {
