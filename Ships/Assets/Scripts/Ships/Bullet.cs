@@ -6,8 +6,10 @@ using UnityEngine;
 public class Bullet : NetworkBehaviour
 {
     float dmg;
-    float maxbulletLifetime;
     float bulletSpeed;
+
+    Vector2 spawnPos;
+    float sqrRange;
     Turret.TurretType turretType;
     Transform target;
 
@@ -19,23 +21,17 @@ public class Bullet : NetworkBehaviour
     float bulletLifetime = 0;
     void FixedUpdate()
     {
-        if (!IsHost) return;
+        if (!IsHost || spawnPos == null) return;
 
         if (turretType == Turret.TurretType.MissilePods && target != null)
         {
-            //transform.LookAt(target, new Vector3(0, 0, 1)); 
-            //transform.Translate((target.position - transform.position).normalized * bulletSpeed * Time.deltaTime);
-
             Vector2 direction = target.position - transform.position;
             float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
             transform.rotation = Quaternion.Euler(0, 0, angle - 90);
         }
-        //else
         
-        transform.Translate(new Vector2(0, 1) * bulletSpeed * Time.deltaTime);
-        bulletLifetime += Time.deltaTime;    
-
-        if (bulletLifetime > maxbulletLifetime)
+        transform.Translate(new Vector2(0, 1) * bulletSpeed * Time.deltaTime);        
+        if (Vector2.SqrMagnitude(spawnPos - (Vector2)transform.position) > sqrRange)
         {
             GetComponent<NetworkObject>().Despawn();
             Destroy(this);
@@ -56,10 +52,12 @@ public class Bullet : NetworkBehaviour
         Destroy(this);
     }
 
-    public void SetupBullet(float lifetime, float damage, float speed, Turret.TurretType type)
+    public void SetupBullet(float range, float damage, float speed, Turret.TurretType type)
     {
-        maxbulletLifetime = lifetime;
+        spawnPos = transform.position;
         dmg = damage;
+        range = range + 5;
+        sqrRange = range * range;
         bulletSpeed = speed;
         turretType = type;
         switch (type)
@@ -79,11 +77,10 @@ public class Bullet : NetworkBehaviour
         }
     }
 
-    public void SetupBullet(float lifetime, float damage, float speed, Turret.TurretType type, Transform ship)
+    public void SetupBullet(float range, float damage, float speed, Turret.TurretType type, Transform ship)
     {
-        Debug.Log("spawned missile");
-        Debug.Log("Target: " + ship.position);
-        maxbulletLifetime = lifetime;
+        spawnPos = transform.position;
+        sqrRange = range * range;
         dmg = damage;
         bulletSpeed = speed;
         turretType = type;

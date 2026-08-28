@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7383353965258389635}
   - component: {fileID: 978731457748045904}
   m_Layer: 11
-  m_Name: Missiile Pods
+  m_Name: Missile Pods
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

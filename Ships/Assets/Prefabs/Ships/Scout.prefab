@@ -287,6 +287,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Scout
       objectReference: {fileID: 0}
+    - target: {fileID: 5167211490098671168, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5248488840569974850, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: GlobalObjectIdHash
       value: 263268806
@@ -510,7 +514,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 6461518517610360253, guid: 79fb5aa85ab1dfc4e8e50251b3f5cd1c, type: 3}
       propertyPath: m_Name
-      value: Missiile Pods
+      value: Missile Pods
+      objectReference: {fileID: 0}
+    - target: {fileID: 6461518517610360253, guid: 79fb5aa85ab1dfc4e8e50251b3f5cd1c, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7383353965258389635, guid: 79fb5aa85ab1dfc4e8e50251b3f5cd1c, type: 3}
       propertyPath: m_LocalPosition.x

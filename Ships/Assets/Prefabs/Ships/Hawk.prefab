@@ -314,6 +314,10 @@ PrefabInstance:
       value: Heavy Turret
       objectReference: {fileID: 0}
     - target: {fileID: 7709267848172825610, guid: e346d0a53ff39734ca77a7b2bf7a716d, type: 3}
+      propertyPath: range
+      value: 35
+      objectReference: {fileID: 0}
+    - target: {fileID: 7709267848172825610, guid: e346d0a53ff39734ca77a7b2bf7a716d, type: 3}
       propertyPath: aimPoint
       value: 90
       objectReference: {fileID: 0}
@@ -323,7 +327,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7709267848172825610, guid: e346d0a53ff39734ca77a7b2bf7a716d, type: 3}
       propertyPath: firingArc
-      value: 20
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 7709267848172825610, guid: e346d0a53ff39734ca77a7b2bf7a716d, type: 3}
       propertyPath: aimDirection
