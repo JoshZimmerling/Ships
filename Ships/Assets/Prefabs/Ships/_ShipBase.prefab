@@ -391,7 +391,7 @@ SpriteRenderer:
   m_SortingLayer: 1
   m_SortingOrder: 0
   m_MaskInteraction: 1
-  m_Sprite: {fileID: 21300000, guid: b6500809a4eecc448a2eaf4d6d503c34, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 86c7d450d73b3aa4ea434cb00f94bc35, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_FlipX: 0
   m_FlipY: 0
@@ -667,6 +667,7 @@ MonoBehaviour:
   shipType: 6
   shipCost: 10
   maxShipHP: 10
+  correctionFactor: 0
 --- !u!114 &4637950062562444113
 MonoBehaviour:
   m_ObjectHideFlags: 0

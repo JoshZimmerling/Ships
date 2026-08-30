@@ -112,6 +112,10 @@ PrefabInstance:
       propertyPath: correctionFactor
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 2767865747623681743, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: b6500809a4eecc448a2eaf4d6d503c34, type: 3}
     - target: {fileID: 3985505458702315912, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: m_Size.x
       value: 1
@@ -122,6 +126,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3985505458702315912, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: m_EdgeRadius
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4322745889547320143, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
+      propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4637950062562444113, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
@@ -142,7 +150,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5248488840569974850, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: GlobalObjectIdHash
-      value: 3843823246
+      value: 911167562
       objectReference: {fileID: 0}
     - target: {fileID: 5548237794063707659, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: m_Sprite

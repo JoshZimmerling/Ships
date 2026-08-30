@@ -1,6 +1,5 @@
 using Unity.Netcode;
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
 
 public class Turret : NetworkBehaviour
 {
