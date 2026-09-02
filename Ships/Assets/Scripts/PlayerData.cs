@@ -62,9 +62,7 @@ public class PlayerData : NetworkBehaviour
         Vector2 offset = Random.onUnitCircle * 15;
         if (motherShip == null)
         {
-            GameObject spawnerPlatform = gameManager.playerSpawns[Random.Range(0, gameManager.playerSpawns.Count)];
-            spawnPos = spawnerPlatform.transform.position;
-            gameManager.playerSpawns.Remove(spawnerPlatform);
+            spawnPos = gameManager.GetOneMothershipSpawnPosition().position;
         }
         else
             spawnPos = motherShip.transform.position + new Vector3(offset.x, offset.y);

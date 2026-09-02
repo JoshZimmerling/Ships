@@ -2,16 +2,32 @@ using System;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class GameSceneManager : Singleton<GameSceneManager>
 {
     public NetworkPrefabsList shipList;
 
+    private List<Transform> playerSpawns;
+
     // TODO: Get rid of these
     public Transform bulletContainer;
-    public List<GameObject> playerSpawns = new List<GameObject>();
     public List<GameObject> shipsInScene = new List<GameObject>();
     public List<GameObject> missilesInScene = new List<GameObject>();
+
+    // TODO: make this better
+    [SerializeField] private GameObject map;
+    [SerializeField] private GameObject gameUI;
+    [SerializeField] private GameObject inputManager;
+
+    protected override void Awake()
+    {
+        base.Awake();
+
+        playerSpawns = new List<Transform>();
+        foreach (Transform spawnLocation in map.transform.Find("SpawnPlatforms"))
+            playerSpawns.Add(spawnLocation);
+    }
 
     public void Start()
     {
@@ -23,11 +39,6 @@ public class GameSceneManager : Singleton<GameSceneManager>
     {
         return shipList.PrefabList[shipNum].Prefab;
     }
-
-    // TODO: make this better
-    [SerializeField] private GameObject map;
-    [SerializeField] private GameObject gameUI;
-    [SerializeField] private GameObject inputManager;
 
     // GameState code
     public static event Action<GameState> OnBeforeStateChange;
@@ -64,6 +75,13 @@ public class GameSceneManager : Singleton<GameSceneManager>
         }
 
         OnAfterStateChange?.Invoke(newState);
+    }
+
+    public Transform GetOneMothershipSpawnPosition()
+    {
+        Transform randomSpawn = playerSpawns[Random.Range(0, playerSpawns.Count)];
+        playerSpawns.Remove(randomSpawn);
+        return randomSpawn;
     }
 }
 
