@@ -1,4 +1,5 @@
 using Unity.Netcode;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Turret : NetworkBehaviour
@@ -125,6 +126,10 @@ public class Turret : NetworkBehaviour
                 {
                     targetedPos = Vector2.Lerp(new Vector2(bestTarget.transform.position.x, bestTarget.transform.position.y), bestTarget.GetComponent<Movement>().GetFuturePosition(timeToTarget), .8f); //This somewhat leads the ship, but not fully
                 }
+                else if (bestTarget.GetComponent<NeutralShip>() != null)
+                {
+                    targetedPos = bestTarget.GetComponent<NeutralShip>().GetFuturePosition(timeToTarget);
+                }
                 else if (bestTarget.GetComponent<Missile>() != null)
                 {
                     //targetedPos = new Vector2(bestTarget.transform.position.x, bestTarget.transform.position.y);
@@ -147,7 +152,7 @@ public class Turret : NetworkBehaviour
                 // Fire the bullet at the angle calculated
                 GameObject bullet = Instantiate(bulletPrefab, transform.position, Quaternion.LookRotation(new Vector3(0, 0, 1), fireVector));
                 bullet.GetComponent<NetworkObject>().SpawnWithOwnership(OwnerClientId);
-                bullet.GetComponent<Bullet>().SetupBullet(range, damage, projectileSpeed, turretType);
+                bullet.GetComponent<Bullet>().SetupBullet(range, damage, projectileSpeed, turretType, transform.parent.parent.GetComponent<NeutralShip>() != null);
                 bullet.transform.parent = GameSceneManager.Singleton.bulletContainer;
             }
             counter = 1 / fireRate;
@@ -160,12 +165,16 @@ public class Turret : NetworkBehaviour
 
         if (target.GetComponent<Ship>() != null)
         {
-            if (target.GetComponent<Ship>().OwnerClientId == OwnerClientId) return false; // Is owned by me
+            if (target.GetComponent<Ship>().OwnerClientId == OwnerClientId && !transform.parent.parent.GetComponent<NeutralShip>()) return false; // Is owned by me
             corrVal = target.GetComponent<Ship>().correctionFactor;
+        }
+        else if (target.GetComponent<NeutralShip>() != null)
+        {
+            if (transform.parent.parent.GetComponent<NeutralShip>()) return false; // Neutral ships should not shoot other neutral ships
         }
         else if (target.GetComponent<Missile>() != null)
         {
-            if (target.GetComponent<Missile>().OwnerClientId == OwnerClientId) return false; // Is owned by me
+            if (target.GetComponent<Missile>().OwnerClientId == OwnerClientId && !transform.parent.parent.GetComponent<NeutralShip>()) return false; // Is owned by me
         }
 
         Vector2 delta = target.transform.position - transform.position;

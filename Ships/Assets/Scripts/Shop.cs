@@ -62,6 +62,12 @@ public class Shop : Singleton<Shop>
         UpdateGold();
     }    
 
+    public void AddGold(int increaseAmount)
+    {
+        playerGold += increaseAmount;
+        UpdateGold();
+    }
+
     public void ToggleShop()
     {
         shopOpen = !shopOpen;

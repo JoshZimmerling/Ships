@@ -10,9 +10,12 @@ public class Bullet : NetworkBehaviour
     float sqrRange;
     Turret.TurretType turretType;
 
+    public bool isFromNeutralShip = false;
+    private Color neutralShipColor = new Color(212/255f, 175/255f, 55/255f);
+
     public override void OnNetworkSpawn()
     {
-        GetComponent<SpriteRenderer>().color = PlayerDataList.Singleton.players[OwnerClientId].playerColor;
+        GetComponent<SpriteRenderer>().color = isFromNeutralShip ? neutralShipColor : PlayerDataList.Singleton.players[OwnerClientId].playerColor;
     }
 
     void FixedUpdate()
@@ -31,15 +34,22 @@ public class Bullet : NetworkBehaviour
     {
         if (!IsHost) return;
 
-        if (collision.gameObject.layer == LayerMask.NameToLayer("Ship"))
+        if (collision.GetComponent<Ship>() != null)
         {
-            if (collision.GetComponent<Ship>().OwnerClientId == this.OwnerClientId)
+            if (collision.GetComponent<Ship>().OwnerClientId == this.OwnerClientId && !isFromNeutralShip)
                 return;
             else
                 collision.GetComponent<Ship>().DoDamage(dmg);
         }
 
-        if (collision.gameObject.layer == LayerMask.NameToLayer("Missile"))
+        if (collision.GetComponent<NeutralShip>() != null)
+        {
+            if (isFromNeutralShip)
+                return;
+            collision.GetComponent<NeutralShip>().DoDamage(dmg, this.OwnerClientId);
+        }
+
+        if (collision.GetComponent<Missile>() != null)
         {
             if (collision.GetComponent<Missile>().OwnerClientId == this.OwnerClientId)
                 return;
@@ -49,7 +59,7 @@ public class Bullet : NetworkBehaviour
         Destroy(this);
     }
 
-    public void SetupBullet(float range, float damage, float speed, Turret.TurretType type)
+    public void SetupBullet(float range, float damage, float speed, Turret.TurretType type, bool neutralShip)
     {
         spawnPos = transform.position;
         dmg = damage;
@@ -57,6 +67,7 @@ public class Bullet : NetworkBehaviour
         sqrRange = range * range;
         bulletSpeed = speed;
         turretType = type;
+        isFromNeutralShip = neutralShip;
         switch (turretType)
         {
             case Turret.TurretType.HeavyTurret:
@@ -69,6 +80,9 @@ public class Bullet : NetworkBehaviour
                 transform.localScale = new Vector3(0.2f, 0.2f, 1);
                 break;
         }
+
+        if (isFromNeutralShip)
+            GetComponent<SpriteRenderer>().color = neutralShipColor;
     }
     /*
     [ClientRpc]

@@ -49,7 +49,7 @@ public class Missile : NetworkBehaviour
     {
         if (!IsHost) return;
         
-        if (collision.gameObject.layer == LayerMask.NameToLayer("Ship"))
+        if (collision.GetComponent<Ship>() != null)
         {
             if (collision.GetComponent<Ship>().OwnerClientId == this.OwnerClientId)
                 return;
@@ -57,15 +57,20 @@ public class Missile : NetworkBehaviour
                 collision.GetComponent<Ship>().DoDamage(dmg);
         }
 
-        if (collision.gameObject.layer == LayerMask.NameToLayer("Missile"))
+        if (collision.GetComponent<NeutralShip>() != null)
+        {
+            collision.GetComponent<NeutralShip>().DoDamage(dmg, this.OwnerClientId);
+        }
+
+        if (collision.GetComponent<Missile>() != null)
         {
             if (collision.GetComponent<Missile>().OwnerClientId == this.OwnerClientId)
                 return;
         }
 
-        if (collision.gameObject.layer == LayerMask.NameToLayer("Bullet"))
+        if (collision.GetComponent<Bullet>() != null)
         {
-            if (collision.GetComponent<Bullet>().OwnerClientId == this.OwnerClientId)
+            if (collision.GetComponent<Bullet>().OwnerClientId == this.OwnerClientId && !collision.GetComponent<Bullet>().isFromNeutralShip)
                 return;
         }
 

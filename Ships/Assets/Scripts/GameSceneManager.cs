@@ -25,7 +25,7 @@ public class GameSceneManager : Singleton<GameSceneManager>
         base.Awake();
 
         playerSpawns = new List<Transform>();
-        foreach (Transform spawnLocation in map.transform.Find("SpawnPlatforms"))
+        foreach (Transform spawnLocation in map.transform.Find("Mothership Spawn Positions"))
             playerSpawns.Add(spawnLocation);
     }
 
