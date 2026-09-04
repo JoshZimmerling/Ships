@@ -13,11 +13,6 @@ public class Bullet : NetworkBehaviour
     public bool isFromNeutralShip = false;
     private Color neutralShipColor = new Color(212/255f, 175/255f, 55/255f);
 
-    public override void OnNetworkSpawn()
-    {
-        GetComponent<SpriteRenderer>().color = isFromNeutralShip ? neutralShipColor : PlayerDataList.Singleton.players[OwnerClientId].playerColor;
-    }
-
     void FixedUpdate()
     {
         if (!IsHost || spawnPos == null) return;
@@ -82,15 +77,14 @@ public class Bullet : NetworkBehaviour
         }
 
         if (isFromNeutralShip)
-            GetComponent<SpriteRenderer>().color = neutralShipColor;
+            SetBulletColorRPC(neutralShipColor);
+        else
+            SetBulletColorRPC(PlayerDataList.Singleton.players[OwnerClientId].playerColor);
     }
-    /*
-    [ClientRpc]
-    public void SetupBulletClientRPC(float lifetime, float damage, float speed)
+
+    [Rpc(SendTo.ClientsAndHost)]
+    public void SetBulletColorRPC(Color bulletColor)
     {
-        maxbulletLifetime = lifetime;
-        dmg = damage;
-        bulletSpeed = speed;
+        GetComponent<SpriteRenderer>().color = bulletColor;
     }
-    */
 }

@@ -128,13 +128,11 @@ public class Turret : NetworkBehaviour
                 }
                 else if (bestTarget.GetComponent<NeutralShip>() != null)
                 {
-                    targetedPos = bestTarget.GetComponent<NeutralShip>().GetFuturePosition(timeToTarget);
+                    targetedPos = Vector2.Lerp(new Vector2(bestTarget.transform.position.x, bestTarget.transform.position.y), bestTarget.GetComponent<NeutralShip>().GetFuturePosition(timeToTarget), .8f); //This somewhat leads the ship, but not fully
                 }
                 else if (bestTarget.GetComponent<Missile>() != null)
                 {
-                    //targetedPos = new Vector2(bestTarget.transform.position.x, bestTarget.transform.position.y);
                     targetedPos = bestTarget.GetComponent<Missile>().GetFuturePosition(timeToTarget);
-                    //targetedPos = Vector2.Lerp(new Vector2(bestTarget.transform.position.x, bestTarget.transform.position.y), bestTarget.GetComponent<Missile>().GetFuturePosition(timeToTarget), .8f); //This somewhat leads the ship, but not fully
                 }
 
                 // Determine the shot direction
