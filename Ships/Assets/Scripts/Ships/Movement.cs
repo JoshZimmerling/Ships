@@ -147,5 +147,8 @@ public class Movement : NetworkBehaviour
         backingUp = false;
         targetPos = target;
         rotateOnly = isRotateOnly;
+
+        if (isRotateOnly)
+            totalVelocity = 0;
     }
 }

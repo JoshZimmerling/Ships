@@ -16,6 +16,8 @@ public class NeutralShip : NetworkBehaviour
     [SerializeField] int moveSpeed = 5;
     [SerializeField] int goldOnKill = 10;
 
+    [SerializeField] GameObject popupTextPrefab;
+
     public override void OnNetworkSpawn()
     {
         // Finding ship components
@@ -79,6 +81,10 @@ public class NeutralShip : NetworkBehaviour
     {
         //If my client ID is the one who killed the neutral ship, gain money
         if (damageDealersClientID == NetworkManager.LocalClientId)
+        {
+            PopupText popupText = Instantiate(popupTextPrefab, transform.position, Quaternion.identity).GetComponent<PopupText>();
+            popupText.SetupText("+ $" + goldOnKill, Color.gold, 2.5f);
             Shop.Singleton.AddGold(goldOnKill);
+        }
     }
 }
