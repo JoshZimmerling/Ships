@@ -132,7 +132,7 @@ public class Turret : NetworkBehaviour
                 }
                 else if (bestTarget.GetComponent<Missile>() != null)
                 {
-                    targetedPos = bestTarget.GetComponent<Missile>().GetFuturePosition(timeToTarget);
+                    targetedPos = bestTarget.position;
                 }
 
                 // Determine the shot direction
