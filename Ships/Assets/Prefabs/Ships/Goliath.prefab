@@ -2007,6 +2007,10 @@ PrefabInstance:
       propertyPath: fireRate
       value: 0.025
       objectReference: {fileID: 0}
+    - target: {fileID: 978731457748045904, guid: 79fb5aa85ab1dfc4e8e50251b3f5cd1c, type: 3}
+      propertyPath: aimDirection
+      value: 270
+      objectReference: {fileID: 0}
     - target: {fileID: 6461518517610360253, guid: 79fb5aa85ab1dfc4e8e50251b3f5cd1c, type: 3}
       propertyPath: m_Name
       value: Missile Pods

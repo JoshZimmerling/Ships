@@ -70,37 +70,18 @@ public class Turret : NetworkBehaviour
                 bestTarget = enemyShip.transform;
             }
         }
-        foreach (GameObject enemyMissiles in GameSceneManager.Singleton.missilesInScene)
+
+        // If it is not a missile turret and then
+        // If there isnt a ship targeted or if it is a light turret look to target missiles
+        if (turretType != TurretType.MissilePods && (bestTarget != null || turretType == TurretType.LightTurret))
         {
-            // Determines if it should target the missile
-            if (IsValidTarget(enemyMissiles))
+            foreach (GameObject enemyMissiles in GameSceneManager.Singleton.missilesInScene)
             {
-                switch (turretType)
+                // Look to see if there are any missiles in range and targets them if they are the closest (or if there isnt anything targeted yet)
+                if (IsValidTarget(enemyMissiles) && (bestTarget == null || bestTargetDistance > distanceToTarget))
                 {
-                    case TurretType.LightTurret:
-                        if (bestTarget == null || bestTarget.GetComponent<Missile>() == null) // We want light turret to prio missiles over ships
-                        {
-                            bestTargetDistance = distanceToTarget;
-                            bestTarget = enemyMissiles.transform;
-                        }
-                        else if (bestTargetDistance > distanceToTarget) //If this missile is closer than the current best target
-                        {
-                            bestTargetDistance = distanceToTarget;
-                            bestTarget = enemyMissiles.transform;
-                        }
-                        break;
-                    default:
-                        if (bestTarget == null) // We want other turrets to only target missiles if there is no ship nearby
-                        {
-                            bestTargetDistance = distanceToTarget;
-                            bestTarget = enemyMissiles.transform;
-                        }
-                        else if (bestTarget.GetComponent<Missile>() != null && bestTargetDistance > distanceToTarget) //If this missile is closer than the current best target missile
-                        {
-                            bestTargetDistance = distanceToTarget;
-                            bestTarget = enemyMissiles.transform;
-                        }
-                        break;
+                    bestTargetDistance = distanceToTarget;
+                    bestTarget = enemyMissiles.transform;
                 }
             }
         }
@@ -110,7 +91,7 @@ public class Turret : NetworkBehaviour
             if (turretType == TurretType.MissilePods)
             {
                 // Fire the missile
-                GameObject missile = Instantiate(missilePrefab, transform.position, Quaternion.identity);
+                GameObject missile = Instantiate(missilePrefab, transform.position, Quaternion.LookRotation(new Vector3(0, 0, 1), fireVector));
                 GameSceneManager.Singleton.missilesInScene.Add(missile);
                 missile.GetComponent<NetworkObject>().SpawnWithOwnership(OwnerClientId);
                 missile.GetComponent<Missile>().SetupMissile(damage, projectileSpeed, missileTurningSpeed, bestTarget);
@@ -242,16 +223,20 @@ public class Turret : NetworkBehaviour
                 break;
             case TurretType.MissilePods:
                 Gizmos.color = Color.blue;
+                float aimDirectionRadians = (aimDirection + shipRotationZ) * Mathf.Deg2Rad;
+                Gizmos.DrawLine(transform.position, transform.position + new Vector3(Mathf.Cos(aimDirectionRadians), Mathf.Sin(aimDirectionRadians)) * range * 0.2f);
                 break;
         }
 
         float max = aimDirection + firingArc / 2 + shipRotationZ;
         float maxRadians = max * Mathf.Deg2Rad;
-        Gizmos.DrawLine(transform.position + new Vector3(Mathf.Cos(maxRadians), Mathf.Sin(maxRadians)) * range * 0.9f, transform.position + new Vector3(Mathf.Cos(maxRadians), Mathf.Sin(maxRadians)) * range);
-
         float min = aimDirection - firingArc / 2 + shipRotationZ;
         float minRadians = min * Mathf.Deg2Rad;
-        Gizmos.DrawLine(transform.position + new Vector3(Mathf.Cos(minRadians), Mathf.Sin(minRadians)) * range * 0.9f, transform.position + new Vector3(Mathf.Cos(minRadians), Mathf.Sin(minRadians)) * range);
+        if (firingArc < 360)
+        {
+            Gizmos.DrawLine(transform.position + new Vector3(Mathf.Cos(maxRadians), Mathf.Sin(maxRadians)) * range * 0.9f, transform.position + new Vector3(Mathf.Cos(maxRadians), Mathf.Sin(maxRadians)) * range);
+            Gizmos.DrawLine(transform.position + new Vector3(Mathf.Cos(minRadians), Mathf.Sin(minRadians)) * range * 0.9f, transform.position + new Vector3(Mathf.Cos(minRadians), Mathf.Sin(minRadians)) * range);
+        }
 
         for (float a = min; a < max - 1; a += 5)
         {

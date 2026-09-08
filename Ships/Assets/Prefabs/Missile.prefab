@@ -32,7 +32,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
+  m_LocalScale: {x: 0.375, y: 0.375, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -49,7 +49,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 674874955
+  GlobalObjectIdHash: 2217205669
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -202,8 +202,8 @@ CapsuleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.000000029802322, y: 0.28169006}
-  m_Size: {x: 0.6860005, y: 1.8127605}
+  m_Offset: {x: 0, y: 0.25}
+  m_Size: {x: 0.7, y: 1.8}
   m_Direction: 0
 --- !u!114 &8724090235591258839
 MonoBehaviour:
@@ -218,6 +218,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Missile
   ShowTopMostFoldoutHeaderGroup: 1
+  missileLifetimeMax: 8
 --- !u!50 &9170517788561288484
 Rigidbody2D:
   serializedVersion: 5

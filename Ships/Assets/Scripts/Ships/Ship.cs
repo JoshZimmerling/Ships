@@ -18,9 +18,9 @@ public class Ship : NetworkBehaviour
     // Ship Variables
     [SerializeField] private ShipTypes shipType;
     [SerializeField] private float shipCost;
-    [SerializeField] protected float maxShipHP;
-    protected NetworkVariable<float> currentShipHP = new NetworkVariable<float>();
-    public int correctionFactor;
+    [SerializeField] private float maxShipHP;
+    private readonly NetworkVariable<float> currentShipHP = new NetworkVariable<float>();
+    public int correctionFactor; // Opponent range adjustments
 
     // Ship Components
     private Transform hpBar;
@@ -28,9 +28,9 @@ public class Ship : NetworkBehaviour
 
     private PlayerData playerData;
 
-    private GameObject scoutMarker;
-    private GameObject minimapMarker;
-    private GameObject minimapScoutMarker;
+    private GameObject scoutMarker; // Marker in fog of war (Enemy)
+    private GameObject minimapMarker; // Market on minimap (Both)
+    private GameObject minimapScoutMarker; // Marker in minimap fog of war (Enemy)
 
     public override void OnNetworkSpawn()
     {
