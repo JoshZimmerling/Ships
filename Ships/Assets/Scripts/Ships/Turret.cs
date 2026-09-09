@@ -91,7 +91,7 @@ public class Turret : NetworkBehaviour
             if (turretType == TurretType.MissilePods)
             {
                 // Fire the missile
-                GameObject missile = Instantiate(missilePrefab, transform.position, Quaternion.LookRotation(new Vector3(0, 0, 1), fireVector));
+                GameObject missile = Instantiate(missilePrefab, transform.position, Quaternion.Euler(0, 0, aimDirection - 90 + transform.rotation.eulerAngles.z));
                 GameSceneManager.Singleton.missilesInScene.Add(missile);
                 missile.GetComponent<NetworkObject>().SpawnWithOwnership(OwnerClientId);
                 missile.GetComponent<Missile>().SetupMissile(damage, projectileSpeed, missileTurningSpeed, bestTarget);
@@ -134,7 +134,7 @@ public class Turret : NetworkBehaviour
                 bullet.GetComponent<Bullet>().SetupBullet(range, damage, projectileSpeed, turretType, transform.parent.parent.GetComponent<NeutralShip>() != null);
                 bullet.transform.parent = GameSceneManager.Singleton.bulletContainer;
             }
-            counter = 1 / fireRate;
+            counter = Random.Range(0.95f, 1.05f) / fireRate;
         }
     }
 

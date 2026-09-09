@@ -40,7 +40,7 @@ public class Missile : NetworkBehaviour
             );
         }
 
-        transform.Translate(Vector2.up * bulletSpeed * Mathf.Pow(missileLifetime / missileLifetimeMax, 1/4) * Time.deltaTime);
+        transform.Translate(Vector2.up * bulletSpeed * Mathf.Pow(missileLifetime / missileLifetimeMax, 1/2) * Time.deltaTime);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -48,7 +48,7 @@ public class Missile : NetworkBehaviour
         if (!IsHost) return;
         
         if (collision.GetComponent<Ship>() != null)
-        {
+        { 
             if (collision.GetComponent<Ship>().OwnerClientId == this.OwnerClientId)
                 return;
             else
