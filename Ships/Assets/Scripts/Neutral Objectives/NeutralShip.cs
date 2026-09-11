@@ -10,6 +10,7 @@ public class NeutralShip : NetworkBehaviour
 
     private Transform spawn;
 
+    private Movement movement;
     private List<Transform> patrolRouteLocations = new List<Transform>();
     private int currentPatrolTarget = 0;
 
@@ -18,10 +19,14 @@ public class NeutralShip : NetworkBehaviour
 
     [SerializeField] GameObject popupTextPrefab;
 
+    private int spawnIndex;
+    private NeutralObjectivesManager neutralObjectivesManager;
+
     public override void OnNetworkSpawn()
     {
         // Finding ship components
         hpBar = transform.Find("Health Bar/Health");
+        movement = GetComponent<Movement>();
 
         // Setting up healthbar
         if (IsHost) currentShipHP.Value = maxShipHP;
@@ -31,18 +36,23 @@ public class NeutralShip : NetworkBehaviour
             hpBar.transform.localPosition = new Vector3((currentShipHP.Value / maxShipHP * 0.5f) - 0.5f, 0, 0);
         };
     }
-
+    private bool moved = false;
     void FixedUpdate()
     {
         if (!IsHost || spawn == null) return;
 
-        transform.position = Vector2.MoveTowards(transform.position, patrolRouteLocations[currentPatrolTarget].position, moveSpeed * Time.deltaTime);
+        //transform.position = Vector2.MoveTowards(transform.position, patrolRouteLocations[currentPatrolTarget].position, moveSpeed * Time.deltaTime);
 
-        if (Vector2.Distance(transform.position, patrolRouteLocations[currentPatrolTarget].position) < .05f)
+        //if (Vector2.Distance(transform.position, patrolRouteLocations[currentPatrolTarget].position) < .05f)
+        if (!movement.moving && !moved)
+        {
             currentPatrolTarget++;
+            if (currentPatrolTarget >= patrolRouteLocations.Count) currentPatrolTarget = 0;
 
-        if (currentPatrolTarget >= patrolRouteLocations.Count)
-            currentPatrolTarget = 0;
+            movement.SetTargetDestinationServerRPC((Vector2)patrolRouteLocations[currentPatrolTarget].position, false);
+            moved = true;
+        }
+        if (movement.moving) moved = false;
     }
 
     public Vector2 GetFuturePosition(float seconds)
@@ -50,10 +60,14 @@ public class NeutralShip : NetworkBehaviour
         return Vector2.MoveTowards(transform.position, patrolRouteLocations[currentPatrolTarget].position, moveSpeed * seconds);
     }
 
-    public void SetupShipSpawn(Transform spawnObject)
+    public void SetupShipSpawn(Transform spawnObject, NeutralObjectivesManager nm, int i)
     {
         spawn = spawnObject;
         transform.position = spawn.position;
+
+        neutralObjectivesManager = nm;
+        spawnIndex = i;
+        neutralObjectivesManager.spawnHasShip[spawnIndex] = true;
 
         foreach (Transform patrolStop in spawn.Find("Patrol Route"))
             patrolRouteLocations.Add(patrolStop);
@@ -69,6 +83,7 @@ public class NeutralShip : NetworkBehaviour
     [Rpc(SendTo.Server)]
     public void DestroyShipRPC(ulong damageDealersClientID)
     {
+        neutralObjectivesManager.spawnHasShip[spawnIndex] = false;
         GameSceneManager.Singleton.shipsInScene.Remove(gameObject);
         ReceiveNeutralObjectivePayoutRPC(damageDealersClientID);
 

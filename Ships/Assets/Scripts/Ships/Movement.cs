@@ -19,7 +19,7 @@ public class Movement : NetworkBehaviour
     Vector2 track;
 
     bool noTarget = true;
-    bool moving;
+    public bool moving;
     bool backingUp;
     bool rotateOnly;
 
@@ -40,7 +40,7 @@ public class Movement : NetworkBehaviour
         if (noTarget) { return; }
 
         // Stopping
-        if (distToTarget < 0.1)
+        if (distToTarget < 1)
         {
             noTarget = true;
             totalVelocity = 0;
@@ -52,7 +52,11 @@ public class Movement : NetworkBehaviour
         if (!backingUp)
         {
             // Turning
-            if (MathF.Abs(angle) > 10)
+            if (shipTurnRate >= 1000) // Insta turn if you have really high turn rate
+            {
+                transform.rotation = Quaternion.LookRotation(Vector3.forward, targetPos - (Vector2)transform.position);
+            }
+            else if (MathF.Abs(angle) > 10)
             {
                 if (angle > 0)
                 {
@@ -126,7 +130,7 @@ public class Movement : NetworkBehaviour
         return transform.position + transform.rotation * Vector2.up * totalVelocity * seconds;
     }
 
-    [ServerRpc]
+    [Rpc(SendTo.Server)]
     public void BackupServerRPC()
     {
         targetPos = transform.position + (-transform.up * distToStop);
@@ -134,13 +138,13 @@ public class Movement : NetworkBehaviour
         noTarget = false;
     }
 
-    [ServerRpc]
+    [Rpc(SendTo.Server)]
     public void StopShipServerRPC()
     {
         targetPos = transform.position + transform.up * distToStop;
     }
 
-    [ServerRpc]
+    [Rpc(SendTo.Server)]
     public void SetTargetDestinationServerRPC(Vector2 target, bool isRotateOnly)
     {
         noTarget = false;
