@@ -110,7 +110,7 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
         {
             foreach (Ship ship in selectedShips)
             {
-                ship.GetComponent<Movement>().StopShipServerRPC(); 
+                ship.GetComponent<Movement>().StopShipRPC(); 
             }
         }
 
@@ -118,7 +118,7 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
         {
             foreach (Ship ship in selectedShips)
             {
-                ship.GetComponent<Movement>().BackupServerRPC();
+                ship.GetComponent<Movement>().BackupShipRPC();
             }
         }
 
@@ -217,27 +217,21 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
 
         if (selectedShips.Count == 1)
         {
-            selectedShips[0].GetComponent<Movement>().SetTargetDestinationServerRPC(directPosition, rotateOnly);
+            selectedShips[0].GetComponent<Movement>().SetTargetDestinationRPC(directPosition, rotateOnly);
         }
-        else
+        else if (selectedShips.Count > 1)
         {
             SetDestinationInFormation(directPosition, rotateOnly);
         }
     }
 
     void SetDestinationInFormation(Vector2 target, bool rotateOnly)
-    {
-        if (selectedShips.Count == 0) 
-        {
-            return;
-        }
-        else 
-        {
-            xMax = selectedShips[0].transform.position.x;
-            yMax = selectedShips[0].transform.position.y;
-            xMin = selectedShips[0].transform.position.x;
-            yMin = selectedShips[0].transform.position.y;
-        }
+    {   
+        xMax = selectedShips[0].transform.position.x;
+        yMax = selectedShips[0].transform.position.y;
+        xMin = selectedShips[0].transform.position.x;
+        yMin = selectedShips[0].transform.position.y;
+        
 
         foreach (Ship ship in selectedShips)
         {
@@ -254,7 +248,7 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
 
         foreach (Ship ship in selectedShips)
         {
-            ship.GetComponent<Movement>().SetTargetDestinationServerRPC(target + ((Vector2) ship.transform.position - shipCenter), rotateOnly);
+            ship.GetComponent<Movement>().SetTargetDestinationRPC(target + ((Vector2) ship.transform.position - shipCenter), rotateOnly);
         }
 
     }

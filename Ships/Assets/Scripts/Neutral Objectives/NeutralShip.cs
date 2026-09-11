@@ -49,7 +49,7 @@ public class NeutralShip : NetworkBehaviour
             currentPatrolTarget++;
             if (currentPatrolTarget >= patrolRouteLocations.Count) currentPatrolTarget = 0;
 
-            movement.SetTargetDestinationServerRPC((Vector2)patrolRouteLocations[currentPatrolTarget].position, false);
+            movement.SetTargetDestinationRPC((Vector2)patrolRouteLocations[currentPatrolTarget].position, false);
             moved = true;
         }
         if (movement.moving) moved = false;

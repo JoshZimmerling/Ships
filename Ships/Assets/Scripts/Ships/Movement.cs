@@ -131,7 +131,7 @@ public class Movement : NetworkBehaviour
     }
 
     [Rpc(SendTo.Server)]
-    public void BackupServerRPC()
+    public void BackupShipRPC()
     {
         targetPos = transform.position + (-transform.up * distToStop);
         backingUp = true;
@@ -139,13 +139,13 @@ public class Movement : NetworkBehaviour
     }
 
     [Rpc(SendTo.Server)]
-    public void StopShipServerRPC()
+    public void StopShipRPC()
     {
         targetPos = transform.position + transform.up * distToStop;
     }
 
     [Rpc(SendTo.Server)]
-    public void SetTargetDestinationServerRPC(Vector2 target, bool isRotateOnly)
+    public void SetTargetDestinationRPC(Vector2 target, bool isRotateOnly)
     {
         noTarget = false;
         backingUp = false;
