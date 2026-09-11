@@ -24,7 +24,7 @@ public class Camera_Control : MonoBehaviour
         camLocked = true;
 
         minimapWidth = GameObject.Find("Minimap").GetComponent<RectTransform>().rect.width;
-        mapWidth = GameObject.Find("Map_1").GetComponent<RectTransform>().rect.width;
+        mapWidth = GameSceneManager.Singleton.map.GetComponent<RectTransform>().rect.width;
     }
 
     void Update()

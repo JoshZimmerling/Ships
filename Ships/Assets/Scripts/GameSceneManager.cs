@@ -18,7 +18,7 @@ public class GameSceneManager : Singleton<GameSceneManager>
     public List<GameObject> missilesInScene = new List<GameObject>();
 
     // TODO: make this better
-    [SerializeField] private GameObject map;
+    [SerializeField] public GameObject map;
     [SerializeField] private GameObject gameUI;
     [SerializeField] private GameObject inputManager;
 

@@ -55,7 +55,7 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
 
         minimapTransform = GameObject.Find("Minimap Image").GetComponent<RectTransform>();
         minimapWidth = minimapTransform.rect.width;
-        mapWidth = GameObject.Find("Map_1").GetComponent<RectTransform>().rect.width;
+        mapWidth = GameSceneManager.Singleton.map.GetComponent<RectTransform>().rect.width;
 
         controlsWindow = GameObject.Find("Controls Window");
         controlsWindow.gameObject.SetActive(false);
