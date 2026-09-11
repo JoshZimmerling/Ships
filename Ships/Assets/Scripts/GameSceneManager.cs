@@ -1,5 +1,7 @@
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.Netcode;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -8,7 +10,7 @@ public class GameSceneManager : Singleton<GameSceneManager>
 {
     public NetworkPrefabsList shipList;
 
-    private List<Transform> playerSpawns;
+    private List<Transform>[] playerSpawns;
 
     // TODO: Get rid of these
     public Transform bulletContainer;
@@ -23,10 +25,14 @@ public class GameSceneManager : Singleton<GameSceneManager>
     protected override void Awake()
     {
         base.Awake();
-
-        playerSpawns = new List<Transform>();
-        foreach (Transform spawnLocation in map.transform.Find("Mothership Spawn Positions"))
-            playerSpawns.Add(spawnLocation);
+        playerSpawns = new List<Transform>[map.transform.Find("Mothership Spawn Positions").childCount];
+        for(int i = 0; i < map.transform.Find("Mothership Spawn Positions").childCount; i++)
+        {
+            playerSpawns[i] = new List<Transform>();
+            foreach (Transform spawnLocation in map.transform.Find("Mothership Spawn Positions").GetChild(i))
+                playerSpawns[i].Add(spawnLocation);
+        }
+            
     }
 
     public void Start()
@@ -79,8 +85,27 @@ public class GameSceneManager : Singleton<GameSceneManager>
 
     public Transform GetOneMothershipSpawnPosition()
     {
-        Transform randomSpawn = playerSpawns[Random.Range(0, playerSpawns.Count)];
-        playerSpawns.Remove(randomSpawn);
+        // Shuffles the array
+        for (int i = 0; i < playerSpawns.Length; i++)
+        {
+            List<Transform> temp = playerSpawns[i];
+            int r = Random.Range(i, playerSpawns.Length);
+            playerSpawns[i] = playerSpawns[r];
+            playerSpawns[r] = temp;
+        }
+        // Finds the first longest list
+        int longest = 0;
+        int longestIndex = 0;
+        for (int i = 0; i < playerSpawns.Length; i++)
+            if (playerSpawns[i].Count > longest)
+            {
+                longest = playerSpawns[i].Count;
+                longestIndex = i;
+            }
+        // Gets the spawn and removes it from the list
+        List<Transform> spawnGroup = playerSpawns[longestIndex];
+        Transform randomSpawn = spawnGroup[Random.Range(0, spawnGroup.Count)];
+        spawnGroup.Remove(randomSpawn);
         return randomSpawn;
     }
 }
