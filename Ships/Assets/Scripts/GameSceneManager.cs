@@ -30,7 +30,10 @@ public class GameSceneManager : Singleton<GameSceneManager>
         {
             playerSpawns[i] = new List<Transform>();
             foreach (Transform spawnLocation in map.transform.Find("Mothership Spawn Positions").GetChild(i))
+            {
                 playerSpawns[i].Add(spawnLocation);
+                spawnLocation.GetComponent<SpriteRenderer>().enabled = false;
+            }
         }
             
     }
