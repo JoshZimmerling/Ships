@@ -6,6 +6,7 @@ public class Ship : NetworkBehaviour
     public enum ShipTypes
     {
         Destroyer,
+        Maurader,
         Hawk,
         Challenger,
         Goliath,
