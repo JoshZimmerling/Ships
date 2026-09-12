@@ -184,6 +184,22 @@ PrefabInstance:
       propertyPath: GlobalObjectIdHash
       value: 2347292881
       objectReference: {fileID: 0}
+    - target: {fileID: 5548237794063707659, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: d2a84525eb0e1ba438e60b7e0b746446, type: 3}
+    - target: {fileID: 5548237794063707659, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
+      propertyPath: m_Color.b
+      value: 0.024403572
+      objectReference: {fileID: 0}
+    - target: {fileID: 5548237794063707659, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
+      propertyPath: m_Color.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5548237794063707659, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
+      propertyPath: m_Color.r
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6010934806082289777, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
