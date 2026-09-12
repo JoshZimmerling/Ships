@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using TMPro;
 using Unity.Netcode;
@@ -143,6 +144,21 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
             playersWindow.gameObject.SetActive(false);
         }
 
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+            FilterSelectedShips(Ship.ShipTypes.Destroyer);
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+            FilterSelectedShips(Ship.ShipTypes.Hawk);
+        if (Input.GetKeyDown(KeyCode.Alpha3))
+            FilterSelectedShips(Ship.ShipTypes.Challenger);
+        if (Input.GetKeyDown(KeyCode.Alpha4))
+            FilterSelectedShips(Ship.ShipTypes.Goliath);
+        if (Input.GetKeyDown(KeyCode.Alpha5))
+            FilterSelectedShips(Ship.ShipTypes.Lightning);
+        if (Input.GetKeyDown(KeyCode.Alpha6))
+            FilterSelectedShips(Ship.ShipTypes.Drone);
+        if (Input.GetKeyDown(KeyCode.Alpha7))
+            FilterSelectedShips(Ship.ShipTypes.Scout);
+
         if (Input.GetMouseButtonDown(0))
         {
             UIClicks ui_click = DidClickUI();
@@ -271,6 +287,18 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
         foreach (Ship newShip in ships)
         {
             selectedShips.Add(newShip);
+        }
+    }
+
+    private void FilterSelectedShips(Ship.ShipTypes shipTypeToKeep)
+    {
+        for (int i = selectedShips.Count - 1; i >= 0; i--)
+        {
+            if (selectedShips[i].GetShipType() != shipTypeToKeep)
+            {
+                selectedShips[i].UnselectShip();
+                selectedShips.RemoveAt(i);
+            }
         }
     }
 
