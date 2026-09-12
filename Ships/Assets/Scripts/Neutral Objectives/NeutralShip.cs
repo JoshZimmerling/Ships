@@ -22,6 +22,12 @@ public class NeutralShip : NetworkBehaviour
     private int spawnIndex;
     private NeutralObjectivesManager neutralObjectivesManager;
 
+    private bool moved = false;
+
+    private GameObject scoutMarker; // Marker in fog of war
+    private GameObject minimapMarker; // Market on minimap
+    private GameObject minimapScoutMarker; // Marker in minimap fog of war
+
     public override void OnNetworkSpawn()
     {
         // Finding ship components
@@ -35,10 +41,19 @@ public class NeutralShip : NetworkBehaviour
             hpBar.transform.localScale = new Vector3(currentShipHP.Value / maxShipHP, 1, 1);
             hpBar.transform.localPosition = new Vector3((currentShipHP.Value / maxShipHP * 0.5f) - 0.5f, 0, 0);
         };
+
+        scoutMarker = transform.Find("Scout Marker").gameObject;
+        minimapMarker = transform.Find("Minimap Marker").gameObject;
+        minimapScoutMarker = transform.Find("Minimap Scout Marker").gameObject;
     }
-    private bool moved = false;
+
     void FixedUpdate()
     {
+        //Don't rotate minimap icons
+        scoutMarker.transform.rotation = Quaternion.Euler(0, 0, -transform.rotation.z);
+        minimapMarker.transform.rotation = Quaternion.Euler(0, 0, -transform.rotation.z);
+        minimapScoutMarker.transform.rotation = Quaternion.Euler(0, 0, -transform.rotation.z);
+
         if (!IsHost || spawn == null) return;
 
         //transform.position = Vector2.MoveTowards(transform.position, patrolRouteLocations[currentPatrolTarget].position, moveSpeed * Time.deltaTime);
