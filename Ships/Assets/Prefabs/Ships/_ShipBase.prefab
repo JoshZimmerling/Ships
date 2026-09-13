@@ -668,6 +668,7 @@ MonoBehaviour:
   shipCost: 10
   maxShipHP: 10
   correctionFactor: 0
+  visionRange: 35
   popupTextPrefab: {fileID: 985385043950032243, guid: a6e0a522c1dcae445a22ddcda9f44396, type: 3}
 --- !u!114 &4637950062562444113
 MonoBehaviour:

@@ -66,6 +66,7 @@ public class Bullet : NetworkBehaviour
         switch (turretType)
         {
             case Turret.TurretType.HeavyTurret:
+            case Turret.TurretType.HawkGun:
                 transform.localScale = new Vector3(0.6f, 0.6f, 1);
                 break;
             case Turret.TurretType.MediumTurret:

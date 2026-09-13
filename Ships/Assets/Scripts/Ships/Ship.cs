@@ -22,9 +22,11 @@ public class Ship : NetworkBehaviour
     [SerializeField] private float maxShipHP;
     private readonly NetworkVariable<float> currentShipHP = new NetworkVariable<float>();
     public int correctionFactor; // Opponent range adjustments
+    public int visionRange;
 
     // Ship Components
     private Transform hpBar;
+    [SerializeField] GameObject popupTextPrefab;
     private SpriteRenderer outlineSprite;
 
     private PlayerData playerData;
@@ -33,13 +35,16 @@ public class Ship : NetworkBehaviour
     private GameObject minimapMarker; // Market on minimap (Both)
     private GameObject minimapScoutMarker; // Marker in minimap fog of war (Enemy)
 
+    private float abilityTimer = 0;
     // Mothership ability settings
     private int mothershipHealRadius = 20;
     private int mothershipHealTimer = 2;
     private int mothershipHealAmount = 1;
-    private float abilityTimer = 0;
+    // Goliath ability settings
+    //private Transform shieldBar;
+    //private float maxShield = 20;
+    //private float shieldRegenRate = 20;
 
-    [SerializeField] GameObject popupTextPrefab;
     public override void OnNetworkSpawn()
     {
         playerData = PlayerDataList.Singleton.players[OwnerClientId];
@@ -66,13 +71,6 @@ public class Ship : NetworkBehaviour
             }
         };
 
-        // Changes based on ship owner
-        if (!IsOwner) {
-            GetComponentInChildren<SpriteMask>().enabled = false;
-            outlineSprite.gameObject.SetActive(false);
-            mapMarkerSprite.gameObject.SetActive(true);
-        }
-
         // Set the team color
         Color teamColor = playerData.playerColor;
         transform.Find("Ship Accent").GetComponent<SpriteRenderer>().color = teamColor;
@@ -89,8 +87,17 @@ public class Ship : NetworkBehaviour
         minimapMarker = transform.Find("Minimap Marker").gameObject;
         minimapScoutMarker = transform.Find("Minimap Scout Marker").gameObject;
 
-        if (IsOwner)
+        Transform fogRemover = transform.Find("Fog Remover");
+        // Changes based on ship owner
+        if (!IsOwner)
         {
+            fogRemover.gameObject.SetActive(false);
+            outlineSprite.gameObject.SetActive(false);
+            mapMarkerSprite.gameObject.SetActive(true);
+        }
+        else
+        {
+            fogRemover.localScale = new Vector3(visionRange / 6f, visionRange / 6f);
             GameplayInputManager.Singleton.AddNewSelectedShip(this);
         }
     }
@@ -150,14 +157,14 @@ public class Ship : NetworkBehaviour
                     abilityTimer = mothershipHealTimer;
                 }
                 break;
-            /*
-            case ShipTypes.Goliath:
-                if (!IsHost) return;
+                /*
+                case ShipTypes.Goliath:
+                    if (!IsHost) return;
 
-                if (currentShipHP.Value < maxShipHP)
-                    currentShipHP.Value += 1 * Time.deltaTime;
-                break;
-            */
+                    if (currentShipHP.Value < maxShipHP)
+                        currentShipHP.Value += 1 * Time.deltaTime;
+                    break;
+                */
         }
     }
 
