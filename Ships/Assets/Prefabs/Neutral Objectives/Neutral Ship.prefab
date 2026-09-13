@@ -164,7 +164,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4637950062562444113, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: shipTurnRate
-      value: 1000
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 4637950062562444113, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: shipAcceleration
@@ -281,13 +281,9 @@ PrefabInstance:
     - target: {fileID: 6956426341357070569, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 21300000, guid: 5b7d9b49a16bd2f46b07dde5b2dbf97e, type: 3}
+      objectReference: {fileID: 21300000, guid: faf6973a532f7e14a92f01d5f57af604, type: 3}
     - target: {fileID: 6956426341357070569, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6956426341357070569, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
-      propertyPath: m_MaskInteraction
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7296890363596327140, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
@@ -300,7 +296,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7597090460994900236, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -2
+      value: -1.5
       objectReference: {fileID: 0}
     - target: {fileID: 7998052403546193370, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: m_LocalScale.x

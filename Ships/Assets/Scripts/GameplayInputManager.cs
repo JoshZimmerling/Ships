@@ -144,21 +144,6 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
             playersWindow.gameObject.SetActive(false);
         }
 
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-            FilterSelectedShips(Ship.ShipTypes.Destroyer);
-        if (Input.GetKeyDown(KeyCode.Alpha2))
-            FilterSelectedShips(Ship.ShipTypes.Hawk);
-        if (Input.GetKeyDown(KeyCode.Alpha3))
-            FilterSelectedShips(Ship.ShipTypes.Challenger);
-        if (Input.GetKeyDown(KeyCode.Alpha4))
-            FilterSelectedShips(Ship.ShipTypes.Goliath);
-        if (Input.GetKeyDown(KeyCode.Alpha5))
-            FilterSelectedShips(Ship.ShipTypes.Lightning);
-        if (Input.GetKeyDown(KeyCode.Alpha6))
-            FilterSelectedShips(Ship.ShipTypes.Drone);
-        if (Input.GetKeyDown(KeyCode.Alpha7))
-            FilterSelectedShips(Ship.ShipTypes.Scout);
-
         if (Input.GetMouseButtonDown(0))
         {
             UIClicks ui_click = DidClickUI();
@@ -168,6 +153,28 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
             }
             else if (ui_click == UIClicks.NONE) //If we did not click on a UI element, start drawing our ship selection box
             {
+                //If control is held, we are grabbing all ships of the type we clicked
+                if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))
+                {
+                    SetShips(null);
+                    Collider2D clickedOnShip = Physics2D.OverlapPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+                    
+                    if (clickedOnShip != null && clickedOnShip.GetComponent<Ship>() != null && clickedOnShip.GetComponent<Ship>().IsOwner)
+                    {
+                        foreach (GameObject ship in GameSceneManager.Singleton.shipsInScene)
+                        {
+                            Ship shipScript = ship.GetComponent<Ship>();
+                            if (IsOnScreen(ship) && shipScript != null && shipScript.IsOwner && shipScript.GetShipType() == clickedOnShip.GetComponent<Ship>().GetShipType())
+                            {
+                                shipScript.SelectShip();
+                                selectedShips.Add(shipScript);
+                            }
+                        }
+                    }
+                    return;
+                }
+
+                //If control is not held, do the normal selection box process
                 startPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 mouseDownInGame = true;
             }
@@ -277,27 +284,14 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
         {
             ship.UnselectShip();
         }
+        selectedShips.Clear();
 
-        foreach (Ship ship in ships)
+        if (ships != null)
         {
-            ship.SelectShip(); 
-        }
-
-        selectedShips.Clear(); 
-        foreach (Ship newShip in ships)
-        {
-            selectedShips.Add(newShip);
-        }
-    }
-
-    private void FilterSelectedShips(Ship.ShipTypes shipTypeToKeep)
-    {
-        for (int i = selectedShips.Count - 1; i >= 0; i--)
-        {
-            if (selectedShips[i].GetShipType() != shipTypeToKeep)
+            foreach (Ship ship in ships)
             {
-                selectedShips[i].UnselectShip();
-                selectedShips.RemoveAt(i);
+                ship.SelectShip();
+                selectedShips.Add(ship);
             }
         }
     }
@@ -398,6 +392,16 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
         RectTransformUtility.ScreenPointToLocalPointInRectangle(minimapTransform, Input.mousePosition, null, out localClickPos);
 
         return localClickPos;
+    }
+
+    private bool IsOnScreen(GameObject obj)
+    {
+        Vector3 screenPoint = Camera.main.WorldToScreenPoint(obj.transform.position);
+
+        return screenPoint.y > 0 &&
+               screenPoint.y < Screen.height &&
+               screenPoint.x > 0 &&
+               screenPoint.x < Screen.width;
     }
 
     public void ShowLeaveGameButton()
