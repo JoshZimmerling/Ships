@@ -6,7 +6,7 @@ public class Ship : NetworkBehaviour
     public enum ShipTypes
     {
         Destroyer,
-        Maurader,
+        Marauder,
         Hawk,
         Challenger,
         Goliath,
@@ -22,9 +22,11 @@ public class Ship : NetworkBehaviour
     [SerializeField] private float maxShipHP;
     private readonly NetworkVariable<float> currentShipHP = new NetworkVariable<float>();
     public int correctionFactor; // Opponent range adjustments
+    public int visionRange;
 
     // Ship Components
     private Transform hpBar;
+    [SerializeField] GameObject popupTextPrefab;
     private SpriteRenderer outlineSprite;
 
     private PlayerData playerData;
@@ -32,6 +34,16 @@ public class Ship : NetworkBehaviour
     private GameObject scoutMarker; // Marker in fog of war (Enemy)
     private GameObject minimapMarker; // Market on minimap (Both)
     private GameObject minimapScoutMarker; // Marker in minimap fog of war (Enemy)
+
+    private float abilityTimer = 0;
+    // Mothership ability settings
+    private int mothershipHealRadius = 20;
+    private int mothershipHealTimer = 2;
+    private int mothershipHealAmount = 1;
+    // Goliath ability settings
+    //private Transform shieldBar;
+    //private float maxShield = 20;
+    //private float shieldRegenRate = 20;
 
     public override void OnNetworkSpawn()
     {
@@ -49,14 +61,15 @@ public class Ship : NetworkBehaviour
         currentShipHP.OnValueChanged += (float previousValue, float newValue) => {
             hpBar.transform.localScale = new Vector3(currentShipHP.Value / maxShipHP, 1, 1);
             hpBar.transform.localPosition = new Vector3((currentShipHP.Value / maxShipHP * 0.5f) - 0.5f, 0, 0);
-        };
 
-        // Changes based on ship owner
-        if (!IsOwner) {
-            GetComponentInChildren<SpriteMask>().enabled = false;
-            outlineSprite.gameObject.SetActive(false);
-            mapMarkerSprite.gameObject.SetActive(true);
-        }
+            if (IsOwner && newValue > previousValue)
+            {
+                PopupText popupText = Instantiate(popupTextPrefab, transform.position + new Vector3(-1, 0) * correctionFactor * 0.5f, Quaternion.identity).GetComponent<PopupText>();
+                popupText.SetupText("+", Color.greenYellow, 1f);
+                popupText = Instantiate(popupTextPrefab, transform.position + new Vector3(1, -1f) * correctionFactor * 0.5f, Quaternion.identity).GetComponent<PopupText>();
+                popupText.SetupText("+", Color.greenYellow, 1f);
+            }
+        };
 
         // Set the team color
         Color teamColor = playerData.playerColor;
@@ -74,8 +87,17 @@ public class Ship : NetworkBehaviour
         minimapMarker = transform.Find("Minimap Marker").gameObject;
         minimapScoutMarker = transform.Find("Minimap Scout Marker").gameObject;
 
-        if (IsOwner)
+        Transform fogRemover = transform.Find("Fog Remover");
+        // Changes based on ship owner
+        if (!IsOwner)
         {
+            fogRemover.gameObject.SetActive(false);
+            outlineSprite.gameObject.SetActive(false);
+            mapMarkerSprite.gameObject.SetActive(true);
+        }
+        else
+        {
+            fogRemover.localScale = new Vector3(visionRange / 6f, visionRange / 6f);
             GameplayInputManager.Singleton.AddNewSelectedShip(this);
         }
     }
@@ -100,6 +122,10 @@ public class Ship : NetworkBehaviour
                     transform.Find("Scout Radar").gameObject.SetActive(true);
                 break;
             case ShipTypes.Mothership:
+                if (IsOwner)
+                    transform.Find("Heal Aura").localScale = new Vector3(mothershipHealRadius / 6.5f, mothershipHealRadius / 6.5f);
+                else
+                    transform.Find("Heal Aura").gameObject.SetActive(false);
                 foreach (var (id, player) in PlayerDataList.Singleton.players)
                     if (player.OwnerClientId == OwnerClientId)
                         player.SetMothership(this);
@@ -111,12 +137,34 @@ public class Ship : NetworkBehaviour
     {
         switch (shipType)
         {
-            case ShipTypes.Goliath:
+            case ShipTypes.Mothership:
                 if (!IsHost) return;
-                
-                if (currentShipHP.Value < maxShipHP)
-                    currentShipHP.Value += 1 * Time.deltaTime;
+                abilityTimer -= Time.deltaTime;
+                if (abilityTimer < 0)
+                {
+                    foreach (GameObject go in GameSceneManager.Singleton.shipsInScene)
+                    {
+                        Ship ship = go.GetComponent<Ship>();
+                        if (ship != null &&
+                            ship.OwnerClientId == OwnerClientId && 
+                            ship.shipType != ShipTypes.Mothership && 
+                            (transform.position - go.transform.position).magnitude + ship.correctionFactor <= mothershipHealRadius &&
+                            ship.currentShipHP.Value != ship.maxShipHP)
+                        {
+                            ship.currentShipHP.Value = Mathf.Min(ship.currentShipHP.Value + mothershipHealAmount, ship.maxShipHP);
+                        }
+                    }
+                    abilityTimer = mothershipHealTimer;
+                }
                 break;
+                /*
+                case ShipTypes.Goliath:
+                    if (!IsHost) return;
+
+                    if (currentShipHP.Value < maxShipHP)
+                        currentShipHP.Value += 1 * Time.deltaTime;
+                    break;
+                */
         }
     }
 

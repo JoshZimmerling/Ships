@@ -150,7 +150,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5248488840569974850, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: GlobalObjectIdHash
-      value: 3843823246
+      value: 911167562
       objectReference: {fileID: 0}
     - target: {fileID: 5548237794063707659, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: m_Sprite
@@ -336,6 +336,10 @@ PrefabInstance:
     - target: {fileID: 7709267848172825610, guid: e346d0a53ff39734ca77a7b2bf7a716d, type: 3}
       propertyPath: firingArc
       value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 7709267848172825610, guid: e346d0a53ff39734ca77a7b2bf7a716d, type: 3}
+      propertyPath: turretType
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 7709267848172825610, guid: e346d0a53ff39734ca77a7b2bf7a716d, type: 3}
       propertyPath: aimDirection

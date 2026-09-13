@@ -153,6 +153,9 @@ public class Movement : NetworkBehaviour
         rotateOnly = isRotateOnly;
 
         if (isRotateOnly)
+        {
             totalVelocity = 0;
+            moving = false;
+        }
     }
 }
