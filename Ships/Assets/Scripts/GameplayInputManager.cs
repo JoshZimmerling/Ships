@@ -161,7 +161,7 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
                     
                     if (clickedOnShip != null && clickedOnShip.GetComponent<Ship>() != null && clickedOnShip.GetComponent<Ship>().IsOwner)
                     {
-                        foreach (GameObject ship in GameSceneManager.Singleton.shipsInScene)
+                        foreach (Transform ship in PlayerDataList.Singleton.GetLocalPlayer().transform)
                         {
                             Ship shipScript = ship.GetComponent<Ship>();
                             if (IsOnScreen(ship) && shipScript != null && shipScript.IsOwner && shipScript.GetShipType() == clickedOnShip.GetComponent<Ship>().GetShipType())
@@ -394,9 +394,9 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
         return localClickPos;
     }
 
-    private bool IsOnScreen(GameObject obj)
+    private bool IsOnScreen(Transform obj)
     {
-        Vector3 screenPoint = Camera.main.WorldToScreenPoint(obj.transform.position);
+        Vector3 screenPoint = Camera.main.WorldToScreenPoint(obj.position);
 
         return screenPoint.y > 0 &&
                screenPoint.y < Screen.height &&
