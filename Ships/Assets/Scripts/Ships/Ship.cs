@@ -32,6 +32,7 @@ public class Ship : NetworkBehaviour
     private PlayerData playerData;
 
     private GameObject scoutMarker; // Marker in fog of war (Enemy)
+    private GameObject scoutMarkerHider;
     private GameObject minimapMarker; // Market on minimap (Both)
     private GameObject minimapScoutMarker; // Marker in minimap fog of war (Enemy)
 
@@ -42,7 +43,11 @@ public class Ship : NetworkBehaviour
         // Finding ship components
         hpBar = transform.Find("Health Bar/Health");
         outlineSprite = transform.Find("Outline").GetComponent<SpriteRenderer>();
-        SpriteRenderer mapMarkerSprite = transform.Find("Scout Marker").GetComponent<SpriteRenderer>();
+
+        scoutMarker = transform.Find("Scout Marker").gameObject;
+        scoutMarkerHider = transform.Find("Scout Marker Hider").gameObject;
+        minimapMarker = transform.Find("Minimap Marker").gameObject;
+        minimapScoutMarker = transform.Find("Minimap Scout Marker").gameObject;
 
 
         // Setting up healthbar
@@ -64,18 +69,14 @@ public class Ship : NetworkBehaviour
         // Set the team color
         Color teamColor = playerData.playerColor;
         transform.Find("Ship Accent").GetComponent<SpriteRenderer>().color = teamColor;
-        transform.Find("Minimap Marker").GetComponent<SpriteRenderer>().color = teamColor;
-        transform.Find("Minimap Scout Marker").GetComponent<SpriteRenderer>().color = teamColor;
-        mapMarkerSprite.color = teamColor;
+        scoutMarker.GetComponent<SpriteRenderer>().color = teamColor;
+        minimapMarker.GetComponent<SpriteRenderer>().color = teamColor;
+        minimapScoutMarker.GetComponent<SpriteRenderer>().color = teamColor;
         teamColor.a = 0f;
         outlineSprite.color = teamColor;
 
         //Ship specific setup
         SetupBasedOnShipType();
-
-        scoutMarker = transform.Find("Scout Marker").gameObject;
-        minimapMarker = transform.Find("Minimap Marker").gameObject;
-        minimapScoutMarker = transform.Find("Minimap Scout Marker").gameObject;
 
         Transform fogRemover = transform.Find("Fog Remover");
         // Changes based on ship owner
@@ -83,7 +84,7 @@ public class Ship : NetworkBehaviour
         {
             fogRemover.gameObject.SetActive(false);
             outlineSprite.gameObject.SetActive(false);
-            mapMarkerSprite.gameObject.SetActive(true);
+            scoutMarker.gameObject.SetActive(true);
         }
         else
         {
@@ -99,6 +100,7 @@ public class Ship : NetworkBehaviour
 
         //Don't rotate minimap icons
         scoutMarker.transform.rotation = Quaternion.Euler(0, 0, -transform.rotation.z);
+        scoutMarkerHider.transform.rotation = Quaternion.Euler(0, 0, -transform.rotation.z);
         minimapMarker.transform.rotation = Quaternion.Euler(0, 0, -transform.rotation.z);
         minimapScoutMarker.transform.rotation = Quaternion.Euler(0, 0, -transform.rotation.z);
     }

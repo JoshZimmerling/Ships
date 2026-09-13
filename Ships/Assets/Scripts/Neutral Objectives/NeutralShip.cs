@@ -25,6 +25,7 @@ public class NeutralShip : NetworkBehaviour
     private bool moved = false;
 
     private GameObject scoutMarker; // Marker in fog of war
+    private GameObject scoutMarkerHider;
     private GameObject minimapMarker; // Market on minimap
     private GameObject minimapScoutMarker; // Marker in minimap fog of war
 
@@ -43,6 +44,7 @@ public class NeutralShip : NetworkBehaviour
         };
 
         scoutMarker = transform.Find("Scout Marker").gameObject;
+        scoutMarkerHider = transform.Find("Scout Marker Hider").gameObject;
         minimapMarker = transform.Find("Minimap Marker").gameObject;
         minimapScoutMarker = transform.Find("Minimap Scout Marker").gameObject;
     }
@@ -51,6 +53,7 @@ public class NeutralShip : NetworkBehaviour
     {
         //Don't rotate minimap icons
         scoutMarker.transform.rotation = Quaternion.Euler(0, 0, -transform.rotation.z);
+        scoutMarkerHider.transform.rotation = Quaternion.Euler(0, 0, -transform.rotation.z);
         minimapMarker.transform.rotation = Quaternion.Euler(0, 0, -transform.rotation.z);
         minimapScoutMarker.transform.rotation = Quaternion.Euler(0, 0, -transform.rotation.z);
 

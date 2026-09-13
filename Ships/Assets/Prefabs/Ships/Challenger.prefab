@@ -112,6 +112,10 @@ PrefabInstance:
       propertyPath: bulletSpawnerList.Array.data[4].shootDirection.x
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 134601730479606179, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1363217247369419061, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: spawnPointList.Array.size
       value: 5
@@ -192,9 +196,21 @@ PrefabInstance:
       propertyPath: correctionFactor
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 2470878593215569971, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3499485431793801839, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4074649399070216136, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4322745889547320143, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4637950062562444113, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: shipMaxSpeed
@@ -295,6 +311,22 @@ PrefabInstance:
     - target: {fileID: 6010934806082289777, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6055569452642492732, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6956426341357070569, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7897495226217979558, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8655475781681200166, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 105496700895673721, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
