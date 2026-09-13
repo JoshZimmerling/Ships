@@ -60,7 +60,7 @@ public class PlayerData : NetworkBehaviour
     {
         Vector3 spawnPos;
         Vector2 offset = Random.onUnitCircle * 15;
-        if (motherShip == null)
+        if (shipType == Ship.ShipTypes.Mothership)
         {
             spawnPos = gameManager.GetOneMothershipSpawnPosition().position;
         }
