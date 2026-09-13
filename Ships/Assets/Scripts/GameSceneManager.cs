@@ -1,7 +1,5 @@
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Unity.Netcode;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -10,7 +8,9 @@ public class GameSceneManager : Singleton<GameSceneManager>
 {
     public NetworkPrefabsList shipList;
 
-    private List<Transform>[] playerSpawns;
+    private List<Transform> prioPlayerSpawnZones = new List<Transform>();
+    private List<Transform> playerSpawnZones = new List<Transform>();
+    private int prioritySpawnGroup;
 
     // TODO: Get rid of these
     public Transform bulletContainer;
@@ -25,17 +25,26 @@ public class GameSceneManager : Singleton<GameSceneManager>
     protected override void Awake()
     {
         base.Awake();
-        playerSpawns = new List<Transform>[map.transform.Find("Mothership Spawn Positions").childCount];
-        for(int i = 0; i < map.transform.Find("Mothership Spawn Positions").childCount; i++)
+
+        prioritySpawnGroup = Random.Range(0, 2);
+        
+        //Populate the spawn zones based on prio grouping
+        foreach (Transform prioSpawnZone in map.transform.Find("Mothership Spawn Positions").GetChild(prioritySpawnGroup))
         {
-            playerSpawns[i] = new List<Transform>();
-            foreach (Transform spawnLocation in map.transform.Find("Mothership Spawn Positions").GetChild(i))
+            prioPlayerSpawnZones.Add(prioSpawnZone);
+            foreach (Transform spawnLocation in prioSpawnZone)
             {
-                playerSpawns[i].Add(spawnLocation);
                 spawnLocation.GetComponent<SpriteRenderer>().enabled = false;
             }
         }
-            
+        foreach (Transform spawnZone in map.transform.Find("Mothership Spawn Positions").GetChild((prioritySpawnGroup + 1) % 2))
+        {
+            playerSpawnZones.Add(spawnZone);
+            foreach (Transform spawnLocation in spawnZone)
+            {
+                spawnLocation.GetComponent<SpriteRenderer>().enabled = false;
+            }
+        }
     }
 
     public void Start()
@@ -88,28 +97,22 @@ public class GameSceneManager : Singleton<GameSceneManager>
 
     public Transform GetOneMothershipSpawnPosition()
     {
-        // Shuffles the array
-        for (int i = 0; i < playerSpawns.Length; i++)
+        //Pick a random spawn zone and then remove it from the list
+        Transform spawnZone;
+        if (prioPlayerSpawnZones.Count > 0)
         {
-            List<Transform> temp = playerSpawns[i];
-            int r = Random.Range(i, playerSpawns.Length);
-            playerSpawns[i] = playerSpawns[r];
-            playerSpawns[r] = temp;
+            spawnZone = prioPlayerSpawnZones[Random.Range(0, prioPlayerSpawnZones.Count)];
+            prioPlayerSpawnZones.Remove(spawnZone);
         }
-        // Finds the first longest list
-        int longest = 0;
-        int longestIndex = 0;
-        for (int i = 0; i < playerSpawns.Length; i++)
-            if (playerSpawns[i].Count > longest)
-            {
-                longest = playerSpawns[i].Count;
-                longestIndex = i;
-            }
-        // Gets the spawn and removes it from the list
-        List<Transform> spawnGroup = playerSpawns[longestIndex];
-        Transform randomSpawn = spawnGroup[Random.Range(0, spawnGroup.Count)];
-        spawnGroup.Remove(randomSpawn);
-        return randomSpawn;
+        else
+        {
+            spawnZone = playerSpawnZones[Random.Range(0, playerSpawnZones.Count)];
+            playerSpawnZones.Remove(spawnZone);
+        }
+
+        //From your spawn zone select a random spawn location
+        Transform spawnLoc = spawnZone.GetChild(Random.Range(0, spawnZone.childCount));
+        return spawnLoc;
     }
 }
 
