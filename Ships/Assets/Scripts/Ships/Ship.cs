@@ -17,10 +17,10 @@ public class Ship : NetworkBehaviour
     }
 
     // Ship Variables
-    [SerializeField] private ShipTypes shipType;
+    public ShipTypes shipType;
     [SerializeField] private float shipCost;
-    [SerializeField] private float maxShipHP;
-    private readonly NetworkVariable<float> currentShipHP = new NetworkVariable<float>();
+    public float maxShipHP;
+    public readonly NetworkVariable<float> currentShipHP = new NetworkVariable<float>();
     public int correctionFactor; // Opponent range adjustments
     public int visionRange;
 
@@ -34,16 +34,6 @@ public class Ship : NetworkBehaviour
     private GameObject scoutMarker; // Marker in fog of war (Enemy)
     private GameObject minimapMarker; // Market on minimap (Both)
     private GameObject minimapScoutMarker; // Marker in minimap fog of war (Enemy)
-
-    private float abilityTimer = 0;
-    // Mothership ability settings
-    private int mothershipHealRadius = 20;
-    private int mothershipHealTimer = 2;
-    private int mothershipHealAmount = 1;
-    // Goliath ability settings
-    //private Transform shieldBar;
-    //private float maxShield = 20;
-    //private float shieldRegenRate = 20;
 
     public override void OnNetworkSpawn()
     {
@@ -122,10 +112,6 @@ public class Ship : NetworkBehaviour
                     transform.Find("Scout Radar").gameObject.SetActive(true);
                 break;
             case ShipTypes.Mothership:
-                if (IsOwner)
-                    transform.Find("Heal Aura").localScale = new Vector3(mothershipHealRadius / 6.5f, mothershipHealRadius / 6.5f);
-                else
-                    transform.Find("Heal Aura").gameObject.SetActive(false);
                 foreach (var (id, player) in PlayerDataList.Singleton.players)
                     if (player.OwnerClientId == OwnerClientId)
                         player.SetMothership(this);
@@ -137,26 +123,8 @@ public class Ship : NetworkBehaviour
     {
         switch (shipType)
         {
-            case ShipTypes.Mothership:
-                if (!IsHost) return;
-                abilityTimer -= Time.deltaTime;
-                if (abilityTimer < 0)
-                {
-                    foreach (GameObject go in GameSceneManager.Singleton.shipsInScene)
-                    {
-                        Ship ship = go.GetComponent<Ship>();
-                        if (ship != null &&
-                            ship.OwnerClientId == OwnerClientId && 
-                            ship.shipType != ShipTypes.Mothership && 
-                            (transform.position - go.transform.position).magnitude + ship.correctionFactor <= mothershipHealRadius &&
-                            ship.currentShipHP.Value != ship.maxShipHP)
-                        {
-                            ship.currentShipHP.Value = Mathf.Min(ship.currentShipHP.Value + mothershipHealAmount, ship.maxShipHP);
-                        }
-                    }
-                    abilityTimer = mothershipHealTimer;
-                }
-                break;
+            //case ShipTypes.Mothership:
+                
                 /*
                 case ShipTypes.Goliath:
                     if (!IsHost) return;

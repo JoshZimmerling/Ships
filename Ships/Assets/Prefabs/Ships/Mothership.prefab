@@ -454,6 +454,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 5167211490098671168, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       insertIndex: -1
       addedObject: {fileID: 6334634130429962548}
+    - targetCorrespondingSourceObject: {fileID: 5167211490098671168, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -5774021685346809979}
   m_SourcePrefab: {fileID: 100100000, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
 --- !u!4 &191685351874319725 stripped
 Transform:
@@ -501,3 +504,19 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_Radius: 12
+--- !u!114 &-5774021685346809979
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1618972516803001180}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e5cb8e304a6841147a6cdbea60762449, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MothershipHealAbility
+  ShowTopMostFoldoutHeaderGroup: 1
+  mothershipHealRadius: 20
+  mothershipHealTimer: 2
+  mothershipHealAmount: 1
