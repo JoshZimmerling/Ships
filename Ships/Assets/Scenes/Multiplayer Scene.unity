@@ -7652,6 +7652,26 @@ PrefabInstance:
       propertyPath: m_Name
       value: Map_2
       objectReference: {fileID: 0}
+    - target: {fileID: 4457062556627139491, guid: f9a585a1066b8b643adb66b7e75f0698, type: 3}
+      propertyPath: m_Name
+      value: Map Edge Fog
+      objectReference: {fileID: 0}
+    - target: {fileID: 8592215696975285212, guid: f9a585a1066b8b643adb66b7e75f0698, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 8592215696975285212, guid: f9a585a1066b8b643adb66b7e75f0698, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 8592215696975285212, guid: f9a585a1066b8b643adb66b7e75f0698, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8592215696975285212, guid: f9a585a1066b8b643adb66b7e75f0698, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
