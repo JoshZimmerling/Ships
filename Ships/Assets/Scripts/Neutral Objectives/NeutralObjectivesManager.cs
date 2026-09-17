@@ -6,11 +6,12 @@ using UnityEngine;
 public class NeutralObjectivesManager : NetworkBehaviour
 {
     [SerializeField] GameObject neutralShipPrefab;
-    [SerializeField] float secondsBetweenNeutralShipSpawns;
-    [SerializeField] float secondsUntilFirstNeutralShipSpawns;
+    [SerializeField] float secondsUntilFirstNeutralShipSpawns = 10;
+    [SerializeField] float secondsBetweenNeutralShipSpawns = 30;
     private float currentShipSpawningTimer;
 
-    public Dictionary<Transform, bool> spawnPositions; //Dictionary for referencing if that spawn position currently has a ship in it
+    private Dictionary<Transform, bool> spawnPositions; //Dictionary for referencing if that spawn position currently has a ship in it
+
     [SerializeField] int maxNeutralShips = 2;
     private int currentNumOfNeutralShips = 0;
 
@@ -19,7 +20,6 @@ public class NeutralObjectivesManager : NetworkBehaviour
         currentShipSpawningTimer = secondsUntilFirstNeutralShipSpawns;
 
         spawnPositions = new Dictionary<Transform, bool>();
-
         foreach (Transform spawnLocation in GameObject.Find("Neutral Ship Spawn Locations").transform)
         {
             spawnPositions.Add(spawnLocation, false);
@@ -50,7 +50,8 @@ public class NeutralObjectivesManager : NetworkBehaviour
                 spawnedShip.GetComponent<NetworkObject>().SpawnWithOwnership(OwnerClientId);
                 spawnedShip.transform.parent = transform;
 
-                spawnedShip.GetComponent<NeutralShip>().SetupShipSpawn(spawnPos, this, r);
+                spawnPositions[spawnPos] = true;
+                spawnedShip.GetComponent<NeutralShip>().SetupShipSpawn(spawnPos);
                 GameSceneManager.Singleton.shipsInScene.Add(spawnedShip);
 
                 currentNumOfNeutralShips++;

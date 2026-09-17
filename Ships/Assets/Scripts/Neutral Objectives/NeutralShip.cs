@@ -19,8 +19,6 @@ public class NeutralShip : NetworkBehaviour
 
     [SerializeField] GameObject popupTextPrefab;
 
-    private NeutralObjectivesManager neutralObjectivesManager;
-
     private bool moved = false;
 
     private GameObject scoutMarker; // Marker in fog of war
@@ -77,13 +75,10 @@ public class NeutralShip : NetworkBehaviour
         return Vector2.MoveTowards(transform.position, patrolRouteLocations[currentPatrolTarget].position, moveSpeed * seconds);
     }
 
-    public void SetupShipSpawn(Transform spawnObject, NeutralObjectivesManager nm, int i)
+    public void SetupShipSpawn(Transform spawnObject)
     {
         spawn = spawnObject;
         transform.position = spawn.position;
-
-        neutralObjectivesManager = nm;
-        neutralObjectivesManager.spawnPositions[spawn] = true;
 
         foreach (Transform patrolStop in spawn.Find("Patrol Route"))
             patrolRouteLocations.Add(patrolStop);
@@ -99,7 +94,7 @@ public class NeutralShip : NetworkBehaviour
     [Rpc(SendTo.Server)]
     public void DestroyShipRPC(ulong damageDealersClientID)
     {
-        neutralObjectivesManager.NeutralShipDeath(spawn);
+        GameSceneManager.Singleton.neutralObjectivesManager.NeutralShipDeath(spawn);
         GameSceneManager.Singleton.shipsInScene.Remove(gameObject);
         ReceiveNeutralObjectivePayoutRPC(damageDealersClientID);
 

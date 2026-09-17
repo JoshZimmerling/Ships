@@ -4850,6 +4850,7 @@ MonoBehaviour:
   bulletContainer: {fileID: 659025215}
   shipsInScene: []
   missilesInScene: []
+  neutralObjectivesManager: {fileID: 0}
   map: {fileID: 308044279}
   gameUI: {fileID: 435938186}
   inputManager: {fileID: 7904982975045375413}

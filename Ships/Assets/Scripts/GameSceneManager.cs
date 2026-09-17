@@ -12,10 +12,11 @@ public class GameSceneManager : Singleton<GameSceneManager>
     private List<Transform> playerSpawnZones = new List<Transform>();
     private int prioritySpawnGroup;
 
-    // TODO: Get rid of these
     public Transform bulletContainer;
     public List<GameObject> shipsInScene = new List<GameObject>();
     public List<GameObject> missilesInScene = new List<GameObject>();
+
+    public NeutralObjectivesManager neutralObjectivesManager;
 
     // TODO: make this better
     [SerializeField] public GameObject map;
@@ -25,6 +26,8 @@ public class GameSceneManager : Singleton<GameSceneManager>
     protected override void Awake()
     {
         base.Awake();
+
+        neutralObjectivesManager = GameObject.Find("Neutral Objectives Manager").GetComponent<NeutralObjectivesManager>();
 
         prioritySpawnGroup = Random.Range(0, 2);
         
