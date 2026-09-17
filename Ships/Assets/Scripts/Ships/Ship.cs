@@ -123,19 +123,20 @@ public class Ship : NetworkBehaviour
 
     public void UpdateBasedOnShipType()
     {
+        /*
         switch (shipType)
         {
-            //case ShipTypes.Mothership:
-                
-                /*
-                case ShipTypes.Goliath:
-                    if (!IsHost) return;
+            case ShipTypes.Mothership:
 
-                    if (currentShipHP.Value < maxShipHP)
-                        currentShipHP.Value += 1 * Time.deltaTime;
-                    break;
-                */
+            case ShipTypes.Goliath:
+                if (!IsHost) return;
+
+                if (currentShipHP.Value < maxShipHP)
+                    currentShipHP.Value += 1 * Time.deltaTime;
+                break;
+        
         }
+        */
     }
 
     public void DoDamage(float damage)

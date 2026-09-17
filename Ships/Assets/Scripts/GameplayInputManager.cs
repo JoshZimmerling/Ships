@@ -65,7 +65,7 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
         foreach (var (id, player) in PlayerDataList.Singleton.players)
         {
             GameObject playersMenuItem = Instantiate(playersInfoPrefab);
-            playersMenuItem.transform.parent = playersWindow.transform.Find("Players List");
+            playersMenuItem.transform.SetParent(playersWindow.transform.Find("Players List"));
             playersMenuItem.transform.Find("Players Color Image").GetComponent<Image>().color = player.playerColor;
             playersMenuItem.transform.Find("Players Name Text").GetComponent<TMP_Text>().text = "- " + player.playerUsername.Value;//PlayerDataList.Singleton.playerUsernames[id];
         }

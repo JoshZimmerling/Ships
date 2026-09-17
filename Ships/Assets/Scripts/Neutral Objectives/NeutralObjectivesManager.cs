@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -9,21 +10,19 @@ public class NeutralObjectivesManager : NetworkBehaviour
     [SerializeField] float secondsUntilFirstNeutralShipSpawns;
     private float currentShipSpawningTimer;
 
-    private List<Transform> spawnPositions;
-    public List<bool> spawnHasShip;
+    public Dictionary<Transform, bool> spawnPositions; //Dictionary for referencing if that spawn position currently has a ship in it
     [SerializeField] int maxNeutralShips = 2;
+    private int currentNumOfNeutralShips = 0;
 
     void Start()
     {
         currentShipSpawningTimer = secondsUntilFirstNeutralShipSpawns;
 
-        spawnPositions = new List<Transform>();
-        spawnHasShip = new List<bool>();
+        spawnPositions = new Dictionary<Transform, bool>();
 
         foreach (Transform spawnLocation in GameObject.Find("Neutral Ship Spawn Locations").transform)
         {
-            spawnPositions.Add(spawnLocation);
-            spawnHasShip.Add(false);
+            spawnPositions.Add(spawnLocation, false);
         }
     }
 
@@ -34,22 +33,17 @@ public class NeutralObjectivesManager : NetworkBehaviour
         currentShipSpawningTimer -= Time.deltaTime;
         if (currentShipSpawningTimer < 0)
         {
-            // Counts ships in scene
-            int c = 0;
-            foreach (bool b in spawnHasShip)
-                if (b) c++;
             // Checks if more ships are needed
-            if (c < maxNeutralShips)
+            if (currentNumOfNeutralShips < maxNeutralShips)
             {
-
                 // Checks for unused spawn
                 Transform spawnPos = null;
                 int r = 0;
                 while (spawnPos == null)
                 {
                     r = Random.Range(0, spawnPositions.Count);
-                    if (!spawnHasShip[r])
-                        spawnPos = spawnPositions[r];
+                    if (!spawnPositions.Values.ElementAt(r))
+                        spawnPos = spawnPositions.Keys.ElementAt(r);
                 }
                 // Spawns ship
                 GameObject spawnedShip = Instantiate(neutralShipPrefab, spawnPos.position, Quaternion.identity);
@@ -59,8 +53,17 @@ public class NeutralObjectivesManager : NetworkBehaviour
                 spawnedShip.GetComponent<NeutralShip>().SetupShipSpawn(spawnPos, this, r);
                 GameSceneManager.Singleton.shipsInScene.Add(spawnedShip);
 
+                currentNumOfNeutralShips++;
                 currentShipSpawningTimer = secondsBetweenNeutralShipSpawns;
             }
         }
+    }
+
+    public void NeutralShipDeath(Transform spawn)
+    {
+        spawnPositions[spawn] = false;
+        if (currentNumOfNeutralShips == maxNeutralShips)
+            currentShipSpawningTimer = 5f; //Give a cooldown on respawning if we were previously at the max number of ships
+        currentNumOfNeutralShips--;
     }
 }

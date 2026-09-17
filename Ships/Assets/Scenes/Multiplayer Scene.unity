@@ -7377,7 +7377,6 @@ MonoBehaviour:
   neutralShipPrefab: {fileID: 6845531929139960284, guid: 59f56c76215ce6b47b8c2b460533f51a, type: 3}
   secondsBetweenNeutralShipSpawns: 30
   secondsUntilFirstNeutralShipSpawns: 10
-  spawnHasShip: 
   maxNeutralShips: 2
 --- !u!4 &2052264805
 Transform:

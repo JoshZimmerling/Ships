@@ -19,7 +19,6 @@ public class NeutralShip : NetworkBehaviour
 
     [SerializeField] GameObject popupTextPrefab;
 
-    private int spawnIndex;
     private NeutralObjectivesManager neutralObjectivesManager;
 
     private bool moved = false;
@@ -84,8 +83,7 @@ public class NeutralShip : NetworkBehaviour
         transform.position = spawn.position;
 
         neutralObjectivesManager = nm;
-        spawnIndex = i;
-        neutralObjectivesManager.spawnHasShip[spawnIndex] = true;
+        neutralObjectivesManager.spawnPositions[spawn] = true;
 
         foreach (Transform patrolStop in spawn.Find("Patrol Route"))
             patrolRouteLocations.Add(patrolStop);
@@ -101,7 +99,7 @@ public class NeutralShip : NetworkBehaviour
     [Rpc(SendTo.Server)]
     public void DestroyShipRPC(ulong damageDealersClientID)
     {
-        neutralObjectivesManager.spawnHasShip[spawnIndex] = false;
+        neutralObjectivesManager.NeutralShipDeath(spawn);
         GameSceneManager.Singleton.shipsInScene.Remove(gameObject);
         ReceiveNeutralObjectivePayoutRPC(damageDealersClientID);
 
