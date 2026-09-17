@@ -6,8 +6,8 @@ public class Missile : NetworkBehaviour
     float dmg;
     float bulletSpeed;
     float missileTurnRate;
-    [SerializeField] float missileLifetimeMax;
-    float missileLifetime;
+    float missileLifetime = 1f; //Temporary to cause it to not despawn while getting setup
+    float missileLifetimeMax = 1f; //Temporary to cause it to not despawn while getting setup
 
     Transform missileTarget;
 
@@ -15,7 +15,6 @@ public class Missile : NetworkBehaviour
     {
         GetComponent<SpriteRenderer>().color = PlayerDataList.Singleton.players[OwnerClientId].playerColor;
         if (!IsOwner) transform.Find("Fog Remover").gameObject.SetActive(false);
-        missileLifetime = missileLifetimeMax;
     }
 
 
@@ -85,11 +84,13 @@ public class Missile : NetworkBehaviour
     }
     */
 
-    public void SetupMissile(float damage, float speed, float turnRate, Transform target)
+    public void SetupMissile(float damage, float speed, float turnRate, float lifetime, Transform target)
     {
         dmg = damage;
         bulletSpeed = speed;
         missileTurnRate = turnRate;
+        missileLifetime = lifetime;
+        missileLifetimeMax = lifetime;
         missileTarget = target;
     }
 

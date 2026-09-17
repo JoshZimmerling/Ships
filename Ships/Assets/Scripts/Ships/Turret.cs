@@ -29,6 +29,7 @@ public class Turret : NetworkBehaviour
 
     [SerializeField] private int projectileSpeed;
     [SerializeField] private float missileTurningSpeed = 60f;
+    [SerializeField] private float missileLifetimeMax = 8f;
     [SerializeField] private float counter = 0;
 
     private int rangeMod = 1;
@@ -100,7 +101,7 @@ public class Turret : NetworkBehaviour
                 GameObject missile = Instantiate(missilePrefab, transform.position, Quaternion.Euler(0, 0, aimDirection - 90 + transform.rotation.eulerAngles.z));
                 GameSceneManager.Singleton.missilesInScene.Add(missile);
                 missile.GetComponent<NetworkObject>().SpawnWithOwnership(OwnerClientId);
-                missile.GetComponent<Missile>().SetupMissile(damage, projectileSpeed, missileTurningSpeed, bestTarget);
+                missile.GetComponent<Missile>().SetupMissile(damage, projectileSpeed, missileTurningSpeed, missileLifetimeMax, bestTarget);
                 missile.transform.parent = GameSceneManager.Singleton.bulletContainer;
             }
             else
