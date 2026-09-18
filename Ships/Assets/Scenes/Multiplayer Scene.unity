@@ -4854,6 +4854,9 @@ MonoBehaviour:
   map: {fileID: 308044279}
   gameUI: {fileID: 435938186}
   inputManager: {fileID: 7904982975045375413}
+  controlsWindow: {fileID: 0}
+  playersWindow: {fileID: 0}
+  playersInfoPrefab: {fileID: 8698869445490966762, guid: 6a4cdae02571c0e408f0174efe38ccb5, type: 3}
 --- !u!4 &1306694288
 Transform:
   m_ObjectHideFlags: 0
@@ -7376,8 +7379,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::NeutralObjectivesManager
   ShowTopMostFoldoutHeaderGroup: 1
   neutralShipPrefab: {fileID: 6845531929139960284, guid: 59f56c76215ce6b47b8c2b460533f51a, type: 3}
-  secondsBetweenNeutralShipSpawns: 30
   secondsUntilFirstNeutralShipSpawns: 10
+  secondsBetweenNeutralShipSpawns: 30
   maxNeutralShips: 2
 --- !u!4 &2052264805
 Transform:
@@ -7559,7 +7562,6 @@ MonoBehaviour:
   shipsFromHit: []
   raycaster: {fileID: 435938187}
   eventSystem: {fileID: 203573525}
-  playersInfoPrefab: {fileID: 8698869445490966762, guid: 6a4cdae02571c0e408f0174efe38ccb5, type: 3}
 --- !u!1001 &3279546199255718382
 PrefabInstance:
   m_ObjectHideFlags: 0

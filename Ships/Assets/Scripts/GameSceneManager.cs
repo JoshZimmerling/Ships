@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
+using TMPro;
+using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 public class GameSceneManager : Singleton<GameSceneManager>
@@ -22,6 +25,11 @@ public class GameSceneManager : Singleton<GameSceneManager>
     [SerializeField] public GameObject map;
     [SerializeField] private GameObject gameUI;
     [SerializeField] private GameObject inputManager;
+
+    public GameObject controlsWindow;
+    public GameObject playersWindow;
+    [SerializeField] private GameObject playersInfoPrefab;
+    private Dictionary<FixedString32Bytes, Transform> allPlayersInfoInTabMenu;
 
     protected override void Awake()
     {
@@ -48,6 +56,25 @@ public class GameSceneManager : Singleton<GameSceneManager>
                 spawnLocation.GetComponent<SpriteRenderer>().enabled = false;
             }
         }
+
+        controlsWindow = GameObject.Find("Controls Window");
+        controlsWindow.gameObject.SetActive(false);
+        playersWindow = GameObject.Find("Players Window");
+        playersWindow.gameObject.SetActive(true);
+        allPlayersInfoInTabMenu = new Dictionary<FixedString32Bytes, Transform>();
+        //Initialize player window
+        foreach (var (id, player) in PlayerDataList.Singleton.players)
+        {
+            Debug.Log("Creating player card for " + player.playerUsername.Value + " with ID " + player.authenticationServicePlayerId.Value);
+            Transform playersMenuItem = Instantiate(playersInfoPrefab).transform;
+            playersMenuItem.SetParent(playersWindow.transform.Find("Players List"));
+            playersMenuItem.Find("Players Color Image").GetComponent<Image>().color = player.playerColor;
+            playersMenuItem.Find("Skull Icon").gameObject.SetActive(false);
+            playersMenuItem.Find("Background Color").GetComponent<Image>().color = player.authenticationServicePlayerId.Value == PlayerDataList.Singleton.GetLocalPlayer().authenticationServicePlayerId.Value ? new Color(.6f, .6f, .6f, .6f) : new Color(0, 0, 0, 0);
+            playersMenuItem.Find("Players Name Text").GetComponent<TMP_Text>().text = "- " + player.playerUsername.Value;
+            allPlayersInfoInTabMenu.Add(player.authenticationServicePlayerId.Value, playersMenuItem);
+        }
+        playersWindow.gameObject.SetActive(false);
     }
 
     public void Start()
@@ -116,6 +143,13 @@ public class GameSceneManager : Singleton<GameSceneManager>
         //From your spawn zone select a random spawn location
         Transform spawnLoc = spawnZone.GetChild(Random.Range(0, spawnZone.childCount));
         return spawnLoc;
+    }
+
+    public void ShowPlayerAsDeadInPlayersMenu(FixedString32Bytes playerAuthId)
+    {
+        Transform playerWhoDiedItem = allPlayersInfoInTabMenu.GetValueOrDefault(playerAuthId);
+        playerWhoDiedItem.Find("Players Name Text").GetComponent<TMP_Text>().text = "<s>" + playerWhoDiedItem.Find("Players Name Text").GetComponent<TMP_Text>().text + "</s>";
+        playerWhoDiedItem.Find("Skull Icon").gameObject.SetActive(true);
     }
 }
 

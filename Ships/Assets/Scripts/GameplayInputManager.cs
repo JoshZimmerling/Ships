@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using TMPro;
 using Unity.Netcode;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -41,10 +42,6 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
     [SerializeField] private GraphicRaycaster raycaster;
     [SerializeField] private EventSystem eventSystem;
 
-    private GameObject controlsWindow;
-    private GameObject playersWindow;
-    [SerializeField] private GameObject playersInfoPrefab;
-
     private Button leaveGameButton;
 
     protected override void Awake()
@@ -57,19 +54,6 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
         minimapTransform = GameObject.Find("Minimap Image").GetComponent<RectTransform>();
         minimapWidth = minimapTransform.rect.width;
         mapWidth = GameSceneManager.Singleton.map.GetComponent<RectTransform>().rect.width;
-
-        controlsWindow = GameObject.Find("Controls Window");
-        controlsWindow.gameObject.SetActive(false);
-        playersWindow = GameObject.Find("Players Window");
-        //Initialize player window
-        foreach (var (id, player) in PlayerDataList.Singleton.players)
-        {
-            GameObject playersMenuItem = Instantiate(playersInfoPrefab);
-            playersMenuItem.transform.SetParent(playersWindow.transform.Find("Players List"));
-            playersMenuItem.transform.Find("Players Color Image").GetComponent<Image>().color = player.playerColor;
-            playersMenuItem.transform.Find("Players Name Text").GetComponent<TMP_Text>().text = "- " + player.playerUsername.Value;//PlayerDataList.Singleton.playerUsernames[id];
-        }
-        playersWindow.gameObject.SetActive(false);
 
         leaveGameButton = GameObject.Find("Leave Game Button").GetComponent<Button>();
         leaveGameButton.onClick.AddListener(LeaveGame);
@@ -138,13 +122,13 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
 
         if (Input.GetKeyDown(KeyCode.Tab))
         {
-            controlsWindow.gameObject.SetActive(true);
-            playersWindow.gameObject.SetActive(true);
+            GameSceneManager.Singleton.controlsWindow.gameObject.SetActive(true);
+            GameSceneManager.Singleton.playersWindow.gameObject.SetActive(true);
         }
         if (Input.GetKeyUp(KeyCode.Tab))
         {
-            controlsWindow.gameObject.SetActive(false);
-            playersWindow.gameObject.SetActive(false);
+            GameSceneManager.Singleton.controlsWindow.gameObject.SetActive(false);
+            GameSceneManager.Singleton.playersWindow.gameObject.SetActive(false);
         }
 
         if (Input.GetMouseButtonDown(0))

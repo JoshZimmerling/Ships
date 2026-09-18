@@ -102,8 +102,12 @@ public class PlayerData : NetworkBehaviour
         mapFogRemover.SetActive(true);
         Shop.Singleton.gameObject.SetActive(false);
 
+        //Show the leave game button for non hosts
         if (!IsHost)
             GameplayInputManager.Singleton.ShowLeaveGameButton();
+
+        //Update everyones tab menu to show you died
+        UpdateTabMenuRPC(authenticationServicePlayerId.Value);
 
         //Check if you are last mothership standing, if so show the leave lobby button
         int numMothershipsLeft = 0;
@@ -114,7 +118,6 @@ public class PlayerData : NetworkBehaviour
                 numMothershipsLeft++;
             }
         }
-
         //Set to 2 since this runs right before destroying our own 
         if (numMothershipsLeft <= 2)
             ShowAllPlayersLeaveButtonRPC();
@@ -124,5 +127,11 @@ public class PlayerData : NetworkBehaviour
     public void ShowAllPlayersLeaveButtonRPC()
     {
         GameplayInputManager.Singleton.ShowLeaveGameButton();
+    }
+
+    [Rpc(SendTo.ClientsAndHost)]
+    public void UpdateTabMenuRPC(FixedString32Bytes playerID)
+    {
+        GameSceneManager.Singleton.ShowPlayerAsDeadInPlayersMenu(playerID);
     }
 }
