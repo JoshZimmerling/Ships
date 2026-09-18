@@ -146,7 +146,7 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
                     SetShips(null);
                     Collider2D clickedOnShip = Physics2D.OverlapPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition));
                     
-                    if (clickedOnShip != null && clickedOnShip.GetComponent<Ship>() != null && clickedOnShip.GetComponent<Ship>().IsOwner)
+                    if (clickedOnShip != null && clickedOnShip.GetComponent<Fighter>() == null && clickedOnShip.GetComponent<Ship>() != null && clickedOnShip.GetComponent<Ship>().IsOwner)
                     {
                         foreach (Transform ship in PlayerDataList.Singleton.GetLocalPlayer().transform)
                         {
@@ -256,6 +256,7 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
 
         shipCenter = new Vector2(xMin + (xDiff / 2), yMin + (yDiff / 2)); 
 
+        Debug.Log(selectedShips.Count);
         foreach (Ship ship in selectedShips)
         {
             ship.GetComponent<Movement>().SetTargetDestinationRPC(target + ((Vector2) ship.transform.position - shipCenter), rotateOnly);
@@ -315,7 +316,7 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
         foreach (Collider2D col in hitColliders)
         {
             Ship ship = col.GetComponent<Ship>();
-            if (ship != null)
+            if (ship != null && col.GetComponent<Fighter>() == null)
                 if (NetworkManager.Singleton.LocalClientId == ship.OwnerClientId)
                     shipsFromHit.Add(ship);
         }

@@ -6,14 +6,16 @@ public class Ship : NetworkBehaviour
     public enum ShipTypes
     {
         Destroyer,
-        //Marauder,
         Hawk,
         Challenger,
         Goliath,
+        GoliathFighter,
         Lightning,
         Drone,
         Scout,
         Mothership
+
+        //Marauder,
     }
 
     // Ship Variables
@@ -89,7 +91,8 @@ public class Ship : NetworkBehaviour
         else
         {
             fogRemover.localScale = new Vector3(visionRange / 6f, visionRange / 6f);
-            GameplayInputManager.Singleton.AddNewSelectedShip(this);
+            if (shipType != ShipTypes.GoliathFighter)
+                GameplayInputManager.Singleton.AddNewSelectedShip(this);
         }
     }
 

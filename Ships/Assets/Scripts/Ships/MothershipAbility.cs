@@ -2,7 +2,7 @@ using Unity.Netcode;
 using UnityEngine;
 using static Ship;
 
-public class MothershipHealAbility : NetworkBehaviour
+public class MothershipAbility : NetworkBehaviour
 {
     private float abilityTimer = 0;
     // Mothership ability settings

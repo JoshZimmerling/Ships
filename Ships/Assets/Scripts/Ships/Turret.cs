@@ -108,8 +108,11 @@ public class Turret : NetworkBehaviour
                 // Determine future position
                 float timeToTarget = bestTargetDistance / projectileSpeed;
                 Vector2 targetedPos = Vector2.zero;
-
-                if (bestTarget.GetComponent<Ship>() != null)
+                if (bestTarget.GetComponent<Fighter>() != null)
+                {
+                    targetedPos = bestTarget.position;
+                }
+                else if (bestTarget.GetComponent<Ship>() != null)
                 {
                     targetedPos = Vector2.Lerp(new Vector2(bestTarget.transform.position.x, bestTarget.transform.position.y), bestTarget.GetComponent<Movement>().GetFuturePosition(timeToTarget), .8f); //This somewhat leads the ship, but not fully
                 }
