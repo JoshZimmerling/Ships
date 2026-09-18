@@ -18,6 +18,8 @@ public class NeutralShip : NetworkBehaviour
 
     [SerializeField] GameObject popupTextPrefab;
 
+    public int correctionFactor; // Opponent range adjustments
+
     private bool moved = false;
 
     private GameObject scoutMarker; // Marker in fog of war

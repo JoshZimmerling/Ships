@@ -306,7 +306,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5248488840569974850, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: GlobalObjectIdHash
-      value: 306058689
+      value: 1639896610
       objectReference: {fileID: 0}
     - target: {fileID: 5248488840569974850, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: SceneMigrationSynchronization
@@ -519,6 +519,7 @@ MonoBehaviour:
   maxShipHP: 100
   goldOnKill: 20
   popupTextPrefab: {fileID: 985385043950032243, guid: a6e0a522c1dcae445a22ddcda9f44396, type: 3}
+  correctionFactor: 2
 --- !u!1001 &3400123671905513826
 PrefabInstance:
   m_ObjectHideFlags: 0

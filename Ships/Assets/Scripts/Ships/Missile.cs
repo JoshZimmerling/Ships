@@ -72,12 +72,12 @@ public class Missile : NetworkBehaviour
         }
         else if (collision.GetComponent<Missile>() != null)
         {
-            if (collision.GetComponent<Missile>().OwnerClientId == this.OwnerClientId || (isFromNeutralShip && collision.GetComponent<Missile>().isFromNeutralShip))
+            if ((collision.GetComponent<Missile>().OwnerClientId == this.OwnerClientId && !collision.GetComponent<Missile>().isFromNeutralShip && !isFromNeutralShip) || (isFromNeutralShip && collision.GetComponent<Missile>().isFromNeutralShip))
                 return;
         }
         else if (collision.GetComponent<Bullet>() != null)
         {
-            if ((collision.GetComponent<Bullet>().OwnerClientId == this.OwnerClientId && !collision.GetComponent<Bullet>().isFromNeutralShip) || (collision.GetComponent<Bullet>().isFromNeutralShip && isFromNeutralShip))
+            if ((collision.GetComponent<Bullet>().OwnerClientId == this.OwnerClientId && !collision.GetComponent<Bullet>().isFromNeutralShip && !isFromNeutralShip) || (isFromNeutralShip && collision.GetComponent<Bullet>().isFromNeutralShip))
                 return;
         }
 

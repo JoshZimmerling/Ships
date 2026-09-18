@@ -49,7 +49,7 @@ public class Bullet : NetworkBehaviour
         }
         else if (collision.GetComponent<Missile>() != null)
         {
-            if (collision.GetComponent<Missile>().OwnerClientId == this.OwnerClientId && !isFromNeutralShip)
+            if ((collision.GetComponent<Missile>().OwnerClientId == this.OwnerClientId && !collision.GetComponent<Missile>().isFromNeutralShip && !isFromNeutralShip) || (isFromNeutralShip && collision.GetComponent<Missile>().isFromNeutralShip))
                 return;
         }
 

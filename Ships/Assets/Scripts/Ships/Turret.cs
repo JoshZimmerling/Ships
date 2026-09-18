@@ -156,10 +156,11 @@ public class Turret : NetworkBehaviour
         else if (target.GetComponent<NeutralShip>() != null)
         {
             if (transform.parent.parent.GetComponent<NeutralShip>()) return false; // Neutral ships should not shoot other neutral ships
+            corrVal = target.GetComponent<NeutralShip>().correctionFactor;
         }
         else if (target.GetComponent<Missile>() != null)
         {
-            if ((target.GetComponent<Missile>().OwnerClientId == OwnerClientId && !target.GetComponent<Missile>().isFromNeutralShip) || (transform.parent.parent.GetComponent<NeutralShip>() && target.GetComponent<Missile>().isFromNeutralShip)) return false; // Is owned by me
+            if ((target.GetComponent<Missile>().OwnerClientId == OwnerClientId && !target.GetComponent<Missile>().isFromNeutralShip && !transform.parent.parent.GetComponent<NeutralShip>()) || (transform.parent.parent.GetComponent<NeutralShip>() && target.GetComponent<Missile>().isFromNeutralShip)) return false; // Is owned by me
         }
 
         Vector2 delta = target.transform.position - transform.position;
