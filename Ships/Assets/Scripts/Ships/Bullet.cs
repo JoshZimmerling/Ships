@@ -29,22 +29,25 @@ public class Bullet : NetworkBehaviour
     {
         if (!IsHost) return;
 
-        if (collision.GetComponent<Ship>() != null)
+        if (LayerMask.LayerToName(collision.gameObject.layer) == "Shield")
+        {
+            if(collision.transform.parent.GetComponent<Ship>().OwnerClientId == this.OwnerClientId && !isFromNeutralShip)
+                return;
+        }
+        else if (collision.GetComponent<Ship>() != null)
         {
             if (collision.GetComponent<Ship>().OwnerClientId == this.OwnerClientId && !isFromNeutralShip)
                 return;
             else
                 collision.GetComponent<Ship>().DoDamage(dmg);
         }
-
-        if (collision.GetComponent<NeutralShip>() != null)
+        else if (collision.GetComponent<NeutralShip>() != null)
         {
             if (isFromNeutralShip)
                 return;
             collision.GetComponent<NeutralShip>().DoDamage(dmg, this.OwnerClientId);
         }
-
-        if (collision.GetComponent<Missile>() != null)
+        else if (collision.GetComponent<Missile>() != null)
         {
             if (collision.GetComponent<Missile>().OwnerClientId == this.OwnerClientId && !isFromNeutralShip)
                 return;

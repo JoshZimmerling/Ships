@@ -51,29 +51,31 @@ public class Missile : NetworkBehaviour
     {
         if (!IsHost) return;
 
-        if (collision.GetComponent<Ship>() != null)
+        if (LayerMask.LayerToName(collision.gameObject.layer) == "Shield")
+        {
+            if (collision.transform.parent.GetComponent<Ship>().OwnerClientId == this.OwnerClientId && !isFromNeutralShip)
+                return;
+        }
+        else if (collision.GetComponent<Ship>() != null)
         { 
             if (collision.GetComponent<Ship>().OwnerClientId == this.OwnerClientId && !isFromNeutralShip)
                 return;
             else
                 collision.GetComponent<Ship>().DoDamage(dmg);
         }
-
-        if (collision.GetComponent<NeutralShip>() != null)
+        else if (collision.GetComponent<NeutralShip>() != null)
         {
             if (isFromNeutralShip)
                 return;
             else
                 collision.GetComponent<NeutralShip>().DoDamage(dmg, this.OwnerClientId);
         }
-
-        if (collision.GetComponent<Missile>() != null)
+        else if (collision.GetComponent<Missile>() != null)
         {
             if (collision.GetComponent<Missile>().OwnerClientId == this.OwnerClientId || (isFromNeutralShip && collision.GetComponent<Missile>().isFromNeutralShip))
                 return;
         }
-
-        if (collision.GetComponent<Bullet>() != null)
+        else if (collision.GetComponent<Bullet>() != null)
         {
             if ((collision.GetComponent<Bullet>().OwnerClientId == this.OwnerClientId && !collision.GetComponent<Bullet>().isFromNeutralShip) || (collision.GetComponent<Bullet>().isFromNeutralShip && isFromNeutralShip))
                 return;
