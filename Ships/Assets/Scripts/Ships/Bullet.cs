@@ -29,7 +29,7 @@ public class Bullet : NetworkBehaviour
     {
         if (!IsHost) return;
 
-        if (LayerMask.LayerToName(collision.gameObject.layer) == "Shield")
+        if (collision.gameObject.name == "Challenger Shield")
         {
             if(collision.transform.parent.GetComponent<Ship>().OwnerClientId == this.OwnerClientId && !isFromNeutralShip)
                 return;

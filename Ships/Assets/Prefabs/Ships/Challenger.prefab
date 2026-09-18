@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 9150732576349819478}
   - component: {fileID: 6205959127213350268}
   - component: {fileID: 6484938087034548292}
-  m_Layer: 13
+  m_Layer: 11
   m_Name: Challenger Shield
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -368,7 +368,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5248488840569974850, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: GlobalObjectIdHash
-      value: 2428963210
+      value: 2408996525
       objectReference: {fileID: 0}
     - target: {fileID: 6010934806082289777, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: m_Pivot.x
