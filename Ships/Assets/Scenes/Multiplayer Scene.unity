@@ -7381,10 +7381,10 @@ MonoBehaviour:
   neutralShipPrefabs:
   - {fileID: 6845531929139960284, guid: 59f56c76215ce6b47b8c2b460533f51a, type: 3}
   - {fileID: 6845531929139960284, guid: 2f8d4fd9358ee1c438e2c3c8887bd1a9, type: 3}
-  neutralShipSpawnRates: 0000000064000000
-  secondsUntilFirstNeutralShipSpawns: 1
-  secondsBetweenNeutralShipSpawns: 1
-  maxNeutralShips: 4
+  neutralShipSpawnRates: 460000001e000000
+  secondsUntilFirstNeutralShipSpawns: 10
+  secondsBetweenNeutralShipSpawns: 30
+  maxNeutralShips: 2
 --- !u!4 &2052264805
 Transform:
   m_ObjectHideFlags: 0
