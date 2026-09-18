@@ -80,7 +80,7 @@ public class NeutralObjectivesManager : NetworkBehaviour
     public void NeutralShipDeath(Transform spawn)
     {
         spawnPositions[spawn] = false;
-        if (currentNumOfNeutralShips == maxNeutralShips)
+        if (currentNumOfNeutralShips == maxNeutralShips && currentShipSpawningTimer < 5f)
             currentShipSpawningTimer = 5f; //Give a cooldown on respawning if we were previously at the max number of ships
         currentNumOfNeutralShips--;
     }
