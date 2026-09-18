@@ -101,7 +101,7 @@ public class Turret : NetworkBehaviour
                 GameObject missile = Instantiate(missilePrefab, transform.position, Quaternion.Euler(0, 0, aimDirection - 90 + transform.rotation.eulerAngles.z));
                 GameSceneManager.Singleton.missilesInScene.Add(missile);
                 missile.GetComponent<NetworkObject>().SpawnWithOwnership(OwnerClientId);
-                missile.GetComponent<Missile>().SetupMissile(damage, projectileSpeed, missileTurningSpeed, missileLifetimeMax, bestTarget);
+                missile.GetComponent<Missile>().SetupMissile(damage, projectileSpeed, missileTurningSpeed, missileLifetimeMax, bestTarget, transform.parent.parent.GetComponent<NeutralShip>() != null);
                 missile.transform.parent = GameSceneManager.Singleton.bulletContainer;
             }
             else
@@ -116,7 +116,7 @@ public class Turret : NetworkBehaviour
                 }
                 else if (bestTarget.GetComponent<NeutralShip>() != null)
                 {
-                    targetedPos = Vector2.Lerp(new Vector2(bestTarget.transform.position.x, bestTarget.transform.position.y), bestTarget.GetComponent<NeutralShip>().GetFuturePosition(timeToTarget), .8f); //This somewhat leads the ship, but not fully
+                    targetedPos = Vector2.Lerp(new Vector2(bestTarget.transform.position.x, bestTarget.transform.position.y), bestTarget.GetComponent<Movement>().GetFuturePosition(timeToTarget), .8f); //This somewhat leads the ship, but not fully
                 }
                 else if (bestTarget.GetComponent<Missile>() != null)
                 {

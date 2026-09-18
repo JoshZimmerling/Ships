@@ -14,7 +14,6 @@ public class NeutralShip : NetworkBehaviour
     private List<Transform> patrolRouteLocations = new List<Transform>();
     private int currentPatrolTarget = 0;
 
-    [SerializeField] int moveSpeed = 5;
     [SerializeField] int goldOnKill = 10;
 
     [SerializeField] GameObject popupTextPrefab;
@@ -68,11 +67,6 @@ public class NeutralShip : NetworkBehaviour
             moved = true;
         }
         if (movement.moving) moved = false;
-    }
-
-    public Vector2 GetFuturePosition(float seconds)
-    {
-        return Vector2.MoveTowards(transform.position, patrolRouteLocations[currentPatrolTarget].position, moveSpeed * seconds);
     }
 
     public void SetupShipSpawn(Transform spawnObject)

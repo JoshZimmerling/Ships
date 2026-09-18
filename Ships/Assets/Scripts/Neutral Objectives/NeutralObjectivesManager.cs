@@ -5,7 +5,8 @@ using UnityEngine;
 
 public class NeutralObjectivesManager : NetworkBehaviour
 {
-    [SerializeField] GameObject neutralShipPrefab;
+    [SerializeField] List<GameObject> neutralShipPrefabs;
+    [SerializeField] List<int> neutralShipSpawnRates;
     [SerializeField] float secondsUntilFirstNeutralShipSpawns = 10;
     [SerializeField] float secondsBetweenNeutralShipSpawns = 30;
     private float currentShipSpawningTimer;
@@ -45,8 +46,24 @@ public class NeutralObjectivesManager : NetworkBehaviour
                     if (!spawnPositions.Values.ElementAt(r))
                         spawnPos = spawnPositions.Keys.ElementAt(r);
                 }
+
+                //Selects a random neutral ship type to spawn
+                int shipTypeToSpawn = 0;
+                int random = Random.Range(0, 100);
+                foreach (int spawnRate in neutralShipSpawnRates)
+                {
+                    if (random > spawnRate)
+                    {
+                        random -= spawnRate;
+                        shipTypeToSpawn++;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
                 // Spawns ship
-                GameObject spawnedShip = Instantiate(neutralShipPrefab, spawnPos.position, Quaternion.identity);
+                GameObject spawnedShip = Instantiate(neutralShipPrefabs[shipTypeToSpawn], spawnPos.position, Quaternion.identity);
                 spawnedShip.GetComponent<NetworkObject>().SpawnWithOwnership(OwnerClientId);
                 spawnedShip.transform.parent = transform;
 

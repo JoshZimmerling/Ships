@@ -11,6 +11,9 @@ public class Missile : NetworkBehaviour
 
     Transform missileTarget;
 
+    public bool isFromNeutralShip = false;
+    private Color neutralShipColor = new Color(212 / 255f, 175 / 255f, 55 / 255f);
+
     public override void OnNetworkSpawn()
     {
         GetComponent<SpriteRenderer>().color = PlayerDataList.Singleton.players[OwnerClientId].playerColor;
@@ -47,10 +50,10 @@ public class Missile : NetworkBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (!IsHost) return;
-        
+
         if (collision.GetComponent<Ship>() != null)
         { 
-            if (collision.GetComponent<Ship>().OwnerClientId == this.OwnerClientId)
+            if (collision.GetComponent<Ship>().OwnerClientId == this.OwnerClientId && !isFromNeutralShip)
                 return;
             else
                 collision.GetComponent<Ship>().DoDamage(dmg);
@@ -58,18 +61,21 @@ public class Missile : NetworkBehaviour
 
         if (collision.GetComponent<NeutralShip>() != null)
         {
-            collision.GetComponent<NeutralShip>().DoDamage(dmg, this.OwnerClientId);
+            if (isFromNeutralShip)
+                return;
+            else
+                collision.GetComponent<NeutralShip>().DoDamage(dmg, this.OwnerClientId);
         }
 
         if (collision.GetComponent<Missile>() != null)
         {
-            if (collision.GetComponent<Missile>().OwnerClientId == this.OwnerClientId)
+            if (collision.GetComponent<Missile>().OwnerClientId == this.OwnerClientId || (isFromNeutralShip && collision.GetComponent<Missile>().isFromNeutralShip))
                 return;
         }
 
         if (collision.GetComponent<Bullet>() != null)
         {
-            if (collision.GetComponent<Bullet>().OwnerClientId == this.OwnerClientId && !collision.GetComponent<Bullet>().isFromNeutralShip)
+            if ((collision.GetComponent<Bullet>().OwnerClientId == this.OwnerClientId && !collision.GetComponent<Bullet>().isFromNeutralShip) || (collision.GetComponent<Bullet>().isFromNeutralShip && isFromNeutralShip))
                 return;
         }
 
@@ -84,7 +90,7 @@ public class Missile : NetworkBehaviour
     }
     */
 
-    public void SetupMissile(float damage, float speed, float turnRate, float lifetime, Transform target)
+    public void SetupMissile(float damage, float speed, float turnRate, float lifetime, Transform target, bool neutralShip)
     {
         dmg = damage;
         bulletSpeed = speed;
@@ -92,6 +98,18 @@ public class Missile : NetworkBehaviour
         missileLifetime = lifetime;
         missileLifetimeMax = lifetime;
         missileTarget = target;
+        isFromNeutralShip = neutralShip;
+
+        if (isFromNeutralShip)
+            SetMissileColorRPC(neutralShipColor);
+        else
+            SetMissileColorRPC(PlayerDataList.Singleton.players[OwnerClientId].playerColor);
+    }
+
+    [Rpc(SendTo.ClientsAndHost)]
+    public void SetMissileColorRPC(Color bulletColor)
+    {
+        GetComponent<SpriteRenderer>().color = bulletColor;
     }
 
     public void DestroyMissile()

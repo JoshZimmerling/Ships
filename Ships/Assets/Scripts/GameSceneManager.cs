@@ -65,7 +65,6 @@ public class GameSceneManager : Singleton<GameSceneManager>
         //Initialize player window
         foreach (var (id, player) in PlayerDataList.Singleton.players)
         {
-            Debug.Log("Creating player card for " + player.playerUsername.Value + " with ID " + player.authenticationServicePlayerId.Value);
             Transform playersMenuItem = Instantiate(playersInfoPrefab).transform;
             playersMenuItem.SetParent(playersWindow.transform.Find("Players List"));
             playersMenuItem.Find("Players Color Image").GetComponent<Image>().color = player.playerColor;
