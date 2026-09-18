@@ -78,9 +78,8 @@ public class Turret : NetworkBehaviour
             }
         }
 
-        // If it is not a missile turret and then
-        // If there isnt a ship targeted or if it is a light turret look to target missiles
-        if (turretType != TurretType.MissilePods && (bestTarget != null || turretType == TurretType.LightTurret))
+        // If it is not a missile turret and there isnt a ship targeted or if it is a light turret look to target missiles
+        if (turretType != TurretType.MissilePods && (bestTarget == null || turretType == TurretType.LightTurret))
         {
             foreach (GameObject enemyMissiles in GameSceneManager.Singleton.missilesInScene)
             {
@@ -160,7 +159,7 @@ public class Turret : NetworkBehaviour
         }
         else if (target.GetComponent<Missile>() != null)
         {
-            if (target.GetComponent<Missile>().OwnerClientId == OwnerClientId && !transform.parent.parent.GetComponent<NeutralShip>()) return false; // Is owned by me
+            if ((target.GetComponent<Missile>().OwnerClientId == OwnerClientId && !target.GetComponent<Missile>().isFromNeutralShip) || (transform.parent.parent.GetComponent<NeutralShip>() && target.GetComponent<Missile>().isFromNeutralShip)) return false; // Is owned by me
         }
 
         Vector2 delta = target.transform.position - transform.position;
