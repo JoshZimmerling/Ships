@@ -37,10 +37,21 @@ public class Turret : NetworkBehaviour
 
     private Movement mv;
 
+    AudioSource shotAudio;
+    private float baselinePitch;
+    private float baselineVolume;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public override void OnNetworkSpawn()
     {
         mv = GetComponentInParent<Movement>();
+
+        shotAudio = GetComponent<AudioSource>();
+        if (shotAudio != null)
+        {
+            baselinePitch = shotAudio.pitch;
+            baselineVolume = shotAudio.volume;
+        }
     }
 
     // Find closest
@@ -252,8 +263,16 @@ public class Turret : NetworkBehaviour
                 }
             }
             if (isSeenByMyShips)
-                if (GetComponent<AudioSource>() != null)
-                    GetComponent<AudioSource>().Play();
+            {
+                if (shotAudio != null)
+                {
+                    shotAudio.pitch = baselinePitch;
+                    shotAudio.volume = baselineVolume;
+                    shotAudio.pitch += Random.Range(-.3f, .3f);
+                    shotAudio.volume += Random.Range(-.05f, .05f);
+                    shotAudio.Play();
+                }
+            }
         }
     }
 
