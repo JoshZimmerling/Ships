@@ -53,7 +53,7 @@ public class Fighter : Ship
         transform.rotation = Quaternion.FromToRotation(Vector3.up, lookDirection);
 
         // Heals fighters when back at goliath
-        if (d > -0.5f && currentShipHP.Value != maxShipHP)
+        if (targetShip == goliath && d > -0.5f && currentShipHP.Value != maxShipHP)
             currentShipHP.Value = maxShipHP;
 
         base.FixedUpdate();
