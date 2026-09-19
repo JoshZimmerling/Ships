@@ -256,7 +256,6 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
 
         shipCenter = new Vector2(xMin + (xDiff / 2), yMin + (yDiff / 2)); 
 
-        Debug.Log(selectedShips.Count);
         foreach (Ship ship in selectedShips)
         {
             ship.GetComponent<Movement>().SetTargetDestinationRPC(target + ((Vector2) ship.transform.position - shipCenter), rotateOnly);

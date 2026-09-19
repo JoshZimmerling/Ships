@@ -19,12 +19,11 @@ public class GoliathAbility : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
-        if (!IsHost)
-        {
-            fighters = new List<GameObject>();
-            for (int i = 0; i < fightersOnSpawn; i++)
-                SpawnFighter();
-        }
+        if (!IsHost) return;
+
+        fighters = new List<GameObject>();
+        for (int i = 0; i < fightersOnSpawn; i++)
+            SpawnFighter();
     }
 
     public void FixedUpdate()
@@ -44,9 +43,11 @@ public class GoliathAbility : NetworkBehaviour
             float closestRange = Mathf.Infinity;
             foreach (GameObject shipInScene in GameSceneManager.Singleton.shipsInScene)
             {
+                if (shipInScene.GetComponent<Fighter>())
+                    continue;
                 if (shipInScene.GetComponent<Ship>() != null && shipInScene.GetComponent<Ship>().OwnerClientId != OwnerClientId)
                 {
-                    float dist2Ship = (shipInScene.transform.position - transform.position).magnitude + shipInScene.GetComponent<Ship>().correctionFactor;
+                    float dist2Ship = (shipInScene.transform.position - transform.position).magnitude - shipInScene.GetComponent<Ship>().correctionFactor;
                     if (dist2Ship < detectionRange && dist2Ship < closestRange)
                     {
                         closestRange = dist2Ship;
@@ -55,7 +56,7 @@ public class GoliathAbility : NetworkBehaviour
                 }
                 else if (shipInScene.GetComponent<NeutralShip>() != null)
                 {
-                    float dist2Ship = (shipInScene.transform.position - transform.position).magnitude + shipInScene.GetComponent<NeutralShip>().correctionFactor;
+                    float dist2Ship = (shipInScene.transform.position - transform.position).magnitude - shipInScene.GetComponent<NeutralShip>().correctionFactor;
                     if (dist2Ship < detectionRange && dist2Ship < closestRange)
                     {
                         closestRange = dist2Ship;
@@ -68,8 +69,8 @@ public class GoliathAbility : NetworkBehaviour
                 foreach (GameObject fighter in fighters)
                     fighter.GetComponent<Fighter>().SetTarget(currentTarget);
         }
-        else if ((currentTarget.GetComponent<Ship>() != null && (currentTarget.transform.position - transform.position).magnitude + currentTarget.GetComponent<Ship>().correctionFactor > maxChaseRange)
-            || (currentTarget.GetComponent<NeutralShip>() != null && (currentTarget.transform.position - transform.position).magnitude + currentTarget.GetComponent<NeutralShip>().correctionFactor > maxChaseRange))
+        else if ((currentTarget.GetComponent<Ship>() != null && (currentTarget.transform.position - transform.position).magnitude - currentTarget.GetComponent<Ship>().correctionFactor > maxChaseRange)
+            || (currentTarget.GetComponent<NeutralShip>() != null && (currentTarget.transform.position - transform.position).magnitude - currentTarget.GetComponent<NeutralShip>().correctionFactor > maxChaseRange))
         {
             // Tell ships to return
             currentTarget = null;
