@@ -6,16 +6,20 @@ public class Missile : NetworkBehaviour
     float dmg;
     float bulletSpeed;
     float missileTurnRate;
-    [SerializeField] float missileLifetimeMax;
-    float missileLifetime;
+    float missileLifetime = 1f; //Temporary to cause it to not despawn while getting setup
+    float missileLifetimeMax = 1f; //Temporary to cause it to not despawn while getting setup
 
     Transform missileTarget;
+
+    public bool isFromNeutralShip = false;
+    private Color neutralShipColor = new Color(212 / 255f, 175 / 255f, 55 / 255f);
 
     public override void OnNetworkSpawn()
     {
         GetComponent<SpriteRenderer>().color = PlayerDataList.Singleton.players[OwnerClientId].playerColor;
-        missileLifetime = missileLifetimeMax;
+        if (!IsOwner) transform.Find("Fog Remover").gameObject.SetActive(false);
     }
+
 
     void FixedUpdate()
     {
@@ -46,29 +50,34 @@ public class Missile : NetworkBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (!IsHost) return;
-        
-        if (collision.GetComponent<Ship>() != null)
+
+        if (collision.gameObject.name == "Challenger Shield")
+        {
+            if (collision.transform.parent.GetComponent<Ship>().OwnerClientId == this.OwnerClientId && !isFromNeutralShip)
+                return;
+        }
+        else if (collision.GetComponent<Ship>() != null)
         { 
-            if (collision.GetComponent<Ship>().OwnerClientId == this.OwnerClientId)
+            if (collision.GetComponent<Ship>().OwnerClientId == this.OwnerClientId && !isFromNeutralShip)
                 return;
             else
                 collision.GetComponent<Ship>().DoDamage(dmg);
         }
-
-        if (collision.GetComponent<NeutralShip>() != null)
+        else if (collision.GetComponent<NeutralShip>() != null)
         {
-            collision.GetComponent<NeutralShip>().DoDamage(dmg, this.OwnerClientId);
+            if (isFromNeutralShip)
+                return;
+            else
+                collision.GetComponent<NeutralShip>().DoDamage(dmg, this.OwnerClientId);
         }
-
-        if (collision.GetComponent<Missile>() != null)
+        else if (collision.GetComponent<Missile>() != null)
         {
-            if (collision.GetComponent<Missile>().OwnerClientId == this.OwnerClientId)
+            if ((collision.GetComponent<Missile>().OwnerClientId == this.OwnerClientId && !collision.GetComponent<Missile>().isFromNeutralShip && !isFromNeutralShip) || (isFromNeutralShip && collision.GetComponent<Missile>().isFromNeutralShip))
                 return;
         }
-
-        if (collision.GetComponent<Bullet>() != null)
+        else if (collision.GetComponent<Bullet>() != null)
         {
-            if (collision.GetComponent<Bullet>().OwnerClientId == this.OwnerClientId && !collision.GetComponent<Bullet>().isFromNeutralShip)
+            if ((collision.GetComponent<Bullet>().OwnerClientId == this.OwnerClientId && !collision.GetComponent<Bullet>().isFromNeutralShip && !isFromNeutralShip) || (isFromNeutralShip && collision.GetComponent<Bullet>().isFromNeutralShip))
                 return;
         }
 
@@ -83,12 +92,29 @@ public class Missile : NetworkBehaviour
     }
     */
 
-    public void SetupMissile(float damage, float speed, float turnRate, Transform target)
+    public void SetupMissile(float damage, float speed, float turnRate, float lifetime, Transform target, bool neutralShip)
     {
         dmg = damage;
         bulletSpeed = speed;
         missileTurnRate = turnRate;
+        missileLifetime = lifetime;
+        missileLifetimeMax = lifetime;
         missileTarget = target;
+        isFromNeutralShip = neutralShip;
+
+        if (isFromNeutralShip)
+        {
+            SetMissileColorRPC(neutralShipColor);
+            transform.Find("Fog Remover").gameObject.SetActive(false);
+        }
+        else
+            SetMissileColorRPC(PlayerDataList.Singleton.players[OwnerClientId].playerColor);
+    }
+
+    [Rpc(SendTo.ClientsAndHost)]
+    public void SetMissileColorRPC(Color bulletColor)
+    {
+        GetComponent<SpriteRenderer>().color = bulletColor;
     }
 
     public void DestroyMissile()

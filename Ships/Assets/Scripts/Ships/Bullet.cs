@@ -29,24 +29,27 @@ public class Bullet : NetworkBehaviour
     {
         if (!IsHost) return;
 
-        if (collision.GetComponent<Ship>() != null)
+        if (collision.gameObject.name == "Challenger Shield")
+        {
+            if(collision.transform.parent.GetComponent<Ship>().OwnerClientId == this.OwnerClientId && !isFromNeutralShip)
+                return;
+        }
+        else if (collision.GetComponent<Ship>() != null)
         {
             if (collision.GetComponent<Ship>().OwnerClientId == this.OwnerClientId && !isFromNeutralShip)
                 return;
             else
                 collision.GetComponent<Ship>().DoDamage(dmg);
         }
-
-        if (collision.GetComponent<NeutralShip>() != null)
+        else if (collision.GetComponent<NeutralShip>() != null)
         {
             if (isFromNeutralShip)
                 return;
             collision.GetComponent<NeutralShip>().DoDamage(dmg, this.OwnerClientId);
         }
-
-        if (collision.GetComponent<Missile>() != null)
+        else if (collision.GetComponent<Missile>() != null)
         {
-            if (collision.GetComponent<Missile>().OwnerClientId == this.OwnerClientId)
+            if ((collision.GetComponent<Missile>().OwnerClientId == this.OwnerClientId && !collision.GetComponent<Missile>().isFromNeutralShip && !isFromNeutralShip) || (isFromNeutralShip && collision.GetComponent<Missile>().isFromNeutralShip))
                 return;
         }
 
@@ -66,6 +69,7 @@ public class Bullet : NetworkBehaviour
         switch (turretType)
         {
             case Turret.TurretType.HeavyTurret:
+            case Turret.TurretType.HawkGun:
                 transform.localScale = new Vector3(0.6f, 0.6f, 1);
                 break;
             case Turret.TurretType.MediumTurret:

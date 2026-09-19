@@ -99,7 +99,7 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
 
     private readonly float heartbeatTimeMax = 15f;
     private float heartbeatTimer = 0f;
-    void FixedUpdate()
+    async void FixedUpdate()
     {
         lobbyRefreshTimer -= Time.deltaTime;
 
@@ -114,7 +114,7 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
             case ScreenNames.LobbyScreen:
                 if (lobbyRefreshTimer < 0f)
                 {
-                    RefreshLobbyInfo();
+                    await RefreshLobbyInfo();
                 }
                 lobbyVisualTimer -= Time.deltaTime;
                 if (lobbyVisualTimer < 0f)

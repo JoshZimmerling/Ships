@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using TMPro;
 using Unity.Netcode;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -40,10 +42,6 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
     [SerializeField] private GraphicRaycaster raycaster;
     [SerializeField] private EventSystem eventSystem;
 
-    private GameObject controlsWindow;
-    private GameObject playersWindow;
-    [SerializeField] private GameObject playersInfoPrefab;
-
     private Button leaveGameButton;
 
     protected override void Awake()
@@ -57,22 +55,12 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
         minimapWidth = minimapTransform.rect.width;
         mapWidth = GameSceneManager.Singleton.map.GetComponent<RectTransform>().rect.width;
 
-        controlsWindow = GameObject.Find("Controls Window");
-        controlsWindow.gameObject.SetActive(false);
-        playersWindow = GameObject.Find("Players Window");
-        //Initialize player window
-        foreach (var (id, player) in PlayerDataList.Singleton.players)
-        {
-            GameObject playersMenuItem = Instantiate(playersInfoPrefab);
-            playersMenuItem.transform.parent = playersWindow.transform.Find("Players List");
-            playersMenuItem.transform.Find("Players Color Image").GetComponent<Image>().color = player.playerColor;
-            playersMenuItem.transform.Find("Players Name Text").GetComponent<TMP_Text>().text = "- " + player.playerUsername.Value;//PlayerDataList.Singleton.playerUsernames[id];
-        }
-        playersWindow.gameObject.SetActive(false);
-
         leaveGameButton = GameObject.Find("Leave Game Button").GetComponent<Button>();
         leaveGameButton.onClick.AddListener(LeaveGame);
         leaveGameButton.gameObject.SetActive(false);
+
+        if (PlayerDataList.Singleton.players.Count <= 1)
+            ShowLeaveGameButton();
     }
 
     // Update is called once per frame
@@ -81,12 +69,12 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
         // Setting the target destination for the ships
         if (Input.GetMouseButtonDown(1))
         {
-            UIClicks ui_click = DidClickUI();
-            if (ui_click == UIClicks.MINIMAP)
+            UIHoverState ui_click = IsMouseOverUI();
+            if (ui_click == UIHoverState.MINIMAP)
             {
                 DirectShips(GetMinimapMouseLocation() * (mapWidth/minimapWidth), false);
             }
-            else if (ui_click == UIClicks.NONE)
+            else if (ui_click == UIHoverState.NONE)
             {
                 DirectShips(Camera.main.ScreenToWorldPoint(Input.mousePosition), false);
             }
@@ -95,12 +83,12 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
         // Rotate only ships
         if (Input.GetMouseButtonDown(2))
         {
-            UIClicks ui_click = DidClickUI();
-            if (ui_click == UIClicks.MINIMAP)
+            UIHoverState ui_click = IsMouseOverUI();
+            if (ui_click == UIHoverState.MINIMAP)
             {
                 DirectShips(GetMinimapMouseLocation() * (mapWidth / minimapWidth), true);
             }
-            else if (ui_click == UIClicks.NONE)
+            else if (ui_click == UIHoverState.NONE)
             {
                 DirectShips(Camera.main.ScreenToWorldPoint(Input.mousePosition), true);
             }
@@ -134,24 +122,46 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
 
         if (Input.GetKeyDown(KeyCode.Tab))
         {
-            controlsWindow.gameObject.SetActive(true);
-            playersWindow.gameObject.SetActive(true);
+            GameSceneManager.Singleton.controlsWindow.gameObject.SetActive(true);
+            GameSceneManager.Singleton.playersWindow.gameObject.SetActive(true);
         }
         if (Input.GetKeyUp(KeyCode.Tab))
         {
-            controlsWindow.gameObject.SetActive(false);
-            playersWindow.gameObject.SetActive(false);
+            GameSceneManager.Singleton.controlsWindow.gameObject.SetActive(false);
+            GameSceneManager.Singleton.playersWindow.gameObject.SetActive(false);
         }
 
         if (Input.GetMouseButtonDown(0))
         {
-            UIClicks ui_click = DidClickUI();
-            if (ui_click == UIClicks.MINIMAP)
+            UIHoverState ui_click = IsMouseOverUI();
+            if (ui_click == UIHoverState.MINIMAP)
             {
                 mouseDownInMinimap = true;
             }
-            else if (ui_click == UIClicks.NONE) //If we did not click on a UI element, start drawing our ship selection box
+            else if (ui_click == UIHoverState.NONE) //If we did not click on a UI element, start drawing our ship selection box
             {
+                //If control is held, we are grabbing all ships of the type we clicked
+                if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))
+                {
+                    SetShips(null);
+                    Collider2D clickedOnShip = Physics2D.OverlapPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+                    
+                    if (clickedOnShip != null && clickedOnShip.GetComponent<Fighter>() == null && clickedOnShip.GetComponent<Ship>() != null && clickedOnShip.GetComponent<Ship>().IsOwner)
+                    {
+                        foreach (Transform ship in PlayerDataList.Singleton.GetLocalPlayer().transform)
+                        {
+                            Ship shipScript = ship.GetComponent<Ship>();
+                            if (IsOnScreen(ship) && shipScript != null && shipScript.IsOwner && shipScript.GetShipType() == clickedOnShip.GetComponent<Ship>().GetShipType())
+                            {
+                                shipScript.SelectShip();
+                                selectedShips.Add(shipScript);
+                            }
+                        }
+                    }
+                    return;
+                }
+
+                //If control is not held, do the normal selection box process
                 startPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 mouseDownInGame = true;
             }
@@ -261,16 +271,15 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
         {
             ship.UnselectShip();
         }
+        selectedShips.Clear();
 
-        foreach (Ship ship in ships)
+        if (ships != null)
         {
-            ship.SelectShip(); 
-        }
-
-        selectedShips.Clear(); 
-        foreach (Ship newShip in ships)
-        {
-            selectedShips.Add(newShip);
+            foreach (Ship ship in ships)
+            {
+                ship.SelectShip();
+                selectedShips.Add(ship);
+            }
         }
     }
 
@@ -306,7 +315,7 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
         foreach (Collider2D col in hitColliders)
         {
             Ship ship = col.GetComponent<Ship>();
-            if (ship != null)
+            if (ship != null && col.GetComponent<Fighter>() == null)
                 if (NetworkManager.Singleton.LocalClientId == ship.OwnerClientId)
                     shipsFromHit.Add(ship);
         }
@@ -334,14 +343,14 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
         }
     }
 
-    private enum UIClicks
+    public enum UIHoverState
     {
         NONE,
         MINIMAP,
         OTHER_NON_MINIMAP_UI
     }
 
-    private UIClicks DidClickUI()
+    public UIHoverState IsMouseOverUI()
     {
         PointerEventData pointerData = new PointerEventData(eventSystem);
         pointerData.position = Input.mousePosition;
@@ -352,16 +361,16 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
         {
             if (UI_Element.gameObject.name == "Minimap Image")
             {
-                return UIClicks.MINIMAP;
+                return UIHoverState.MINIMAP;
             }
         }
 
         if (clickedUIElements.Count > 0)
         {
-            return UIClicks.OTHER_NON_MINIMAP_UI;
+            return UIHoverState.OTHER_NON_MINIMAP_UI;
         }
 
-        return UIClicks.NONE;
+        return UIHoverState.NONE;
     }
 
     private Vector2 GetMinimapMouseLocation()
@@ -370,6 +379,16 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
         RectTransformUtility.ScreenPointToLocalPointInRectangle(minimapTransform, Input.mousePosition, null, out localClickPos);
 
         return localClickPos;
+    }
+
+    private bool IsOnScreen(Transform obj)
+    {
+        Vector3 screenPoint = Camera.main.WorldToScreenPoint(obj.position);
+
+        return screenPoint.y > 0 &&
+               screenPoint.y < Screen.height &&
+               screenPoint.x > 0 &&
+               screenPoint.x < Screen.width;
     }
 
     public void ShowLeaveGameButton()

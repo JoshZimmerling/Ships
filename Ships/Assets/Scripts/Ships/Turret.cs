@@ -29,12 +29,17 @@ public class Turret : NetworkBehaviour
 
     [SerializeField] private int projectileSpeed;
     [SerializeField] private float missileTurningSpeed = 60f;
+    [SerializeField] private float missileLifetimeMax = 8f;
     [SerializeField] private float counter = 0;
+
+    private int rangeMod = 1;
+
+    private Movement mv;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public override void OnNetworkSpawn()
     {
-
+        mv = GetComponentInParent<Movement>();
     }
 
     // Find closest
@@ -61,6 +66,8 @@ public class Turret : NetworkBehaviour
         maxRadians = (aimDirection + transform.rotation.eulerAngles.z) * Mathf.Deg2Rad;
         fireVector = new Vector2(Mathf.Cos(maxRadians), Mathf.Sin(maxRadians));
 
+        rangeMod = (turretType == TurretType.HawkGun && !mv.moving ? 2 : 1);
+
         foreach (GameObject enemyShip in GameSceneManager.Singleton.shipsInScene)
         {
             // Finds the closest ship
@@ -71,9 +78,8 @@ public class Turret : NetworkBehaviour
             }
         }
 
-        // If it is not a missile turret and then
-        // If there isnt a ship targeted or if it is a light turret look to target missiles
-        if (turretType != TurretType.MissilePods && (bestTarget != null || turretType == TurretType.LightTurret))
+        // If it is not a missile turret and there isnt a ship targeted or if it is a light turret look to target missiles
+        if (turretType != TurretType.MissilePods && (bestTarget == null || turretType == TurretType.LightTurret))
         {
             foreach (GameObject enemyMissiles in GameSceneManager.Singleton.missilesInScene)
             {
@@ -94,7 +100,7 @@ public class Turret : NetworkBehaviour
                 GameObject missile = Instantiate(missilePrefab, transform.position, Quaternion.Euler(0, 0, aimDirection - 90 + transform.rotation.eulerAngles.z));
                 GameSceneManager.Singleton.missilesInScene.Add(missile);
                 missile.GetComponent<NetworkObject>().SpawnWithOwnership(OwnerClientId);
-                missile.GetComponent<Missile>().SetupMissile(damage, projectileSpeed, missileTurningSpeed, bestTarget);
+                missile.GetComponent<Missile>().SetupMissile(damage, projectileSpeed, missileTurningSpeed, missileLifetimeMax, bestTarget, transform.parent.parent.GetComponent<NeutralShip>() != null);
                 missile.transform.parent = GameSceneManager.Singleton.bulletContainer;
             }
             else
@@ -102,14 +108,17 @@ public class Turret : NetworkBehaviour
                 // Determine future position
                 float timeToTarget = bestTargetDistance / projectileSpeed;
                 Vector2 targetedPos = Vector2.zero;
-
-                if (bestTarget.GetComponent<Ship>() != null)
+                if (bestTarget.GetComponent<Fighter>() != null)
+                {
+                    targetedPos = Vector2.Lerp(new Vector2(bestTarget.transform.position.x, bestTarget.transform.position.y), bestTarget.GetComponent<Fighter>().GetFuturePosition(timeToTarget), .8f);
+                }
+                else if (bestTarget.GetComponent<Ship>() != null)
                 {
                     targetedPos = Vector2.Lerp(new Vector2(bestTarget.transform.position.x, bestTarget.transform.position.y), bestTarget.GetComponent<Movement>().GetFuturePosition(timeToTarget), .8f); //This somewhat leads the ship, but not fully
                 }
                 else if (bestTarget.GetComponent<NeutralShip>() != null)
                 {
-                    targetedPos = Vector2.Lerp(new Vector2(bestTarget.transform.position.x, bestTarget.transform.position.y), bestTarget.GetComponent<NeutralShip>().GetFuturePosition(timeToTarget), .8f); //This somewhat leads the ship, but not fully
+                    targetedPos = Vector2.Lerp(new Vector2(bestTarget.transform.position.x, bestTarget.transform.position.y), bestTarget.GetComponent<Movement>().GetFuturePosition(timeToTarget), .8f); //This somewhat leads the ship, but not fully
                 }
                 else if (bestTarget.GetComponent<Missile>() != null)
                 {
@@ -131,7 +140,7 @@ public class Turret : NetworkBehaviour
                 // Fire the bullet at the angle calculated
                 GameObject bullet = Instantiate(bulletPrefab, transform.position, Quaternion.LookRotation(new Vector3(0, 0, 1), fireVector));
                 bullet.GetComponent<NetworkObject>().SpawnWithOwnership(OwnerClientId);
-                bullet.GetComponent<Bullet>().SetupBullet(range, damage, projectileSpeed, turretType, transform.parent.parent.GetComponent<NeutralShip>() != null);
+                bullet.GetComponent<Bullet>().SetupBullet(range * rangeMod, damage, projectileSpeed * rangeMod, turretType, transform.parent.parent.GetComponent<NeutralShip>() != null);
                 bullet.transform.parent = GameSceneManager.Singleton.bulletContainer;
             }
             counter = Random.Range(0.95f, 1.05f) / fireRate;
@@ -150,28 +159,45 @@ public class Turret : NetworkBehaviour
         else if (target.GetComponent<NeutralShip>() != null)
         {
             if (transform.parent.parent.GetComponent<NeutralShip>()) return false; // Neutral ships should not shoot other neutral ships
+            corrVal = target.GetComponent<NeutralShip>().correctionFactor;
         }
         else if (target.GetComponent<Missile>() != null)
         {
-            if (target.GetComponent<Missile>().OwnerClientId == OwnerClientId && !transform.parent.parent.GetComponent<NeutralShip>()) return false; // Is owned by me
+            if ((target.GetComponent<Missile>().OwnerClientId == OwnerClientId && !target.GetComponent<Missile>().isFromNeutralShip && !transform.parent.parent.GetComponent<NeutralShip>()) || (transform.parent.parent.GetComponent<NeutralShip>() && target.GetComponent<Missile>().isFromNeutralShip)) return false; // Is owned by me
         }
 
         Vector2 delta = target.transform.position - transform.position;
         distanceToTarget = delta.magnitude - corrVal;
-        if (distanceToTarget > range) return false; // Is out of range
+
+        if (distanceToTarget > range * rangeMod) return false; // Is out of range
 
         if (firingArc == 360) return true;
+
+        if (turretType == TurretType.HawkGun && !mv.moving) // Checks if in vision for hawk gun
+        {
+            bool inRange = false;
+            foreach (GameObject ship in GameSceneManager.Singleton.shipsInScene)
+            {
+                Ship alliedShip = ship.GetComponent<Ship>();
+                if (alliedShip != null && alliedShip.OwnerClientId == OwnerClientId && (alliedShip.transform.position - target.transform.position).magnitude < alliedShip.visionRange)
+                {
+                    inRange = true;
+                    break;
+                }
+            }
+            if (!inRange) return false;
+        }
 
         float dot = Vector2.Dot(delta.normalized, fireVector);
         float halfAngleRad = (firingArc * 0.5f) * Mathf.Deg2Rad;
         float cosHalfAngle = Mathf.Cos(halfAngleRad);
-        if (dot >= cosHalfAngle && distanceToTarget <= range) return true; // Center of target in sector (extended)
+        if (dot >= cosHalfAngle && distanceToTarget <= range * rangeMod) return true; // Center of target in sector (extended)
 
         Vector2 leftEdgeDir = RotateVector(fireVector, firingArc * 0.5f).normalized;
         Vector2 rightEdgeDir = RotateVector(fireVector, -firingArc * 0.5f).normalized;
 
-        if (LineSegmentIntersectsCircle(transform.position, (Vector2)transform.position + leftEdgeDir * range, target.transform.position, corrVal)) return true;
-        if (LineSegmentIntersectsCircle(transform.position, (Vector2)transform.position + rightEdgeDir * range, target.transform.position, corrVal)) return true;
+        if (LineSegmentIntersectsCircle(transform.position, (Vector2)transform.position + leftEdgeDir * range * rangeMod, target.transform.position, corrVal)) return true;
+        if (LineSegmentIntersectsCircle(transform.position, (Vector2)transform.position + rightEdgeDir * range * rangeMod, target.transform.position, corrVal)) return true;
 
         return false;
     }
@@ -234,15 +260,15 @@ public class Turret : NetworkBehaviour
         float minRadians = min * Mathf.Deg2Rad;
         if (firingArc < 360)
         {
-            Gizmos.DrawLine(transform.position + new Vector3(Mathf.Cos(maxRadians), Mathf.Sin(maxRadians)) * range * 0.9f, transform.position + new Vector3(Mathf.Cos(maxRadians), Mathf.Sin(maxRadians)) * range);
-            Gizmos.DrawLine(transform.position + new Vector3(Mathf.Cos(minRadians), Mathf.Sin(minRadians)) * range * 0.9f, transform.position + new Vector3(Mathf.Cos(minRadians), Mathf.Sin(minRadians)) * range);
+            Gizmos.DrawLine(transform.position + new Vector3(Mathf.Cos(maxRadians), Mathf.Sin(maxRadians)) * range * rangeMod * 0.9f, transform.position + new Vector3(Mathf.Cos(maxRadians), Mathf.Sin(maxRadians)) * range * rangeMod);
+            Gizmos.DrawLine(transform.position + new Vector3(Mathf.Cos(minRadians), Mathf.Sin(minRadians)) * range * rangeMod * 0.9f, transform.position + new Vector3(Mathf.Cos(minRadians), Mathf.Sin(minRadians)) * range * rangeMod);
         }
 
         for (float a = min; a < max - 1; a += 5)
         {
             minRadians = a * Mathf.Deg2Rad;
             maxRadians = (a + 5) * Mathf.Deg2Rad;
-            Gizmos.DrawLine(transform.position + new Vector3(Mathf.Cos(minRadians), Mathf.Sin(minRadians)) * range, transform.position + new Vector3(Mathf.Cos(maxRadians), Mathf.Sin(maxRadians)) * range);
+            Gizmos.DrawLine(transform.position + new Vector3(Mathf.Cos(minRadians), Mathf.Sin(minRadians)) * range * rangeMod, transform.position + new Vector3(Mathf.Cos(maxRadians), Mathf.Sin(maxRadians)) * range * rangeMod);
         }
 
         // Draw spread

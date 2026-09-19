@@ -1,41 +1,79 @@
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using TMPro;
+using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 public class GameSceneManager : Singleton<GameSceneManager>
 {
     public NetworkPrefabsList shipList;
 
-    private List<Transform>[] playerSpawns;
+    private List<Transform> prioPlayerSpawnZones = new List<Transform>();
+    private List<Transform> playerSpawnZones = new List<Transform>();
+    private int prioritySpawnGroup;
 
-    // TODO: Get rid of these
     public Transform bulletContainer;
     public List<GameObject> shipsInScene = new List<GameObject>();
     public List<GameObject> missilesInScene = new List<GameObject>();
+
+    public NeutralObjectivesManager neutralObjectivesManager;
 
     // TODO: make this better
     [SerializeField] public GameObject map;
     [SerializeField] private GameObject gameUI;
     [SerializeField] private GameObject inputManager;
 
+    public GameObject controlsWindow;
+    public GameObject playersWindow;
+    [SerializeField] private GameObject playersInfoPrefab;
+    private Dictionary<FixedString32Bytes, Transform> allPlayersInfoInTabMenu;
+
     protected override void Awake()
     {
         base.Awake();
-        playerSpawns = new List<Transform>[map.transform.Find("Mothership Spawn Positions").childCount];
-        for(int i = 0; i < map.transform.Find("Mothership Spawn Positions").childCount; i++)
+
+        neutralObjectivesManager = GameObject.Find("Neutral Objectives Manager").GetComponent<NeutralObjectivesManager>();
+
+        prioritySpawnGroup = Random.Range(0, 2);
+        
+        //Populate the spawn zones based on prio grouping
+        foreach (Transform prioSpawnZone in map.transform.Find("Mothership Spawn Positions").GetChild(prioritySpawnGroup))
         {
-            playerSpawns[i] = new List<Transform>();
-            foreach (Transform spawnLocation in map.transform.Find("Mothership Spawn Positions").GetChild(i))
+            prioPlayerSpawnZones.Add(prioSpawnZone);
+            foreach (Transform spawnLocation in prioSpawnZone)
             {
-                playerSpawns[i].Add(spawnLocation);
                 spawnLocation.GetComponent<SpriteRenderer>().enabled = false;
             }
         }
-            
+        foreach (Transform spawnZone in map.transform.Find("Mothership Spawn Positions").GetChild((prioritySpawnGroup + 1) % 2))
+        {
+            playerSpawnZones.Add(spawnZone);
+            foreach (Transform spawnLocation in spawnZone)
+            {
+                spawnLocation.GetComponent<SpriteRenderer>().enabled = false;
+            }
+        }
+
+        controlsWindow = GameObject.Find("Controls Window");
+        controlsWindow.gameObject.SetActive(false);
+        playersWindow = GameObject.Find("Players Window");
+        playersWindow.gameObject.SetActive(true);
+        allPlayersInfoInTabMenu = new Dictionary<FixedString32Bytes, Transform>();
+        //Initialize player window
+        foreach (var (id, player) in PlayerDataList.Singleton.players)
+        {
+            Transform playersMenuItem = Instantiate(playersInfoPrefab).transform;
+            playersMenuItem.SetParent(playersWindow.transform.Find("Players List"));
+            playersMenuItem.Find("Players Color Image").GetComponent<Image>().color = player.playerColor;
+            playersMenuItem.Find("Skull Icon").gameObject.SetActive(false);
+            playersMenuItem.Find("Background Color").GetComponent<Image>().color = player.authenticationServicePlayerId.Value == PlayerDataList.Singleton.GetLocalPlayer().authenticationServicePlayerId.Value ? new Color(.6f, .6f, .6f, .6f) : new Color(0, 0, 0, 0);
+            playersMenuItem.Find("Players Name Text").GetComponent<TMP_Text>().text = "- " + player.playerUsername.Value;
+            allPlayersInfoInTabMenu.Add(player.authenticationServicePlayerId.Value, playersMenuItem);
+        }
+        playersWindow.gameObject.SetActive(false);
     }
 
     public void Start()
@@ -88,28 +126,29 @@ public class GameSceneManager : Singleton<GameSceneManager>
 
     public Transform GetOneMothershipSpawnPosition()
     {
-        // Shuffles the array
-        for (int i = 0; i < playerSpawns.Length; i++)
+        //Pick a random spawn zone and then remove it from the list
+        Transform spawnZone;
+        if (prioPlayerSpawnZones.Count > 0)
         {
-            List<Transform> temp = playerSpawns[i];
-            int r = Random.Range(i, playerSpawns.Length);
-            playerSpawns[i] = playerSpawns[r];
-            playerSpawns[r] = temp;
+            spawnZone = prioPlayerSpawnZones[Random.Range(0, prioPlayerSpawnZones.Count)];
+            prioPlayerSpawnZones.Remove(spawnZone);
         }
-        // Finds the first longest list
-        int longest = 0;
-        int longestIndex = 0;
-        for (int i = 0; i < playerSpawns.Length; i++)
-            if (playerSpawns[i].Count > longest)
-            {
-                longest = playerSpawns[i].Count;
-                longestIndex = i;
-            }
-        // Gets the spawn and removes it from the list
-        List<Transform> spawnGroup = playerSpawns[longestIndex];
-        Transform randomSpawn = spawnGroup[Random.Range(0, spawnGroup.Count)];
-        spawnGroup.Remove(randomSpawn);
-        return randomSpawn;
+        else
+        {
+            spawnZone = playerSpawnZones[Random.Range(0, playerSpawnZones.Count)];
+            playerSpawnZones.Remove(spawnZone);
+        }
+
+        //From your spawn zone select a random spawn location
+        Transform spawnLoc = spawnZone.GetChild(Random.Range(0, spawnZone.childCount));
+        return spawnLoc;
+    }
+
+    public void ShowPlayerAsDeadInPlayersMenu(FixedString32Bytes playerAuthId)
+    {
+        Transform playerWhoDiedItem = allPlayersInfoInTabMenu.GetValueOrDefault(playerAuthId);
+        playerWhoDiedItem.Find("Players Name Text").GetComponent<TMP_Text>().text = "<s>" + playerWhoDiedItem.Find("Players Name Text").GetComponent<TMP_Text>().text + "</s>";
+        playerWhoDiedItem.Find("Skull Icon").gameObject.SetActive(true);
     }
 }
 

@@ -1,12 +1,11 @@
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 [ExecuteInEditMode]
 public class MapGenerator : MonoBehaviour
 {
+#if UNITY_EDITOR
     [Header("Spawner Settings")]
     public List<GameObject> prefabsToSpawn;
 
@@ -81,4 +80,7 @@ public class MapGenerator : MonoBehaviour
             GameObject.DestroyImmediate(transform.GetChild(0).gameObject);
         }
     }
+#else
+    
+#endif
 }

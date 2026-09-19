@@ -6,30 +6,35 @@ public class Ship : NetworkBehaviour
     public enum ShipTypes
     {
         Destroyer,
-        Maurader,
         Hawk,
         Challenger,
         Goliath,
+        GoliathFighter,
         Lightning,
         Drone,
         Scout,
         Mothership
+
+        //Marauder,
     }
 
     // Ship Variables
-    [SerializeField] private ShipTypes shipType;
+    public ShipTypes shipType;
     [SerializeField] private float shipCost;
-    [SerializeField] private float maxShipHP;
-    private readonly NetworkVariable<float> currentShipHP = new NetworkVariable<float>();
+    public float maxShipHP;
+    public readonly NetworkVariable<float> currentShipHP = new NetworkVariable<float>();
     public int correctionFactor; // Opponent range adjustments
+    public int visionRange;
 
     // Ship Components
     private Transform hpBar;
+    [SerializeField] GameObject popupTextPrefab;
     private SpriteRenderer outlineSprite;
 
     private PlayerData playerData;
 
     private GameObject scoutMarker; // Marker in fog of war (Enemy)
+    private GameObject scoutMarkerHider;
     private GameObject minimapMarker; // Market on minimap (Both)
     private GameObject minimapScoutMarker; // Marker in minimap fog of war (Enemy)
 
@@ -40,7 +45,11 @@ public class Ship : NetworkBehaviour
         // Finding ship components
         hpBar = transform.Find("Health Bar/Health");
         outlineSprite = transform.Find("Outline").GetComponent<SpriteRenderer>();
-        SpriteRenderer mapMarkerSprite = transform.Find("Scout Marker").GetComponent<SpriteRenderer>();
+
+        scoutMarker = transform.Find("Scout Marker").gameObject;
+        scoutMarkerHider = transform.Find("Scout Marker Hider").gameObject;
+        minimapMarker = transform.Find("Minimap Marker").gameObject;
+        minimapScoutMarker = transform.Find("Minimap Scout Marker").gameObject;
 
 
         // Setting up healthbar
@@ -49,34 +58,41 @@ public class Ship : NetworkBehaviour
         currentShipHP.OnValueChanged += (float previousValue, float newValue) => {
             hpBar.transform.localScale = new Vector3(currentShipHP.Value / maxShipHP, 1, 1);
             hpBar.transform.localPosition = new Vector3((currentShipHP.Value / maxShipHP * 0.5f) - 0.5f, 0, 0);
-        };
 
-        // Changes based on ship owner
-        if (!IsOwner) {
-            GetComponentInChildren<SpriteMask>().enabled = false;
-            outlineSprite.gameObject.SetActive(false);
-            mapMarkerSprite.gameObject.SetActive(true);
-        }
+            if (IsOwner && newValue > previousValue)
+            {
+                PopupText popupText = Instantiate(popupTextPrefab, transform.position + new Vector3(-1, 0) * correctionFactor * 0.5f, Quaternion.identity).GetComponent<PopupText>();
+                popupText.SetupText("+", Color.greenYellow, 1f);
+                popupText = Instantiate(popupTextPrefab, transform.position + new Vector3(1, -1f) * correctionFactor * 0.5f, Quaternion.identity).GetComponent<PopupText>();
+                popupText.SetupText("+", Color.greenYellow, 1f);
+            }
+        };
 
         // Set the team color
         Color teamColor = playerData.playerColor;
         transform.Find("Ship Accent").GetComponent<SpriteRenderer>().color = teamColor;
-        transform.Find("Minimap Marker").GetComponent<SpriteRenderer>().color = teamColor;
-        transform.Find("Minimap Scout Marker").GetComponent<SpriteRenderer>().color = teamColor;
-        mapMarkerSprite.color = teamColor;
+        scoutMarker.GetComponent<SpriteRenderer>().color = teamColor;
+        minimapMarker.GetComponent<SpriteRenderer>().color = teamColor;
+        minimapScoutMarker.GetComponent<SpriteRenderer>().color = teamColor;
         teamColor.a = 0f;
         outlineSprite.color = teamColor;
 
         //Ship specific setup
         SetupBasedOnShipType();
 
-        scoutMarker = transform.Find("Scout Marker").gameObject;
-        minimapMarker = transform.Find("Minimap Marker").gameObject;
-        minimapScoutMarker = transform.Find("Minimap Scout Marker").gameObject;
-
-        if (IsOwner)
+        Transform fogRemover = transform.Find("Fog Remover");
+        // Changes based on ship owner
+        if (!IsOwner)
         {
-            GameplayInputManager.Singleton.AddNewSelectedShip(this);
+            fogRemover.gameObject.SetActive(false);
+            outlineSprite.gameObject.SetActive(false);
+            scoutMarker.gameObject.SetActive(true);
+        }
+        else
+        {
+            fogRemover.localScale = new Vector3(visionRange / 6f, visionRange / 6f);
+            if (shipType != ShipTypes.GoliathFighter)
+                GameplayInputManager.Singleton.AddNewSelectedShip(this);
         }
     }
 
@@ -87,6 +103,7 @@ public class Ship : NetworkBehaviour
 
         //Don't rotate minimap icons
         scoutMarker.transform.rotation = Quaternion.Euler(0, 0, -transform.rotation.z);
+        scoutMarkerHider.transform.rotation = Quaternion.Euler(0, 0, -transform.rotation.z);
         minimapMarker.transform.rotation = Quaternion.Euler(0, 0, -transform.rotation.z);
         minimapScoutMarker.transform.rotation = Quaternion.Euler(0, 0, -transform.rotation.z);
     }
@@ -109,15 +126,20 @@ public class Ship : NetworkBehaviour
 
     public void UpdateBasedOnShipType()
     {
+        /*
         switch (shipType)
         {
+            case ShipTypes.Mothership:
+
             case ShipTypes.Goliath:
                 if (!IsHost) return;
-                
+
                 if (currentShipHP.Value < maxShipHP)
                     currentShipHP.Value += 1 * Time.deltaTime;
                 break;
+        
         }
+        */
     }
 
     public void DoDamage(float damage)

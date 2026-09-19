@@ -14,13 +14,18 @@ public class NeutralShip : NetworkBehaviour
     private List<Transform> patrolRouteLocations = new List<Transform>();
     private int currentPatrolTarget = 0;
 
-    [SerializeField] int moveSpeed = 5;
     [SerializeField] int goldOnKill = 10;
 
     [SerializeField] GameObject popupTextPrefab;
 
-    private int spawnIndex;
-    private NeutralObjectivesManager neutralObjectivesManager;
+    public int correctionFactor; // Opponent range adjustments
+
+    private bool moved = false;
+
+    private GameObject scoutMarker; // Marker in fog of war
+    private GameObject scoutMarkerHider;
+    private GameObject minimapMarker; // Market on minimap
+    private GameObject minimapScoutMarker; // Marker in minimap fog of war
 
     public override void OnNetworkSpawn()
     {
@@ -35,10 +40,21 @@ public class NeutralShip : NetworkBehaviour
             hpBar.transform.localScale = new Vector3(currentShipHP.Value / maxShipHP, 1, 1);
             hpBar.transform.localPosition = new Vector3((currentShipHP.Value / maxShipHP * 0.5f) - 0.5f, 0, 0);
         };
+
+        scoutMarker = transform.Find("Scout Marker").gameObject;
+        scoutMarkerHider = transform.Find("Scout Marker Hider").gameObject;
+        minimapMarker = transform.Find("Minimap Marker").gameObject;
+        minimapScoutMarker = transform.Find("Minimap Scout Marker").gameObject;
     }
-    private bool moved = false;
+
     void FixedUpdate()
     {
+        //Don't rotate minimap icons
+        scoutMarker.transform.rotation = Quaternion.Euler(0, 0, -transform.rotation.z);
+        scoutMarkerHider.transform.rotation = Quaternion.Euler(0, 0, -transform.rotation.z);
+        minimapMarker.transform.rotation = Quaternion.Euler(0, 0, -transform.rotation.z);
+        minimapScoutMarker.transform.rotation = Quaternion.Euler(0, 0, -transform.rotation.z);
+
         if (!IsHost || spawn == null) return;
 
         //transform.position = Vector2.MoveTowards(transform.position, patrolRouteLocations[currentPatrolTarget].position, moveSpeed * Time.deltaTime);
@@ -55,19 +71,10 @@ public class NeutralShip : NetworkBehaviour
         if (movement.moving) moved = false;
     }
 
-    public Vector2 GetFuturePosition(float seconds)
-    {
-        return Vector2.MoveTowards(transform.position, patrolRouteLocations[currentPatrolTarget].position, moveSpeed * seconds);
-    }
-
-    public void SetupShipSpawn(Transform spawnObject, NeutralObjectivesManager nm, int i)
+    public void SetupShipSpawn(Transform spawnObject)
     {
         spawn = spawnObject;
         transform.position = spawn.position;
-
-        neutralObjectivesManager = nm;
-        spawnIndex = i;
-        neutralObjectivesManager.spawnHasShip[spawnIndex] = true;
 
         foreach (Transform patrolStop in spawn.Find("Patrol Route"))
             patrolRouteLocations.Add(patrolStop);
@@ -83,7 +90,7 @@ public class NeutralShip : NetworkBehaviour
     [Rpc(SendTo.Server)]
     public void DestroyShipRPC(ulong damageDealersClientID)
     {
-        neutralObjectivesManager.spawnHasShip[spawnIndex] = false;
+        GameSceneManager.Singleton.neutralObjectivesManager.NeutralShipDeath(spawn);
         GameSceneManager.Singleton.shipsInScene.Remove(gameObject);
         ReceiveNeutralObjectivePayoutRPC(damageDealersClientID);
 

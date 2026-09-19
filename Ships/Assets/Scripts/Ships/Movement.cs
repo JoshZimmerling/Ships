@@ -141,7 +141,10 @@ public class Movement : NetworkBehaviour
     [Rpc(SendTo.Server)]
     public void StopShipRPC()
     {
-        targetPos = transform.position + transform.up * distToStop;
+        if (backingUp && distToTarget > 1.5f) 
+            targetPos = transform.position + -transform.up * distToStop/1.5f;
+        else if (!backingUp)
+            targetPos = transform.position + transform.up * distToStop;
     }
 
     [Rpc(SendTo.Server)]
@@ -153,6 +156,9 @@ public class Movement : NetworkBehaviour
         rotateOnly = isRotateOnly;
 
         if (isRotateOnly)
+        {
             totalVelocity = 0;
+            moving = false;
+        }
     }
 }
