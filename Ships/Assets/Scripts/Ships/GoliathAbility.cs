@@ -24,6 +24,8 @@ public class GoliathAbility : NetworkBehaviour
         fighters = new List<GameObject>();
         for (int i = 0; i < fightersOnSpawn; i++)
             SpawnFighter();
+
+        abilityTimer = spawnCooldown;
     }
 
     public void FixedUpdate()

@@ -296,15 +296,14 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   shipType: 4
   shipCost: 0
-  maxShipHP: 2
+  maxShipHP: 5
   correctionFactor: 0
   visionRange: 10
   popupTextPrefab: {fileID: 985385043950032243, guid: a6e0a522c1dcae445a22ddcda9f44396, type: 3}
-  moveSpeed: 10
+  moveSpeed: 15
+  moveSpeedRandomness: 2
   orbitRadius: 6
   orbitRadiusRandomness: 2
-  orbitSpeed: 50
-  orbitSpeedRandomness: 5
 --- !u!4 &9132343670559134920 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 813458412376552807, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}

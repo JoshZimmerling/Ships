@@ -1,7 +1,8 @@
-using TMPro;
 using Unity.Netcode;
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
+using UnityEngine.EventSystems;
+using UnityEngine.UIElements;
+using static Turret;
 
 public class Fighter : Ship
 {
@@ -9,11 +10,13 @@ public class Fighter : Ship
     private GameObject targetShip;
 
     [SerializeField] private float moveSpeed;
+    [SerializeField] private float moveSpeedRandomness;
     [SerializeField] private float orbitRadius;
     [SerializeField] private float orbitRadiusRandomness;
-    [SerializeField] private float orbitSpeed;
-    [SerializeField] private float orbitSpeedRandomness;
-    private float relativeOrbitRadius;
+    private int orbitDirection;
+    private float targetedOrbitRadius;
+
+    private Vector3 moveDirection;
 
     public new void FixedUpdate()
     {
@@ -29,35 +32,29 @@ public class Fighter : Ship
         if (targetShip == null) 
         {
             targetShip = goliath;
-            relativeOrbitRadius = orbitRadius + targetShip.GetComponent<Ship>().correctionFactor;
+            targetedOrbitRadius = orbitRadius + targetShip.GetComponent<Ship>().correctionFactor;
         }
 
-        float currentRadius = (targetShip.transform.position - transform.position).magnitude;
-        if (currentRadius > relativeOrbitRadius + 1f)
-        {
-            transform.position = Vector3.MoveTowards(transform.position, targetShip.transform.position, moveSpeed * Time.deltaTime);
-        }
-        else if (currentRadius > relativeOrbitRadius + 0.2f) 
-        {
-            transform.position = Vector3.MoveTowards(transform.position, targetShip.transform.position, moveSpeed / 5f * Time.deltaTime);
-        }
-        else if (currentRadius < relativeOrbitRadius - 1f)
-        {
-            transform.position = Vector3.MoveTowards(transform.position, targetShip.transform.position, -moveSpeed * Time.deltaTime);
-        }
-        else if (currentRadius < relativeOrbitRadius - 0.2f)
-        {
-            transform.position = Vector3.MoveTowards(transform.position, targetShip.transform.position, -moveSpeed / 5f * Time.deltaTime);
-        }
+        Vector3 direction2Target = targetShip.transform.position - transform.position;
+        Vector3 perpendicular2Target = Vector2.Perpendicular(direction2Target) * orbitDirection;
 
-        if (currentRadius > relativeOrbitRadius - 1f && currentRadius < relativeOrbitRadius + 1f)
-        {
-            transform.RotateAround(targetShip.transform.position, Vector3.forward, orbitSpeed * Time.deltaTime);
-        }
+        float currentRadius = direction2Target.magnitude;
+        float d = (targetedOrbitRadius - currentRadius) / 8;
+        if (d > 1) d = 1;
+        if (d < -1) d = -1;
+        if (d >= 0)
+            moveDirection = Vector3.Slerp(perpendicular2Target.normalized / 2, -direction2Target.normalized, d);
+        else
+            moveDirection = Vector3.Slerp(perpendicular2Target.normalized / 2, direction2Target.normalized, d * -1);
 
+        transform.position = transform.position + moveDirection * moveSpeed * Time.deltaTime;
 
-        Vector2 direction = (targetShip.transform.position - transform.position) * (targetShip == goliath ? -1 : 1);
-        transform.rotation = Quaternion.FromToRotation(Vector3.up, direction);
+        Vector2 lookDirection = (targetShip.transform.position - transform.position) * (targetShip == goliath && d > -0.5f ? -1 : 1);
+        transform.rotation = Quaternion.FromToRotation(Vector3.up, lookDirection);
+
+        // Heals fighters when back at goliath
+        if (d > -0.5f && currentShipHP.Value != maxShipHP)
+            currentShipHP.Value = maxShipHP;
 
         base.FixedUpdate();
     }
@@ -74,9 +71,9 @@ public class Fighter : Ship
         goliath = ship;
         targetShip = goliath;
         orbitRadius += Random.Range(-orbitRadiusRandomness, orbitRadiusRandomness);
-        orbitSpeed += Random.Range(-orbitSpeedRandomness, orbitSpeedRandomness);
-        orbitSpeed *= Random.Range(0, 2) == 0 ? 1 : -1;
-        relativeOrbitRadius = orbitRadius + ship.GetComponent<Ship>().correctionFactor;
+        moveSpeed += Random.Range(-moveSpeedRandomness, moveSpeedRandomness);
+        orbitDirection = Random.Range(0, 2) == 0 ? 1 : -1;
+        targetedOrbitRadius = orbitRadius + ship.GetComponent<Ship>().correctionFactor;
     }
 
     public void SetTarget(GameObject ship)
@@ -84,8 +81,12 @@ public class Fighter : Ship
         targetShip = ship;
 
         if (ship.GetComponent<Ship>() != null)
-            relativeOrbitRadius = orbitRadius + ship.GetComponent<Ship>().correctionFactor;
+            targetedOrbitRadius = orbitRadius + ship.GetComponent<Ship>().correctionFactor;
         if (ship.GetComponent<NeutralShip>() != null)
-            relativeOrbitRadius = orbitRadius + ship.GetComponent<NeutralShip>().correctionFactor;
+            targetedOrbitRadius = orbitRadius + ship.GetComponent<NeutralShip>().correctionFactor;
+    }
+    public Vector2 GetFuturePosition(float seconds)
+    {
+        return transform.position + moveDirection * moveSpeed * seconds;
     }
 }

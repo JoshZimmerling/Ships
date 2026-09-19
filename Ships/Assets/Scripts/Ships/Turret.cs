@@ -110,7 +110,7 @@ public class Turret : NetworkBehaviour
                 Vector2 targetedPos = Vector2.zero;
                 if (bestTarget.GetComponent<Fighter>() != null)
                 {
-                    targetedPos = bestTarget.position;
+                    targetedPos = Vector2.Lerp(new Vector2(bestTarget.transform.position.x, bestTarget.transform.position.y), bestTarget.GetComponent<Fighter>().GetFuturePosition(timeToTarget), .8f);
                 }
                 else if (bestTarget.GetComponent<Ship>() != null)
                 {
