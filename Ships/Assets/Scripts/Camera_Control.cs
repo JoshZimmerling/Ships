@@ -117,4 +117,17 @@ public class Camera_Control : Singleton<Camera_Control>
                screenPoint.x > 0 &&
                screenPoint.x < Screen.width;
     }
+
+    public bool IsSeenByMyShips(Transform obj)
+    {
+        foreach (Transform ship in PlayerDataList.Singleton.GetLocalPlayer().transform)
+        {
+            Ship myShip = ship.GetComponent<Ship>();
+            if ((myShip.transform.position - obj.position).magnitude < myShip.visionRange)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 }

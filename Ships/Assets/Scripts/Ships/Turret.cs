@@ -154,10 +154,12 @@ public class Turret : NetworkBehaviour
                 bullet.GetComponent<NetworkObject>().SpawnWithOwnership(OwnerClientId);
                 bullet.GetComponent<Bullet>().SetupBullet(range * rangeMod, damage, projectileSpeed * rangeMod, turretType, transform.parent.parent.GetComponent<NeutralShip>() != null);
                 bullet.transform.parent = GameSceneManager.Singleton.bulletContainer;
-
-                // Play sound for firing bullet
-                PlayShootingAudioRPC();
             }
+
+            // Play sound for firing bullet
+            PlayShootingAudioRPC();
+
+            //Reset shot counter with a slight variation
             counter = Random.Range(0.95f, 1.05f) / fireRate;
         }
     }
@@ -250,28 +252,15 @@ public class Turret : NetworkBehaviour
     public void PlayShootingAudioRPC()
     {
         Transform thisTurretsShip = transform.parent.parent;
-        if (Camera_Control.Singleton.IsOnScreen(thisTurretsShip))
+        if (Camera_Control.Singleton.IsOnScreen(thisTurretsShip) && Camera_Control.Singleton.IsSeenByMyShips(thisTurretsShip))
         {
-            bool isSeenByMyShips = false;
-            foreach (Transform ship in PlayerDataList.Singleton.GetLocalPlayer().transform)
+            if (shotAudio != null)
             {
-                Ship myShip = ship.GetComponent<Ship>();
-                if ((myShip.transform.position - thisTurretsShip.position).magnitude < myShip.visionRange)
-                {
-                    isSeenByMyShips = true;
-                    break;
-                }
-            }
-            if (isSeenByMyShips)
-            {
-                if (shotAudio != null)
-                {
-                    shotAudio.pitch = baselinePitch;
-                    shotAudio.volume = baselineVolume;
-                    shotAudio.pitch += Random.Range(-.3f, .3f);
-                    shotAudio.volume += Random.Range(-.05f, .05f);
-                    shotAudio.Play();
-                }
+                shotAudio.pitch = baselinePitch;
+                shotAudio.volume = baselineVolume;
+                shotAudio.pitch += Random.Range(-.3f, .3f);
+                shotAudio.volume += Random.Range(-.05f, .05f);
+                shotAudio.Play();
             }
         }
     }
