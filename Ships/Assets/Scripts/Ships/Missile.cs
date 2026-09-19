@@ -103,7 +103,10 @@ public class Missile : NetworkBehaviour
         isFromNeutralShip = neutralShip;
 
         if (isFromNeutralShip)
+        {
             SetMissileColorRPC(neutralShipColor);
+            transform.Find("Fog Remover").gameObject.SetActive(false);
+        }
         else
             SetMissileColorRPC(PlayerDataList.Singleton.players[OwnerClientId].playerColor);
     }
