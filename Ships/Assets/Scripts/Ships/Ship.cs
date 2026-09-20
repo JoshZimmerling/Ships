@@ -142,15 +142,24 @@ public class Ship : NetworkBehaviour
         */
     }
 
-    public void DoDamage(float damage)
+    public void DoDamage(float damage, GameObject shipDamageCameFrom)
     {
         currentShipHP.Value -= damage;
         if (currentShipHP.Value <= 0)
-            DestroyShipRPC();
+            DestroyShip(shipDamageCameFrom);
     }
 
     [Rpc(SendTo.Server)]
-    public void DestroyShipRPC()
+    public void SelfDestroyShipRPC()
+    {
+        //This method is used by the mothership when it dies to remove all of your own ships from the scene
+        GameSceneManager.Singleton.shipsInScene.Remove(gameObject);
+
+        GetComponent<NetworkObject>().Despawn();
+        Destroy(this.gameObject);
+    }
+
+    public void DestroyShip(GameObject shipDamageCameFrom)
     {
         if (shipType == ShipTypes.Mothership)
         {
@@ -158,9 +167,28 @@ public class Ship : NetworkBehaviour
         }
 
         GameSceneManager.Singleton.shipsInScene.Remove(gameObject);
+        if (shipDamageCameFrom != null)
+            InformShipWhoKilled(shipDamageCameFrom);
 
         GetComponent<NetworkObject>().Despawn();
         Destroy(this.gameObject);
+    }
+
+    public void InformShipWhoKilled(GameObject shipDamageCameFrom)
+    {
+        Ship shipScript = shipDamageCameFrom.GetComponent<Ship>();
+        if (shipScript != null)
+        {
+            switch (shipScript.shipType)
+            {
+                case Ship.ShipTypes.Lightning:
+                    //TODO: Call the movement script on shipDamageCameFrom to change the movement
+                    shipDamageCameFrom.GetComponent<Movement>().ChangeSpeed(1.5f, 7f);
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 
     public void SelectShip()

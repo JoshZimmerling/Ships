@@ -97,7 +97,7 @@ public class PlayerData : NetworkBehaviour
     {
         foreach (Transform child in transform)
             if (child.gameObject.GetComponent<Ship>() != null && child.gameObject.GetComponent<Ship>().GetShipType() != Ship.ShipTypes.Mothership)
-                child.gameObject.GetComponent<Ship>().DestroyShipRPC();
+                child.gameObject.GetComponent<Ship>().SelfDestroyShipRPC();
 
         mapFogRemover.SetActive(true);
         Shop.Singleton.gameObject.SetActive(false);

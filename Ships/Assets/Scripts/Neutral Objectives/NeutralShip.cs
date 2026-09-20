@@ -80,19 +80,19 @@ public class NeutralShip : NetworkBehaviour
             patrolRouteLocations.Add(patrolStop);
     }
 
-    public void DoDamage(float damage, ulong damageDealersClientID)
+    public void DoDamage(float damage, GameObject shipDamageCameFrom)
     {
         currentShipHP.Value -= damage;
         if (currentShipHP.Value <= 0)
-            DestroyShipRPC(damageDealersClientID);
+            DestroyShip(shipDamageCameFrom);
     }
 
-    [Rpc(SendTo.Server)]
-    public void DestroyShipRPC(ulong damageDealersClientID)
+    public void DestroyShip(GameObject shipDamageCameFrom)
     {
         GameSceneManager.Singleton.neutralObjectivesManager.NeutralShipDeath(spawn);
         GameSceneManager.Singleton.shipsInScene.Remove(gameObject);
-        ReceiveNeutralObjectivePayoutRPC(damageDealersClientID);
+        ReceiveNeutralObjectivePayoutRPC(shipDamageCameFrom.GetComponent<Ship>().OwnerClientId);
+        InformShipWhoKilled(shipDamageCameFrom);
 
         GetComponent<NetworkObject>().Despawn();
         Destroy(this.gameObject);
@@ -107,6 +107,23 @@ public class NeutralShip : NetworkBehaviour
             PopupText popupText = Instantiate(popupTextPrefab, transform.position, Quaternion.identity).GetComponent<PopupText>();
             popupText.SetupText("+ $" + goldOnKill, Color.gold, 2.5f);
             Shop.Singleton.AddGold(goldOnKill);
+        }
+    }
+
+    public void InformShipWhoKilled(GameObject shipDamageCameFrom)
+    {
+        Ship shipScript = shipDamageCameFrom.GetComponent<Ship>();
+        if (shipScript != null)
+        {
+            switch (shipScript.shipType)
+            {
+                case Ship.ShipTypes.Lightning:
+                    //TODO: Call the movement script on shipDamageCameFrom to change the movement
+                    shipDamageCameFrom.GetComponent<Movement>().ChangeSpeed(1.5f, 7f);
+                    break;
+                default:
+                    break;
+            }
         }
     }
 }

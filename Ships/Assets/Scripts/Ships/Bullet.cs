@@ -9,6 +9,7 @@ public class Bullet : NetworkBehaviour
     Vector2 spawnPos;
     float sqrRange;
     Turret.TurretType turretType;
+    public GameObject parentShip;
 
     public bool isFromNeutralShip = false;
     private Color neutralShipColor = new Color(212/255f, 175/255f, 55/255f);
@@ -39,13 +40,13 @@ public class Bullet : NetworkBehaviour
             if (collision.GetComponent<Ship>().OwnerClientId == this.OwnerClientId && !isFromNeutralShip)
                 return;
             else
-                collision.GetComponent<Ship>().DoDamage(dmg);
+                collision.GetComponent<Ship>().DoDamage(dmg, parentShip);
         }
         else if (collision.GetComponent<NeutralShip>() != null)
         {
             if (isFromNeutralShip)
                 return;
-            collision.GetComponent<NeutralShip>().DoDamage(dmg, this.OwnerClientId);
+            collision.GetComponent<NeutralShip>().DoDamage(dmg, parentShip);
         }
         else if (collision.GetComponent<Missile>() != null)
         {
@@ -57,7 +58,7 @@ public class Bullet : NetworkBehaviour
         Destroy(this);
     }
 
-    public void SetupBullet(float range, float damage, float speed, Turret.TurretType type, bool neutralShip)
+    public void SetupBullet(float range, float damage, float speed, Turret.TurretType type, GameObject shipWhoShot)
     {
         spawnPos = transform.position;
         dmg = damage;
@@ -65,7 +66,8 @@ public class Bullet : NetworkBehaviour
         sqrRange = range * range;
         bulletSpeed = speed;
         turretType = type;
-        isFromNeutralShip = neutralShip;
+        parentShip = shipWhoShot;
+        isFromNeutralShip = shipWhoShot.GetComponent<NeutralShip>() != null;
         switch (turretType)
         {
             case Turret.TurretType.HeavyTurret:

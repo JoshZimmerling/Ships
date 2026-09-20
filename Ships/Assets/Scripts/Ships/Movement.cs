@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -130,6 +131,11 @@ public class Movement : NetworkBehaviour
         return transform.position + transform.rotation * Vector2.up * totalVelocity * seconds;
     }
 
+    public void ChangeSpeed(float speedChange, float duration)
+    {
+        StartCoroutine(ChangeSpeedCoroutine(speedChange, duration));
+    }
+
     [Rpc(SendTo.Server)]
     public void BackupShipRPC()
     {
@@ -160,5 +166,14 @@ public class Movement : NetworkBehaviour
             totalVelocity = 0;
             moving = false;
         }
+    }
+
+    private IEnumerator ChangeSpeedCoroutine(float speedChange, float time)
+    {
+        shipMaxSpeed *= speedChange;
+        shipTurnRate *= speedChange;
+        yield return new WaitForSeconds(time);
+        shipMaxSpeed *= 1f/speedChange;
+        shipTurnRate *= 1f/speedChange;
     }
 }
