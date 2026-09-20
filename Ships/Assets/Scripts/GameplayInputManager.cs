@@ -12,7 +12,6 @@ using UnityEngine.UI;
 public class GameplayInputManager : Singleton<GameplayInputManager>
 {
     private readonly List<Ship> selectedShips = new();
-    private Camera_Control cameraScript; // TODO: move to using singleton
 
     // Ship movement / selection
     Transform selectionBox;
@@ -48,7 +47,6 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
     {
         base.Awake();
 
-        cameraScript = Camera.main.GetComponent<Camera_Control>();
         selectionBox = transform.Find("Selection Box");
 
         minimapTransform = GameObject.Find("Minimap Image").GetComponent<RectTransform>();
@@ -117,7 +115,7 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
 
         if (Input.GetKeyDown(KeyCode.E))
         {
-            cameraScript.ToggleLockState();
+            Camera_Control.Singleton.ToggleLockState();
         }
 
         if (Input.GetKeyDown(KeyCode.Tab))
@@ -194,7 +192,7 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
                     normalizedClick.y = 1;
                 }
 
-                cameraScript.MoveCameraToNormalizedPosition(normalizedClick);
+                Camera_Control.Singleton.MoveCameraToNormalizedPosition(normalizedClick);
             }
         }
 

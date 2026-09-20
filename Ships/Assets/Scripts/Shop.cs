@@ -10,10 +10,7 @@ public class Shop : Singleton<Shop>
     private bool shopOpen = false;
     private ulong playerId;
     private PlayerData playerData;
-
-    // TODO: build in autofind functionality
-    [SerializeField] RectTransform buttonContainer;
-    [SerializeField] TMP_Text goldDisplay;
+    private TMP_Text goldDisplay;
 
     public void SetupShop()
     {
@@ -22,6 +19,7 @@ public class Shop : Singleton<Shop>
         transform.Find("Toggle Window Button").GetComponent<Button>().onClick.AddListener(() => ToggleShop()); ;
 
         playerData = PlayerDataList.Singleton.players[playerId];
+        goldDisplay = transform.Find("Money Display").Find("Money Text").GetComponent<TMP_Text>();
 
         Color playerColor = playerData.playerColor;
         foreach (NetworkPrefab prefab in GameSceneManager.Singleton.shipList.PrefabList)
@@ -30,7 +28,7 @@ public class Shop : Singleton<Shop>
             float shipCost = shipPrefab.GetComponent<Ship>().GetShipCost();
             if (shipCost > 0)
             {
-                Transform button = Instantiate(shopButtonPrefab, buttonContainer).transform;
+                Transform button = Instantiate(shopButtonPrefab, transform.Find("Shop").Find("Button Container")).transform;
                 button.Find("Ship Name").GetComponent<TMP_Text>().text = shipPrefab.GetComponent<Ship>().GetShipType().ToString();
                 button.Find("Ship Sprite").GetComponent<Image>().sprite = shipPrefab.GetComponent<SpriteRenderer>().sprite;
                 button.Find("Ship Color").GetComponent<Image>().sprite = shipPrefab.Find("Ship Accent").GetComponent<SpriteRenderer>().sprite;

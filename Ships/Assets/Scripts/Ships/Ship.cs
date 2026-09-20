@@ -181,8 +181,7 @@ public class Ship : NetworkBehaviour
         {
             switch (shipScript.shipType)
             {
-                case Ship.ShipTypes.Lightning:
-                    //TODO: Call the movement script on shipDamageCameFrom to change the movement
+                case ShipTypes.Lightning:
                     shipDamageCameFrom.GetComponent<Movement>().ChangeSpeed(1.5f, 7f);
                     break;
                 default:
