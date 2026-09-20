@@ -1,6 +1,7 @@
 using Unity.Netcode;
 using Unity.VisualScripting;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 public class Turret : NetworkBehaviour
 {
@@ -36,10 +37,21 @@ public class Turret : NetworkBehaviour
 
     private Movement mv;
 
+    AudioSource shotAudio;
+    private float baselinePitch;
+    private float baselineVolume;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public override void OnNetworkSpawn()
     {
         mv = GetComponentInParent<Movement>();
+
+        shotAudio = GetComponent<AudioSource>();
+        if (shotAudio != null)
+        {
+            baselinePitch = shotAudio.pitch;
+            baselineVolume = shotAudio.volume;
+        }
     }
 
     // Find closest
@@ -143,6 +155,11 @@ public class Turret : NetworkBehaviour
                 bullet.GetComponent<Bullet>().SetupBullet(range * rangeMod, damage, projectileSpeed * rangeMod, turretType, transform.parent.parent.GetComponent<NeutralShip>() != null);
                 bullet.transform.parent = GameSceneManager.Singleton.bulletContainer;
             }
+
+            // Play sound for firing bullet
+            PlayShootingAudioRPC();
+
+            //Reset shot counter with a slight variation
             counter = Random.Range(0.95f, 1.05f) / fireRate;
         }
     }
@@ -231,10 +248,26 @@ public class Turret : NetworkBehaviour
         return (circleCenter - closestPoint).sqrMagnitude <= radius * radius;
     }
 
+    [Rpc(SendTo.ClientsAndHost)]
+    public void PlayShootingAudioRPC()
+    {
+        Transform thisTurretsShip = transform.parent.parent;
+        if (Camera_Control.Singleton.IsOnScreen(thisTurretsShip) && Camera_Control.Singleton.IsSeenByMyShips(thisTurretsShip))
+        {
+            if (shotAudio != null)
+            {
+                shotAudio.pitch = baselinePitch;
+                shotAudio.volume = baselineVolume;
+                shotAudio.pitch += Random.Range(-.3f, .3f);
+                shotAudio.volume += Random.Range(-.05f, .05f);
+                shotAudio.Play();
+            }
+        }
+    }
+
     private void OnDrawGizmos()
     {
         float shipRotationZ = gameObject.transform.rotation.eulerAngles.z;
-
 
         switch (turretType)
         {

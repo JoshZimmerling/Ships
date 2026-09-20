@@ -151,7 +151,7 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
                         foreach (Transform ship in PlayerDataList.Singleton.GetLocalPlayer().transform)
                         {
                             Ship shipScript = ship.GetComponent<Ship>();
-                            if (IsOnScreen(ship) && shipScript != null && shipScript.IsOwner && shipScript.GetShipType() == clickedOnShip.GetComponent<Ship>().GetShipType())
+                            if (Camera_Control.Singleton.IsOnScreen(ship) && shipScript != null && shipScript.IsOwner && shipScript.GetShipType() == clickedOnShip.GetComponent<Ship>().GetShipType())
                             {
                                 shipScript.SelectShip();
                                 selectedShips.Add(shipScript);
@@ -379,16 +379,6 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
         RectTransformUtility.ScreenPointToLocalPointInRectangle(minimapTransform, Input.mousePosition, null, out localClickPos);
 
         return localClickPos;
-    }
-
-    private bool IsOnScreen(Transform obj)
-    {
-        Vector3 screenPoint = Camera.main.WorldToScreenPoint(obj.position);
-
-        return screenPoint.y > 0 &&
-               screenPoint.y < Screen.height &&
-               screenPoint.x > 0 &&
-               screenPoint.x < Screen.width;
     }
 
     public void ShowLeaveGameButton()

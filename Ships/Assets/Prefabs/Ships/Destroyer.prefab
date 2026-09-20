@@ -44,6 +44,10 @@ PrefabInstance:
       propertyPath: projectileSpeed
       value: 12
       objectReference: {fileID: 0}
+    - target: {fileID: 3990095818291278530, guid: 43a2939fe795a084fb7eae8696978de9, type: 3}
+      propertyPath: m_Volume
+      value: 0.15
+      objectReference: {fileID: 0}
     - target: {fileID: 6762637872082208304, guid: 43a2939fe795a084fb7eae8696978de9, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.8
@@ -240,6 +244,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 8811438501680361406}
     m_Modifications:
+    - target: {fileID: -239427368649001473, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
+      propertyPath: m_Volume
+      value: 0.1
+      objectReference: {fileID: 0}
     - target: {fileID: 1281296594994837668, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
       propertyPath: aimPoint
       value: 220
@@ -584,6 +592,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 8811438501680361406}
     m_Modifications:
+    - target: {fileID: -239427368649001473, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
+      propertyPath: m_Volume
+      value: 0.1
+      objectReference: {fileID: 0}
     - target: {fileID: 1281296594994837668, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
       propertyPath: aimPoint
       value: 140
@@ -705,6 +717,10 @@ PrefabInstance:
     - target: {fileID: 3907542364246273763, guid: 43a2939fe795a084fb7eae8696978de9, type: 3}
       propertyPath: aimDirection
       value: 70
+      objectReference: {fileID: 0}
+    - target: {fileID: 3990095818291278530, guid: 43a2939fe795a084fb7eae8696978de9, type: 3}
+      propertyPath: m_Volume
+      value: 0.15
       objectReference: {fileID: 0}
     - target: {fileID: 6762637872082208304, guid: 43a2939fe795a084fb7eae8696978de9, type: 3}
       propertyPath: m_LocalPosition.x
@@ -850,6 +866,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 8811438501680361406}
     m_Modifications:
+    - target: {fileID: -239427368649001473, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
+      propertyPath: m_Volume
+      value: 0.1
+      objectReference: {fileID: 0}
     - target: {fileID: 1281296594994837668, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
       propertyPath: aimPoint
       value: 320
@@ -1471,6 +1491,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 8811438501680361406}
     m_Modifications:
+    - target: {fileID: -239427368649001473, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
+      propertyPath: m_Volume
+      value: 0.1
+      objectReference: {fileID: 0}
     - target: {fileID: 1281296594994837668, guid: daf757be7ad99b340a3ab75bd34f88e3, type: 3}
       propertyPath: aimPoint
       value: 40

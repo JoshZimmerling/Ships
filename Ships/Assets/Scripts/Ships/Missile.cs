@@ -14,15 +14,39 @@ public class Missile : NetworkBehaviour
     public bool isFromNeutralShip = false;
     private Color neutralShipColor = new Color(212 / 255f, 175 / 255f, 55 / 255f);
 
+    private AudioSource inFlightAudio;
+    private bool audioPlaying = false;
+
     public override void OnNetworkSpawn()
     {
         GetComponent<SpriteRenderer>().color = PlayerDataList.Singleton.players[OwnerClientId].playerColor;
         if (!IsOwner) transform.Find("Fog Remover").gameObject.SetActive(false);
+
+        inFlightAudio = GetComponent<AudioSource>();
     }
 
 
     void FixedUpdate()
     {
+        if (!audioPlaying)
+        {
+            if (Camera_Control.Singleton.IsOnScreen(transform) && (Camera_Control.Singleton.IsSeenByMyShips(transform) || (IsOwner && !isFromNeutralShip)))
+            {
+                audioPlaying = true;
+                Debug.Log("Missile audio on");
+                inFlightAudio.UnPause();
+            }
+        }
+        else
+        {
+            if (!Camera_Control.Singleton.IsOnScreen(transform) || (!Camera_Control.Singleton.IsSeenByMyShips(transform) && (!IsOwner || isFromNeutralShip)))
+            {
+                audioPlaying = false;
+                Debug.Log("Missile audio off");
+                inFlightAudio.Pause();
+            }
+        }
+
         if (!IsHost) return;
 
         missileLifetime -= Time.deltaTime;
@@ -109,6 +133,9 @@ public class Missile : NetworkBehaviour
         }
         else
             SetMissileColorRPC(PlayerDataList.Singleton.players[OwnerClientId].playerColor);
+
+        inFlightAudio.Play();
+        inFlightAudio.Pause();
     }
 
     [Rpc(SendTo.ClientsAndHost)]

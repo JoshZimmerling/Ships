@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Camera_Control : MonoBehaviour
+public class Camera_Control : Singleton<Camera_Control>
 {
     [SerializeField] float maxZoomOut = 50f;
     [SerializeField] float maxZoomIn = 10f;
@@ -105,6 +105,29 @@ public class Camera_Control : MonoBehaviour
     {
         minimapViewportRectangle.anchoredPosition = new Vector2(transform.position.x, transform.position.y) * (minimapWidth/mapWidth);
 
-        minimapViewportRectangle.transform.localScale = new Vector3(0.5f + ((currentZoomLevel-maxZoomIn) / (maxZoomOut - maxZoomIn) * 1.9f), 0.5f + ((currentZoomLevel - maxZoomIn) / (maxZoomOut - maxZoomIn) * 1.9f), 1f);
+        minimapViewportRectangle.transform.localScale = new Vector3((125f/mapWidth) + ((currentZoomLevel-maxZoomIn) / (maxZoomOut - maxZoomIn) * (475f/mapWidth)), (125f / mapWidth) + ((currentZoomLevel - maxZoomIn) / (maxZoomOut - maxZoomIn) * (475f / mapWidth)), 1f);
+    }
+
+    public bool IsOnScreen(Transform obj)
+    {
+        Vector3 screenPoint = cam.WorldToScreenPoint(obj.position);
+
+        return screenPoint.y > 0 &&
+               screenPoint.y < Screen.height &&
+               screenPoint.x > 0 &&
+               screenPoint.x < Screen.width;
+    }
+
+    public bool IsSeenByMyShips(Transform obj)
+    {
+        foreach (Transform ship in PlayerDataList.Singleton.GetLocalPlayer().transform)
+        {
+            Ship myShip = ship.GetComponent<Ship>();
+            if ((myShip.transform.position - obj.position).magnitude < myShip.visionRange)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }
