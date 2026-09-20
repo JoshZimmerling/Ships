@@ -28,7 +28,7 @@ public class Ship : NetworkBehaviour
 
     // Ship Components
     private Transform hpBar;
-    [SerializeField] GameObject popupTextPrefab;
+    [SerializeField] public GameObject popupTextPrefab;
     private SpriteRenderer outlineSprite;
 
     private PlayerData playerData;
