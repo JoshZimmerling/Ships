@@ -8,7 +8,8 @@ public class MothershipAbility : NetworkBehaviour
     // Mothership ability settings
     [SerializeField] private int mothershipHealRadius = 20;
     [SerializeField] private int mothershipHealTimer = 2;
-    [SerializeField] private int mothershipHealAmount = 1;
+    [SerializeField] private int mothershipHealAmountFlat = 1;
+    [SerializeField] private float mothershipHealAmountPercent = 0.05f;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public override void OnNetworkSpawn()
@@ -35,7 +36,7 @@ public class MothershipAbility : NetworkBehaviour
                     (transform.position - go.transform.position).magnitude + ship.correctionFactor <= mothershipHealRadius &&
                     ship.currentShipHP.Value != ship.maxShipHP)
                 {
-                    ship.currentShipHP.Value = Mathf.Min(ship.currentShipHP.Value + mothershipHealAmount, ship.maxShipHP);
+                    ship.currentShipHP.Value = Mathf.Min(ship.currentShipHP.Value + mothershipHealAmountFlat + mothershipHealAmountPercent * ship.maxShipHP, ship.maxShipHP);
                 }
             }
             abilityTimer = mothershipHealTimer;
