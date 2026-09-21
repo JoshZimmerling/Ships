@@ -12,6 +12,8 @@ public class Shop : Singleton<Shop>
     private PlayerData playerData;
     private TMP_Text goldDisplay;
 
+    float playerGold = 200f;
+
     public void SetupShop()
     {
         playerId = NetworkManager.Singleton.LocalClientId;
@@ -42,8 +44,6 @@ public class Shop : Singleton<Shop>
         UpdateGold();
     }
 
-    float playerGold = 200f;
-
     private void UpdateGold()
     {
         goldDisplay.text = "$" + playerGold;
@@ -64,6 +64,11 @@ public class Shop : Singleton<Shop>
     {
         playerGold += increaseAmount;
         UpdateGold();
+    }
+
+    public float GetGold()
+    {
+        return playerGold;
     }
 
     public void ToggleShop()

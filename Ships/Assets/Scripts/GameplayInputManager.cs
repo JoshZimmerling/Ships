@@ -382,6 +382,7 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
     public void ShowLeaveGameButton()
     {
         leaveGameButton.gameObject.SetActive(true);
+        PlayerDataList.Singleton.GetLocalPlayer().RemoveMapFog(); //Very dumb but only way I could get map fog to remove for winning player
     }
 
     private void LeaveGame()

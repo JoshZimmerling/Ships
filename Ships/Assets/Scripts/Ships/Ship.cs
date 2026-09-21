@@ -165,6 +165,11 @@ public class Ship : NetworkBehaviour
         {
             playerData.KillMothershipRPC();
         }
+        else
+        {
+            //Check if this was last ship and no money left
+            //CheckIfLastShipAndNoMoneyRPC(OwnerClientId);
+        }
 
         GameSceneManager.Singleton.shipsInScene.Remove(gameObject);
         if (shipDamageCameFrom != null)
@@ -189,6 +194,24 @@ public class Ship : NetworkBehaviour
                     break;
                 default:
                     break;
+            }
+        }
+    }
+
+    [Rpc(SendTo.ClientsAndHost)]
+    public void CheckIfLastShipAndNoMoneyRPC(ulong shipsClientID)
+    {
+        //If my client ID is the ship who just died, check if that is my last ship and if I have no money left, kill my mothership
+        if (shipsClientID == NetworkManager.LocalClientId)
+        {
+            Debug.Log("My ship just died");
+            Debug.Log("Child count: " + PlayerDataList.Singleton.GetLocalPlayer().transform.childCount + " | Last ship mothership?? " + (PlayerDataList.Singleton.GetLocalPlayer().transform.GetChild(0).GetComponent<Ship>().shipType == ShipTypes.Mothership) + " | Money left: " + Shop.Singleton.GetGold());
+            //TODO: Need to maybe rework this, currently checking against child count of 2 since technically this ship has not died yet, but that doesnt work with Goliath since it can have fighters still
+            if (PlayerDataList.Singleton.GetLocalPlayer().transform.childCount == 2 && PlayerDataList.Singleton.GetLocalPlayer().transform.GetChild(0).GetComponent<Ship>().shipType == ShipTypes.Mothership && Shop.Singleton.GetGold() <= 0)
+            {
+                Debug.Log("I aint got no money");
+                playerData.KillMothershipRPC();
+                PlayerDataList.Singleton.GetLocalPlayer().transform.GetChild(0).GetComponent<Ship>().SelfDestroyShipRPC();
             }
         }
     }

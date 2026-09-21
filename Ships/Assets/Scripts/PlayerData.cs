@@ -99,7 +99,7 @@ public class PlayerData : NetworkBehaviour
             if (child.gameObject.GetComponent<Ship>() != null && child.gameObject.GetComponent<Ship>().GetShipType() != Ship.ShipTypes.Mothership)
                 child.gameObject.GetComponent<Ship>().SelfDestroyShipRPC();
 
-        mapFogRemover.SetActive(true);
+        RemoveMapFog();
         Shop.Singleton.gameObject.SetActive(false);
 
         //Show the leave game button for non hosts
@@ -127,6 +127,11 @@ public class PlayerData : NetworkBehaviour
     public void ShowAllPlayersLeaveButtonRPC()
     {
         GameplayInputManager.Singleton.ShowLeaveGameButton();
+    }
+
+    public void RemoveMapFog()
+    {
+        mapFogRemover.SetActive(true);
     }
 
     [Rpc(SendTo.ClientsAndHost)]
