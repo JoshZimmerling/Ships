@@ -182,7 +182,10 @@ public class Ship : NetworkBehaviour
             switch (shipScript.shipType)
             {
                 case ShipTypes.Lightning:
-                    shipDamageCameFrom.GetComponent<Movement>().ChangeSpeed(1.5f, 7f);
+                    if (shipType == ShipTypes.GoliathFighter)
+                        shipDamageCameFrom.GetComponent<Movement>().ChangeSpeed(1.25f, 7f);
+                    else
+                        shipDamageCameFrom.GetComponent<Movement>().ChangeSpeed(1.5f, 7f);
                     break;
                 default:
                     break;
