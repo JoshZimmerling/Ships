@@ -171,7 +171,10 @@ public class Ship : NetworkBehaviour
             CheckIfLastShipAndNoMoneyRPC(OwnerClientId);
         }
 
+        //Cleaning up old references
         GameSceneManager.Singleton.shipsInScene.Remove(gameObject);
+        UnselectShipRPC();
+
         if (shipDamageCameFrom != null)
             InformShipWhoKilled(shipDamageCameFrom);
 
@@ -211,7 +214,6 @@ public class Ship : NetworkBehaviour
                     if (myShip.GetComponent<Ship>().shipType != ShipTypes.Mothership && myShip.GetComponent<Ship>().shipType != ShipTypes.GoliathFighter && myShip != transform)
                         return;
                 }
-                Debug.Log("I aint got no money");
                 playerData.KillMothershipRPC();
                 PlayerDataList.Singleton.GetLocalPlayer().transform.GetChild(0).GetComponent<Ship>().SelfDestroyShipRPC();
             }
@@ -230,6 +232,12 @@ public class Ship : NetworkBehaviour
         Color newColor = outlineSprite.color;
         newColor.a = 0f;
         outlineSprite.color = newColor;
+    }
+
+    [Rpc(SendTo.Owner)]
+    public void UnselectShipRPC()
+    {
+        UnselectShip();
     }
 
     public ShipTypes GetShipType()
