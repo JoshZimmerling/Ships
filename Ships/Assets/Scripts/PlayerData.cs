@@ -99,7 +99,6 @@ public class PlayerData : NetworkBehaviour
             if (child.gameObject.GetComponent<Ship>() != null && child.gameObject.GetComponent<Ship>().GetShipType() != Ship.ShipTypes.Mothership)
                 child.gameObject.GetComponent<Ship>().SelfDestroyShipRPC();
 
-        RemoveMapFog();
         Shop.Singleton.gameObject.SetActive(false);
 
         //Show the leave game button for non hosts
