@@ -671,6 +671,7 @@ MonoBehaviour:
   correctionFactor: 0
   visionRange: 35
   popupTextPrefab: {fileID: 985385043950032243, guid: a6e0a522c1dcae445a22ddcda9f44396, type: 3}
+  deathSound: {fileID: 8300000, guid: 0ea31790a1baca449a58d136452b34f2, type: 3}
 --- !u!114 &4637950062562444113
 MonoBehaviour:
   m_ObjectHideFlags: 0

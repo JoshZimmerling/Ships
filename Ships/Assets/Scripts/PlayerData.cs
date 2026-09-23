@@ -130,6 +130,8 @@ public class PlayerData : NetworkBehaviour
 
     public void RemoveMapFog()
     {
+        if (mapFogRemover == null)
+            mapFogRemover = GameObject.Find("MapFogRemover");
         mapFogRemover.SetActive(true);
     }
 

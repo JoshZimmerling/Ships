@@ -29,6 +29,7 @@ public class Ship : NetworkBehaviour
     // Ship Components
     private Transform hpBar;
     [SerializeField] public GameObject popupTextPrefab;
+    [SerializeField] AudioClip deathSound;
     private SpriteRenderer outlineSprite;
 
     private PlayerData playerData;
@@ -174,6 +175,7 @@ public class Ship : NetworkBehaviour
         //Cleaning up old references
         GameSceneManager.Singleton.shipsInScene.Remove(gameObject);
         UnselectShipRPC();
+        PlayDeathSoundRPC();
 
         if (shipDamageCameFrom != null)
             InformShipWhoKilled(shipDamageCameFrom);
@@ -238,6 +240,18 @@ public class Ship : NetworkBehaviour
     public void UnselectShipRPC()
     {
         UnselectShip();
+    }
+
+    [Rpc(SendTo.ClientsAndHost)]
+    public void PlayDeathSoundRPC()
+    {
+        if (Camera_Control.Singleton.IsOnScreen(transform) && Camera_Control.Singleton.IsSeenByMyShips(transform) && deathSound != null)
+        {
+            if (shipType != ShipTypes.GoliathFighter)
+                AudioSource.PlayClipAtPoint(deathSound, Camera.main.transform.position, 0.4f);
+            else
+                AudioSource.PlayClipAtPoint(deathSound, Camera.main.transform.position, 0.2f);
+        }
     }
 
     public ShipTypes GetShipType()
