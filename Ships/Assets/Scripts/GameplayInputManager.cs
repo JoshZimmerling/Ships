@@ -56,9 +56,6 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
         leaveGameButton = GameObject.Find("Leave Game Button").GetComponent<Button>();
         leaveGameButton.onClick.AddListener(LeaveGame);
         leaveGameButton.gameObject.SetActive(false);
-
-        if (PlayerDataList.Singleton.players.Count <= 1)
-            ShowLeaveGameButton();
     }
 
     // Update is called once per frame
@@ -382,7 +379,6 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
     public void ShowLeaveGameButton()
     {
         leaveGameButton.gameObject.SetActive(true);
-        PlayerDataList.Singleton.GetLocalPlayer().RemoveMapFog();
     }
 
     private void LeaveGame()

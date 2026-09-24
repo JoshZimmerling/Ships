@@ -52,6 +52,9 @@ public class PlayerData : NetworkBehaviour
 
             mapFogRemover = GameObject.Find("MapFogRemover");
             mapFogRemover.SetActive(false);
+
+            if (PlayerDataList.Singleton.players.Count <= 1)
+                GameplayInputManager.Singleton.ShowLeaveGameButton();
         }
     }
 
@@ -100,11 +103,11 @@ public class PlayerData : NetworkBehaviour
                 child.gameObject.GetComponent<Ship>().SelfDestroyShipRPC();
 
         Shop.Singleton.gameObject.SetActive(false);
+        RemoveMapFog();
 
         //Show the leave game button for non hosts
         if (!IsHost)
             GameplayInputManager.Singleton.ShowLeaveGameButton();
-
         //Update everyones tab menu to show you died
         UpdateTabMenuRPC(authenticationServicePlayerId.Value);
 
@@ -126,12 +129,11 @@ public class PlayerData : NetworkBehaviour
     public void ShowAllPlayersLeaveButtonRPC()
     {
         GameplayInputManager.Singleton.ShowLeaveGameButton();
+        PlayerDataList.Singleton.GetLocalPlayer().RemoveMapFog();
     }
 
     public void RemoveMapFog()
     {
-        if (mapFogRemover == null)
-            mapFogRemover = GameObject.Find("MapFogRemover");
         mapFogRemover.SetActive(true);
     }
 
