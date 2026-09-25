@@ -8,7 +8,7 @@ public class PlayerData : NetworkBehaviour
     private GameSceneManager gameManager;
 
     private Ship motherShip;
-    private GameObject mapFogRemover;
+    //private GameObject mapFogRemover;
 
     public NetworkVariable<int> playerColorIndex = new NetworkVariable<int>(-1, writePerm : NetworkVariableWritePermission.Owner);
     public Color playerColor;
@@ -50,8 +50,7 @@ public class PlayerData : NetworkBehaviour
         if (IsOwner){
             SpawnShipServerRPC(Ship.ShipTypes.Mothership);
 
-            mapFogRemover = GameObject.Find("MapFogRemover");
-            mapFogRemover.SetActive(false);
+            SetRevealMap(false);
 
             if (PlayerDataList.Singleton.players.Count <= 1)
                 GameplayInputManager.Singleton.ShowLeaveGameButton();
@@ -105,7 +104,7 @@ public class PlayerData : NetworkBehaviour
                 child.gameObject.GetComponent<Ship>().SelfDestroyShipRPC();
 
         Shop.Singleton.gameObject.SetActive(false);
-        RemoveMapFog();
+        SetRevealMap(true);
 
         //Show the leave game button for non hosts
         if (!IsHost)
@@ -131,12 +130,12 @@ public class PlayerData : NetworkBehaviour
     public void ShowAllPlayersLeaveButtonRPC()
     {
         GameplayInputManager.Singleton.ShowLeaveGameButton();
-        PlayerDataList.Singleton.GetLocalPlayer().RemoveMapFog();
+        PlayerDataList.Singleton.GetLocalPlayer().SetRevealMap(true);
     }
 
-    public void RemoveMapFog()
+    public void SetRevealMap(bool b)
     {
-        mapFogRemover.SetActive(true);
+        GetComponent<PassBufferPoints>().revealMap = b;
     }
 
     [Rpc(SendTo.ClientsAndHost)]

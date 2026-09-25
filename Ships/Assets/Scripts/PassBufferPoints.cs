@@ -11,6 +11,7 @@ public class PassBufferPoints : NetworkBehaviour
     private VisionCone[] bufferData;
     private ComputeBuffer pointsBuffer;
     private GameObject bulletContainer;
+    public bool revealMap = false;
 
     [StructLayout(LayoutKind.Sequential)]
     public struct VisionCone
@@ -30,40 +31,50 @@ public class PassBufferPoints : NetworkBehaviour
     {
         if (!IsLocalPlayer) return;
 
-        //if (bulletContainer == null) bulletContainer = GameObject.Find("Bullet Container");
-
-        Ship[] ships = GetComponentsInChildren<Ship>();
-        Missile[] unfilteredMissiles = bulletContainer.GetComponentsInChildren<Missile>();
-
-        List<Missile> missiles = new List<Missile>();
-
-        foreach (Missile missile in unfilteredMissiles)
+        if (revealMap)
         {
-            if (missile.OwnerClientId == this.OwnerClientId && !missile.isFromNeutralShip)
+            bufferData = new VisionCone[1];
+            bufferData[0].position = Vector2.zero;
+            bufferData[0].visionRadius = 1000;
+
+        }
+        else
+        {
+            //if (bulletContainer == null) bulletContainer = GameObject.Find("Bullet Container");
+
+            Ship[] ships = GetComponentsInChildren<Ship>();
+            Missile[] unfilteredMissiles = bulletContainer.GetComponentsInChildren<Missile>();
+
+            List<Missile> missiles = new List<Missile>();
+
+            foreach (Missile missile in unfilteredMissiles)
             {
-                missiles.Add(missile);
+                if (missile.OwnerClientId == this.OwnerClientId && !missile.isFromNeutralShip)
+                {
+                    missiles.Add(missile);
+                }
             }
+
+            bufferData = new VisionCone[ships.Length + missiles.Count];
+
+            // Go through ships
+            for (int i = 0; i < ships.Length; i++)
+            {
+                bufferData[i].position = (Vector2)ships[i].transform.position;
+                bufferData[i].visionRadius = ships[i].visionRange;
+            }
+
+            // Go through Missiles
+            for (int i = 0; i < missiles.Count; i++)
+            {
+                bufferData[ships.Length + i].position = (Vector2)missiles[i].transform.position;
+                bufferData[ships.Length + i].visionRadius = missiles[i].visionRange;
+            }
+
+            // Dynamically increases buffer as needed
+            if (Shader.GetGlobalInt("_PointsBufferCount") < bufferData.Length)
+                pointsBuffer = new ComputeBuffer(bufferData.Length, Marshal.SizeOf(typeof(VisionCone)));
         }
-
-        bufferData = new VisionCone[ships.Length + missiles.Count];
-
-        // Go through ships
-        for (int i = 0; i < ships.Length; i++)
-        {
-            bufferData[i].position = (Vector2)ships[i].transform.position;
-            bufferData[i].visionRadius = ships[i].visionRange;
-        }
-
-        // Go through Missiles
-        for (int i = 0; i < missiles.Count; i++)
-        {
-            bufferData[ships.Length + i].position = (Vector2)missiles[i].transform.position;
-            bufferData[ships.Length + i].visionRadius = missiles[i].visionRange;
-        }
-
-        // Dynamically increases buffer as needed
-        if (Shader.GetGlobalInt("_PointsBufferCount") < bufferData.Length)
-            pointsBuffer = new ComputeBuffer(bufferData.Length, Marshal.SizeOf(typeof(VisionCone)));
 
         // Upload the array to the GPU buffer
         pointsBuffer.SetData(bufferData);

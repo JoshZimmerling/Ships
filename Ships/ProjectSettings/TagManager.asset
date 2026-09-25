@@ -44,8 +44,5 @@ TagManager:
   - name: Scanner
     uniqueID: 257962177
     locked: 0
-  - name: HideInFog
-    uniqueID: 2182174917
-    locked: 0
   m_RenderingLayers:
   - Default
