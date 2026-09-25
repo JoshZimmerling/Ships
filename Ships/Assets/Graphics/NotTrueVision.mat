@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: TEST
+  m_Name: NotTrueVision
   m_Shader: {fileID: 4800000, guid: 4640bd571685ad4429f579ac98499bcf, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -38,6 +38,8 @@ Material:
     - _AphaThreshold: 0.5
     - _Glossiness: 0.5
     - _Metallic: 0
+    - _RevealedByShips: 0
+    - _ShowInFog: 0
     m_Colors:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}

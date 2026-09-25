@@ -9,6 +9,8 @@ public class Missile : NetworkBehaviour
     float missileLifetime = 1f; //Temporary to cause it to not despawn while getting setup
     float missileLifetimeMax = 1f; //Temporary to cause it to not despawn while getting setup
 
+    public int visionRange = 7;
+
     Transform missileTarget;
 
     public bool isFromNeutralShip = false;

@@ -1,35 +1,76 @@
+using NUnit.Framework;
+using System.Collections.Generic;
+using System.Runtime.InteropServices;
+using Unity.Netcode;
 using UnityEngine;
 
-public class PassBufferPoints : MonoBehaviour
+
+//[ExecuteInEditMode]
+public class PassBufferPoints : NetworkBehaviour
 {
-    public Vector3[] worldPoints;
+    private VisionCone[] bufferData;
     private ComputeBuffer pointsBuffer;
+    private GameObject bulletContainer;
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct VisionCone
+    {
+        public Vector2 position;        // 2 floats = 8 bytes
+        public float visionRadius;      // 1 float  = 4 bytes
+    }                                   // Total stride = 12 bytes
 
     void OnEnable()
     {
-        if (worldPoints == null || worldPoints.Length == 0) return;
-
         // Initialize buffer: (Number of elements, Size of float4 in bytes [4 floats * 4 bytes])
-        pointsBuffer = new ComputeBuffer(worldPoints.Length, sizeof(float) * 4);
+        pointsBuffer = new ComputeBuffer(32, Marshal.SizeOf(typeof(VisionCone)));
+        bulletContainer = GameObject.Find("Bullet Container");
     }
 
     void Update()
     {
-        if (pointsBuffer == null || worldPoints == null) return;
+        if (!IsLocalPlayer) return;
 
-        // Cover Vector3[] into a temporary Vector4[] array
-        Vector4[] bufferData = new Vector4[worldPoints.Length];
-        for (int i = 0; i < worldPoints.Length; i++)
+        //if (bulletContainer == null) bulletContainer = GameObject.Find("Bullet Container");
+
+        Ship[] ships = GetComponentsInChildren<Ship>();
+        Missile[] unfilteredMissiles = bulletContainer.GetComponentsInChildren<Missile>();
+
+        List<Missile> missiles = new List<Missile>();
+
+        foreach (Missile missile in unfilteredMissiles)
         {
-            bufferData[i] = new Vector4(worldPoints[i].x, worldPoints[i].y, worldPoints[i].z, 1.0f);
+            if (missile.OwnerClientId == this.OwnerClientId && !missile.isFromNeutralShip)
+            {
+                missiles.Add(missile);
+            }
         }
+
+        bufferData = new VisionCone[ships.Length + missiles.Count];
+
+        // Go through ships
+        for (int i = 0; i < ships.Length; i++)
+        {
+            bufferData[i].position = (Vector2)ships[i].transform.position;
+            bufferData[i].visionRadius = ships[i].visionRange;
+        }
+
+        // Go through Missiles
+        for (int i = 0; i < missiles.Count; i++)
+        {
+            bufferData[ships.Length + i].position = (Vector2)missiles[i].transform.position;
+            bufferData[ships.Length + i].visionRadius = missiles[i].visionRange;
+        }
+
+        // Dynamically increases buffer as needed
+        if (Shader.GetGlobalInt("_PointsBufferCount") < bufferData.Length)
+            pointsBuffer = new ComputeBuffer(bufferData.Length, Marshal.SizeOf(typeof(VisionCone)));
 
         // Upload the array to the GPU buffer
         pointsBuffer.SetData(bufferData);
 
         // Bind the buffer and the count globally so any material can read it
         Shader.SetGlobalBuffer("_PointsBuffer", pointsBuffer);
-        Shader.SetGlobalInt("_PointsBufferCount", worldPoints.Length);
+        Shader.SetGlobalInt("_PointsBufferCount", bufferData.Length);
     }
 
     void OnDisable()

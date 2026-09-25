@@ -53,6 +53,8 @@ public class PlayerData : NetworkBehaviour
             mapFogRemover = GameObject.Find("MapFogRemover");
             mapFogRemover.SetActive(false);
         }
+
+        GetComponent<PassBufferPoints>().enabled = true;
     }
 
     [Rpc(SendTo.Server)]

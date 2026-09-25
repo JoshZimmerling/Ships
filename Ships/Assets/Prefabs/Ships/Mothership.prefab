@@ -535,4 +535,5 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   mothershipHealRadius: 20
   mothershipHealTimer: 2
-  mothershipHealAmount: 1
+  mothershipHealAmountFlat: 1
+  mothershipHealAmountPercent: 0.01

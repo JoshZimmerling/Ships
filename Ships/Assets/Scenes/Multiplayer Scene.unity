@@ -7661,6 +7661,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Map Edge Fog
       objectReference: {fileID: 0}
+    - target: {fileID: 5430023927987212885, guid: f9a585a1066b8b643adb66b7e75f0698, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 9cc67d47ff4cb5a43bc2ac02fd2a9823, type: 2}
+    - target: {fileID: 8560099374808376625, guid: f9a585a1066b8b643adb66b7e75f0698, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 9cc67d47ff4cb5a43bc2ac02fd2a9823, type: 2}
     - target: {fileID: 8592215696975285212, guid: f9a585a1066b8b643adb66b7e75f0698, type: 3}
       propertyPath: m_LocalScale.x
       value: 30
