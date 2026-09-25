@@ -12,7 +12,7 @@ public class Shop : Singleton<Shop>
     private PlayerData playerData;
     private TMP_Text goldDisplay;
 
-    float playerGold = 200f;
+    float playerGold = 100f;
 
     public void SetupShop()
     {

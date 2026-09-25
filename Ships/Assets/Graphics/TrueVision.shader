@@ -85,6 +85,9 @@ Shader "Custom/TrueVision"
 				orgColor.rgb *= orgColor.a;
 				float4 transColor = float4(0, 0, 0, 0);
 
+				if (_PointsBufferCount == 0)
+					return orgColor;
+
 				for (int i = 0; i < _PointsBufferCount; i++)
 				{
 					float maxRadius = _PointsBuffer[i].visionRadius;

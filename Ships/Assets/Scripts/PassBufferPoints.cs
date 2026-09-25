@@ -33,9 +33,9 @@ public class PassBufferPoints : NetworkBehaviour
 
         if (revealMap)
         {
-            bufferData = new VisionCone[1];
-            bufferData[0].position = Vector2.zero;
-            bufferData[0].visionRadius = 1000;
+            bufferData = new VisionCone[0];
+            //bufferData[0].position = Vector2.zero;
+            //bufferData[0].visionRadius = 1000;
 
         }
         else
