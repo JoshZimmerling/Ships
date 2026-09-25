@@ -35,7 +35,6 @@ public class Ship : NetworkBehaviour
     private PlayerData playerData;
 
     private GameObject scoutMarker; // Marker in fog of war (Enemy)
-    //private GameObject scoutMarkerHider;
     private GameObject minimapMarker; // Market on minimap (Both)
     private GameObject minimapScoutMarker; // Marker in minimap fog of war (Enemy)
 
@@ -48,7 +47,6 @@ public class Ship : NetworkBehaviour
         outlineSprite = transform.Find("Outline").GetComponent<SpriteRenderer>();
 
         scoutMarker = transform.Find("Scout Marker").gameObject;
-        //scoutMarkerHider = transform.Find("Scout Marker Hider").gameObject;
         minimapMarker = transform.Find("Minimap Marker").gameObject;
         minimapScoutMarker = transform.Find("Minimap Scout Marker").gameObject;
 
@@ -81,17 +79,14 @@ public class Ship : NetworkBehaviour
         //Ship specific setup
         SetupBasedOnShipType();
 
-        //Transform fogRemover = transform.Find("Fog Remover");
         // Changes based on ship owner
         if (!IsOwner)
         {
-            //fogRemover.gameObject.SetActive(false);
             outlineSprite.gameObject.SetActive(false);
-            scoutMarker.gameObject.SetActive(true);
+            scoutMarker.SetActive(true);
         }
         else
         {
-            //fogRemover.localScale = new Vector3(visionRange / 6f, visionRange / 6f);
             if (shipType != ShipTypes.GoliathFighter)
                 GameplayInputManager.Singleton.AddNewSelectedShip(this);
         }
@@ -102,11 +97,14 @@ public class Ship : NetworkBehaviour
         //Ship specific updates
         UpdateBasedOnShipType();
 
+
+        //if (shipType == ShipTypes.GoliathFighter)
+            //Debug.Log(
+
         //Don't rotate minimap icons
-        scoutMarker.transform.rotation = Quaternion.Euler(0, 0, -transform.rotation.z);
-        //scoutMarkerHider.transform.rotation = Quaternion.Euler(0, 0, -transform.rotation.z);
-        minimapMarker.transform.rotation = Quaternion.Euler(0, 0, -transform.rotation.z);
-        minimapScoutMarker.transform.rotation = Quaternion.Euler(0, 0, -transform.rotation.z);
+        scoutMarker.transform.rotation = Quaternion.identity;
+        minimapMarker.transform.rotation = Quaternion.identity;
+        minimapScoutMarker.transform.rotation = Quaternion.identity;
     }
 
     public void SetupBasedOnShipType()

@@ -20,6 +20,8 @@ public class Fighter : Ship
 
     public new void FixedUpdate()
     {
+        base.FixedUpdate();
+
         if (!IsHost) return;
 
         if (goliath == null)
@@ -56,7 +58,6 @@ public class Fighter : Ship
         if (targetShip == goliath && d > -0.5f && currentShipHP.Value != maxShipHP)
             currentShipHP.Value = maxShipHP;
 
-        base.FixedUpdate();
     }
 
     public override void OnDestroy()
