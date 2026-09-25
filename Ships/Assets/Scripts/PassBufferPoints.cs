@@ -4,8 +4,6 @@ using System.Runtime.InteropServices;
 using Unity.Netcode;
 using UnityEngine;
 
-
-//[ExecuteInEditMode]
 public class PassBufferPoints : NetworkBehaviour
 {
     private VisionCone[] bufferData;
@@ -13,16 +11,18 @@ public class PassBufferPoints : NetworkBehaviour
     private GameObject bulletContainer;
     public bool revealMap = false;
 
+    // Updated Struct: Padded out to match the 32-byte HLSL stride requirements (multiples of 16)
     [StructLayout(LayoutKind.Sequential)]
     public struct VisionCone
     {
-        public Vector2 position;        // 2 floats = 8 bytes
+        public Vector4 position;        // 4 floats = 16 bytes (Uses .x and .y for your 2D space)
         public float visionRadius;      // 1 float  = 4 bytes
-    }                                   // Total stride = 12 bytes
+        public Vector3 padding;         // 3 floats = 12 bytes
+    }                                   // Total stride = 32 bytes
 
     void OnEnable()
     {
-        // Initialize buffer: (Number of elements, Size of float4 in bytes [4 floats * 4 bytes])
+        // Start with a reasonable baseline capacity (32 slots)
         pointsBuffer = new ComputeBuffer(32, Marshal.SizeOf(typeof(VisionCone)));
         bulletContainer = GameObject.Find("Bullet Container");
     }
@@ -34,24 +34,24 @@ public class PassBufferPoints : NetworkBehaviour
         if (revealMap)
         {
             bufferData = new VisionCone[0];
-            //bufferData[0].position = Vector2.zero;
-            //bufferData[0].visionRadius = 1000;
-
         }
         else
         {
-            //if (bulletContainer == null) bulletContainer = GameObject.Find("Bullet Container");
-
             Ship[] ships = GetComponentsInChildren<Ship>();
-            Missile[] unfilteredMissiles = bulletContainer.GetComponentsInChildren<Missile>();
+
+            if (bulletContainer == null)
+                bulletContainer = GameObject.Find("Bullet Container");
 
             List<Missile> missiles = new List<Missile>();
-
-            foreach (Missile missile in unfilteredMissiles)
+            if (bulletContainer != null)
             {
-                if (missile.OwnerClientId == this.OwnerClientId && !missile.isFromNeutralShip)
+                Missile[] unfilteredMissiles = bulletContainer.GetComponentsInChildren<Missile>();
+                foreach (Missile missile in unfilteredMissiles)
                 {
-                    missiles.Add(missile);
+                    if (missile.OwnerClientId == this.OwnerClientId && !missile.isFromNeutralShip)
+                    {
+                        missiles.Add(missile);
+                    }
                 }
             }
 
@@ -60,24 +60,35 @@ public class PassBufferPoints : NetworkBehaviour
             // Go through ships
             for (int i = 0; i < ships.Length; i++)
             {
-                bufferData[i].position = (Vector2)ships[i].transform.position;
+                // Vector4 automatically handles implicit conversion from Vector3/Vector2
+                bufferData[i].position = ships[i].transform.position;
                 bufferData[i].visionRadius = ships[i].visionRange;
             }
 
             // Go through Missiles
             for (int i = 0; i < missiles.Count; i++)
             {
-                bufferData[ships.Length + i].position = (Vector2)missiles[i].transform.position;
+                bufferData[ships.Length + i].position = missiles[i].transform.position;
                 bufferData[ships.Length + i].visionRadius = missiles[i].visionRange;
             }
 
-            // Dynamically increases buffer as needed
-            if (Shader.GetGlobalInt("_PointsBufferCount") < bufferData.Length)
-                pointsBuffer = new ComputeBuffer(bufferData.Length, Marshal.SizeOf(typeof(VisionCone)));
+            // FIXED: Only resize the buffer if our current pool size is too small.
+            // This prevents allocating a brand new GPU buffer every single frame.
+            if (pointsBuffer == null || pointsBuffer.count < bufferData.Length)
+            {
+                if (pointsBuffer != null) pointsBuffer.Release();
+
+                // Allocate a little extra headroom (e.g., length + 8) to avoid resizing constantly
+                int newCapacity = bufferData.Length + 8;
+                pointsBuffer = new ComputeBuffer(newCapacity, Marshal.SizeOf(typeof(VisionCone)));
+            }
         }
 
-        // Upload the array to the GPU buffer
-        pointsBuffer.SetData(bufferData);
+        // Upload array to GPU buffer (if empty, it safely uploads 0 elements)
+        if (bufferData.Length > 0)
+        {
+            pointsBuffer.SetData(bufferData);
+        }
 
         // Bind the buffer and the count globally so any material can read it
         Shader.SetGlobalBuffer("_PointsBuffer", pointsBuffer);
