@@ -28,7 +28,8 @@ public class Ship : NetworkBehaviour
 
     // Ship Components
     private Transform hpBar;
-    [SerializeField] GameObject popupTextPrefab;
+    [SerializeField] public GameObject popupTextPrefab;
+    [SerializeField] AudioClip deathSound;
     private SpriteRenderer outlineSprite;
 
     private PlayerData playerData;
@@ -142,25 +143,83 @@ public class Ship : NetworkBehaviour
         */
     }
 
-    public void DoDamage(float damage)
+    public void DoDamage(float damage, GameObject shipDamageCameFrom)
     {
         currentShipHP.Value -= damage;
         if (currentShipHP.Value <= 0)
-            DestroyShipRPC();
+            DestroyShip(shipDamageCameFrom);
     }
 
     [Rpc(SendTo.Server)]
-    public void DestroyShipRPC()
+    public void SelfDestroyShipRPC()
+    {
+        //This method is used by the mothership when it dies to remove all of your own ships from the scene
+        GameSceneManager.Singleton.shipsInScene.Remove(gameObject);
+
+        GetComponent<NetworkObject>().Despawn();
+        Destroy(this.gameObject);
+    }
+
+    public void DestroyShip(GameObject shipDamageCameFrom)
     {
         if (shipType == ShipTypes.Mothership)
         {
             playerData.KillMothershipRPC();
         }
+        else
+        {
+            //Check if this was last ship and no money left
+            CheckIfLastShipAndNoMoneyRPC(OwnerClientId);
+        }
 
+        //Cleaning up old references
         GameSceneManager.Singleton.shipsInScene.Remove(gameObject);
+        UnselectShipRPC();
+        PlayDeathSoundRPC();
+
+        if (shipDamageCameFrom != null)
+            InformShipWhoKilled(shipDamageCameFrom);
 
         GetComponent<NetworkObject>().Despawn();
         Destroy(this.gameObject);
+    }
+
+    public void InformShipWhoKilled(GameObject shipDamageCameFrom)
+    {
+        Ship shipScript = shipDamageCameFrom.GetComponent<Ship>();
+        if (shipScript != null)
+        {
+            switch (shipScript.shipType)
+            {
+                case ShipTypes.Lightning:
+                    if (shipType == ShipTypes.GoliathFighter)
+                        shipDamageCameFrom.GetComponent<Movement>().ChangeSpeed(1.25f, 7f);
+                    else
+                        shipDamageCameFrom.GetComponent<Movement>().ChangeSpeed(1.5f, 7f);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    [Rpc(SendTo.ClientsAndHost)]
+    public void CheckIfLastShipAndNoMoneyRPC(ulong shipsClientID)
+    {
+        //If my client ID is the ship who just died, check if that is my last ship and if I have no money left, kill my mothership
+        if (shipsClientID == NetworkManager.LocalClientId)
+        {
+            if (Shop.Singleton.GetGold() <= 0)
+            { // If I have no money, loop through my remaining alive ships and if they are all not my mothership, this ship, or Goliath Fighters, we can consider ourselves still alive. Otherwise, kill my mothership
+                foreach (Transform myShip in PlayerDataList.Singleton.GetLocalPlayer().transform)
+                {
+                    if (myShip.GetComponent<Ship>().shipType != ShipTypes.Mothership && myShip.GetComponent<Ship>().shipType != ShipTypes.GoliathFighter && myShip != transform)
+                        return;
+                }
+                playerData.KillMothershipRPC();
+                PlayerDataList.Singleton.GetLocalPlayer().transform.GetChild(0).GetComponent<Ship>().SelfDestroyShipRPC();
+            }
+        }
     }
 
     public void SelectShip()
@@ -175,6 +234,24 @@ public class Ship : NetworkBehaviour
         Color newColor = outlineSprite.color;
         newColor.a = 0f;
         outlineSprite.color = newColor;
+    }
+
+    [Rpc(SendTo.Owner)]
+    public void UnselectShipRPC()
+    {
+        UnselectShip();
+    }
+
+    [Rpc(SendTo.ClientsAndHost)]
+    public void PlayDeathSoundRPC()
+    {
+        if (Camera_Control.Singleton.IsOnScreen(transform) && Camera_Control.Singleton.IsSeenByMyShips(transform) && deathSound != null)
+        {
+            if (shipType != ShipTypes.GoliathFighter)
+                AudioSource.PlayClipAtPoint(deathSound, Camera.main.transform.position, 0.4f);
+            else
+                AudioSource.PlayClipAtPoint(deathSound, Camera.main.transform.position, 0.2f);
+        }
     }
 
     public ShipTypes GetShipType()

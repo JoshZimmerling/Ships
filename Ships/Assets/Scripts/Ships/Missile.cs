@@ -13,6 +13,7 @@ public class Missile : NetworkBehaviour
 
     Transform missileTarget;
 
+    public GameObject parentShip;
     public bool isFromNeutralShip = false;
     private Color neutralShipColor = new Color(212 / 255f, 175 / 255f, 55 / 255f);
 
@@ -35,7 +36,6 @@ public class Missile : NetworkBehaviour
             if (Camera_Control.Singleton.IsOnScreen(transform) && (Camera_Control.Singleton.IsSeenByMyShips(transform) || (IsOwner && !isFromNeutralShip)))
             {
                 audioPlaying = true;
-                Debug.Log("Missile audio on");
                 inFlightAudio.UnPause();
             }
         }
@@ -44,7 +44,6 @@ public class Missile : NetworkBehaviour
             if (!Camera_Control.Singleton.IsOnScreen(transform) || (!Camera_Control.Singleton.IsSeenByMyShips(transform) && (!IsOwner || isFromNeutralShip)))
             {
                 audioPlaying = false;
-                Debug.Log("Missile audio off");
                 inFlightAudio.Pause();
             }
         }
@@ -87,14 +86,14 @@ public class Missile : NetworkBehaviour
             if (collision.GetComponent<Ship>().OwnerClientId == this.OwnerClientId && !isFromNeutralShip)
                 return;
             else
-                collision.GetComponent<Ship>().DoDamage(dmg);
+                collision.GetComponent<Ship>().DoDamage(dmg, parentShip);
         }
         else if (collision.GetComponent<NeutralShip>() != null)
         {
             if (isFromNeutralShip)
                 return;
             else
-                collision.GetComponent<NeutralShip>().DoDamage(dmg, this.OwnerClientId);
+                collision.GetComponent<NeutralShip>().DoDamage(dmg, parentShip);
         }
         else if (collision.GetComponent<Missile>() != null)
         {
@@ -118,7 +117,7 @@ public class Missile : NetworkBehaviour
     }
     */
 
-    public void SetupMissile(float damage, float speed, float turnRate, float lifetime, Transform target, bool neutralShip)
+    public void SetupMissile(float damage, float speed, float turnRate, float lifetime, Transform target, GameObject shipWhoShot)
     {
         dmg = damage;
         bulletSpeed = speed;
@@ -126,7 +125,8 @@ public class Missile : NetworkBehaviour
         missileLifetime = lifetime;
         missileLifetimeMax = lifetime;
         missileTarget = target;
-        isFromNeutralShip = neutralShip;
+        parentShip = shipWhoShot;
+        isFromNeutralShip = shipWhoShot.GetComponent<NeutralShip>() != null;
 
         if (isFromNeutralShip)
         {

@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -130,6 +131,11 @@ public class Movement : NetworkBehaviour
         return transform.position + transform.rotation * Vector2.up * totalVelocity * seconds;
     }
 
+    public void ChangeSpeed(float speedChange, float duration)
+    {
+        StartCoroutine(ChangeSpeedCoroutine(speedChange, duration));
+    }
+
     [Rpc(SendTo.Server)]
     public void BackupShipRPC()
     {
@@ -159,6 +165,33 @@ public class Movement : NetworkBehaviour
         {
             totalVelocity = 0;
             moving = false;
+        }
+    }
+
+    private IEnumerator ChangeSpeedCoroutine(float speedChange, float time)
+    {
+        shipMaxSpeed *= speedChange;
+        shipTurnRate *= speedChange;
+        ShowPopupTextRPC(true);
+
+        yield return new WaitForSeconds(time);
+
+        shipMaxSpeed *= 1f/speedChange;
+        shipTurnRate *= 1f/speedChange;
+        ShowPopupTextRPC(false);
+    }
+
+    [Rpc(SendTo.ClientsAndHost)]
+    public void ShowPopupTextRPC(bool speedUp)
+    {
+        string text = speedUp ? "^" : "-";
+        Color textColor = speedUp ? Color.cornflowerBlue : Color.orangeRed;
+        if (Camera_Control.Singleton.IsOnScreen(transform) && Camera_Control.Singleton.IsSeenByMyShips(transform))
+        {
+            PopupText popupText = Instantiate(gameObject.GetComponent<Ship>().popupTextPrefab, transform.position + new Vector3(-1, 0.5f) * gameObject.GetComponent<Ship>().correctionFactor * 0.5f, Quaternion.identity).GetComponent<PopupText>();
+            popupText.SetupText(text, textColor, 1f);
+            popupText = Instantiate(gameObject.GetComponent<Ship>().popupTextPrefab, transform.position + new Vector3(1, -1f) * gameObject.GetComponent<Ship>().correctionFactor * 0.5f, Quaternion.identity).GetComponent<PopupText>();
+            popupText.SetupText(text, textColor, 1f);
         }
     }
 }

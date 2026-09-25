@@ -1099,7 +1099,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 230, y: 10}
+  m_AnchoredPosition: {x: 115, y: -90}
   m_SizeDelta: {x: 215, y: 110}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &260094572
@@ -1175,7 +1175,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -90}
+  m_AnchoredPosition: {x: 120, y: 10}
   m_SizeDelta: {x: 410, y: 110}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &292021715
@@ -1331,7 +1331,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 10}
+  m_AnchoredPosition: {x: -115, y: -90}
   m_SizeDelta: {x: 215, y: 110}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &418266594
@@ -5405,9 +5405,9 @@ RectTransform:
   - {fileID: 638901607}
   - {fileID: 1148328052}
   - {fileID: 1123466504}
+  - {fileID: 276480746}
   - {fileID: 393279458}
   - {fileID: 212405201}
-  - {fileID: 276480746}
   - {fileID: 1459866889}
   - {fileID: 1138389652}
   - {fileID: 869996509}
@@ -6666,8 +6666,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   shopButtonPrefab: {fileID: 118576031280450674, guid: 3b54be2418e26bb4a928cab6a691c64c, type: 3}
-  buttonContainer: {fileID: 2047129183}
-  goldDisplay: {fileID: 1128698505}
 --- !u!1 &1907444152
 GameObject:
   m_ObjectHideFlags: 0
@@ -7384,7 +7382,7 @@ MonoBehaviour:
   neutralShipSpawnRates: 460000001e000000
   secondsUntilFirstNeutralShipSpawns: 10
   secondsBetweenNeutralShipSpawns: 30
-  maxNeutralShips: 2
+  maxNeutralShips: 4
 --- !u!4 &2052264805
 Transform:
   m_ObjectHideFlags: 0
@@ -7655,35 +7653,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4197134435304196912, guid: f9a585a1066b8b643adb66b7e75f0698, type: 3}
       propertyPath: m_Name
-      value: Map_2
-      objectReference: {fileID: 0}
-    - target: {fileID: 4457062556627139491, guid: f9a585a1066b8b643adb66b7e75f0698, type: 3}
-      propertyPath: m_Name
-      value: Map Edge Fog
-      objectReference: {fileID: 0}
-    - target: {fileID: 5430023927987212885, guid: f9a585a1066b8b643adb66b7e75f0698, type: 3}
-      propertyPath: 'm_Materials.Array.data[0]'
-      value: 
-      objectReference: {fileID: 2100000, guid: 9cc67d47ff4cb5a43bc2ac02fd2a9823, type: 2}
-    - target: {fileID: 8560099374808376625, guid: f9a585a1066b8b643adb66b7e75f0698, type: 3}
-      propertyPath: 'm_Materials.Array.data[0]'
-      value: 
-      objectReference: {fileID: 2100000, guid: 9cc67d47ff4cb5a43bc2ac02fd2a9823, type: 2}
-    - target: {fileID: 8592215696975285212, guid: f9a585a1066b8b643adb66b7e75f0698, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 30
-      objectReference: {fileID: 0}
-    - target: {fileID: 8592215696975285212, guid: f9a585a1066b8b643adb66b7e75f0698, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 30
-      objectReference: {fileID: 0}
-    - target: {fileID: 8592215696975285212, guid: f9a585a1066b8b643adb66b7e75f0698, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8592215696975285212, guid: f9a585a1066b8b643adb66b7e75f0698, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: Solar Satellites
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

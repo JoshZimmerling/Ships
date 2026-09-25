@@ -112,7 +112,7 @@ public class Turret : NetworkBehaviour
                 GameObject missile = Instantiate(missilePrefab, transform.position, Quaternion.Euler(0, 0, aimDirection - 90 + transform.rotation.eulerAngles.z));
                 GameSceneManager.Singleton.missilesInScene.Add(missile);
                 missile.GetComponent<NetworkObject>().SpawnWithOwnership(OwnerClientId);
-                missile.GetComponent<Missile>().SetupMissile(damage, projectileSpeed, missileTurningSpeed, missileLifetimeMax, bestTarget, transform.parent.parent.GetComponent<NeutralShip>() != null);
+                missile.GetComponent<Missile>().SetupMissile(damage, projectileSpeed, missileTurningSpeed, missileLifetimeMax, bestTarget, transform.parent.parent.gameObject);
                 missile.transform.parent = GameSceneManager.Singleton.bulletContainer;
             }
             else
@@ -152,7 +152,7 @@ public class Turret : NetworkBehaviour
                 // Fire the bullet at the angle calculated
                 GameObject bullet = Instantiate(bulletPrefab, transform.position, Quaternion.LookRotation(new Vector3(0, 0, 1), fireVector));
                 bullet.GetComponent<NetworkObject>().SpawnWithOwnership(OwnerClientId);
-                bullet.GetComponent<Bullet>().SetupBullet(range * rangeMod, damage, projectileSpeed * rangeMod, turretType, transform.parent.parent.GetComponent<NeutralShip>() != null);
+                bullet.GetComponent<Bullet>().SetupBullet(range * rangeMod, damage, projectileSpeed * rangeMod, turretType, transform.parent.parent.gameObject);
                 bullet.transform.parent = GameSceneManager.Singleton.bulletContainer;
             }
 

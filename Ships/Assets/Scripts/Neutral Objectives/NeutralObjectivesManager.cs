@@ -23,8 +23,12 @@ public class NeutralObjectivesManager : NetworkBehaviour
         spawnPositions = new Dictionary<Transform, bool>();
         foreach (Transform spawnLocation in GameObject.Find("Neutral Ship Spawn Locations").transform)
         {
+            spawnLocation.GetComponent<SpriteRenderer>().enabled = false;
             spawnPositions.Add(spawnLocation, false);
         }
+
+        if (maxNeutralShips > spawnPositions.Count)
+            maxNeutralShips = spawnPositions.Count;
     }
 
     void FixedUpdate()
