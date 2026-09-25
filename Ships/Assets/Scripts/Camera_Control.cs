@@ -128,6 +128,6 @@ public class Camera_Control : Singleton<Camera_Control>
                 return true;
             }
         }
-        return false;
+        return !PlayerDataList.Singleton.GetLocalPlayer().IsMothershipAlive(); //Returns false when you have a mothership, if you don't have a mothership you are already dead and should be able to hear everything that is on your screen
     }
 }
