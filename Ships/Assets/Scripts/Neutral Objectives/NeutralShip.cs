@@ -43,7 +43,6 @@ public class NeutralShip : NetworkBehaviour
         };
 
         scoutMarker = transform.Find("Scout Marker").gameObject;
-        //scoutMarkerHider = transform.Find("Scout Marker Hider").gameObject;
         minimapMarker = transform.Find("Minimap Marker").gameObject;
         minimapScoutMarker = transform.Find("Minimap Scout Marker").gameObject;
     }
@@ -51,16 +50,12 @@ public class NeutralShip : NetworkBehaviour
     void FixedUpdate()
     {
         //Don't rotate minimap icons
-        scoutMarker.transform.rotation = Quaternion.Euler(0, 0, -transform.rotation.z);
-        //scoutMarkerHider.transform.rotation = Quaternion.Euler(0, 0, -transform.rotation.z);
-        minimapMarker.transform.rotation = Quaternion.Euler(0, 0, -transform.rotation.z);
-        minimapScoutMarker.transform.rotation = Quaternion.Euler(0, 0, -transform.rotation.z);
+        scoutMarker.transform.rotation = Quaternion.identity;
+        minimapMarker.transform.rotation = Quaternion.identity;
+        minimapScoutMarker.transform.rotation = Quaternion.identity;
 
         if (!IsHost || spawn == null) return;
 
-        //transform.position = Vector2.MoveTowards(transform.position, patrolRouteLocations[currentPatrolTarget].position, moveSpeed * Time.deltaTime);
-
-        //if (Vector2.Distance(transform.position, patrolRouteLocations[currentPatrolTarget].position) < .05f)
         if (!movement.moving && !moved)
         {
             currentPatrolTarget++;

@@ -70,7 +70,7 @@ Shader "Custom/TrueVision"
 				orgColor.rgb *= orgColor.a;
 				float4 transColor = float4(0, 0, 0, 0);
 
-				if (_GlobalPointsBufferCount == 0)
+				if (_GlobalPointsBufferCount <= 0)
 				{
 					return orgColor;
 				}

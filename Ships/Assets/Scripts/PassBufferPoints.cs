@@ -60,4 +60,9 @@ public class PassBufferPoints : NetworkBehaviour
             Shader.SetGlobalVectorArray("_GlobalPointsBuffer", bufferData);
         }
     }
+
+    private void OnDisable()
+    {
+        Shader.SetGlobalInt("_GlobalPointsBufferCount", 0);
+    }
 }
