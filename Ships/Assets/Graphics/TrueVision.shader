@@ -14,19 +14,21 @@ Shader "Custom/TrueVision"
 		{
 			"RenderType" = "Transparent"
 			"Queue" = "Transparent"
+			"RenderPipeline" = "UniversalPipeline"
 		}
 
 		Pass
 		{
 			Blend [_SrcBlend] [_DstBlend]
+			ZWrite Off
+			Cull Off
 
 			HLSLPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
-
 			#pragma target 3.0 
 
-			#include "UnityCG.cginc"
+			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
 
 			struct Attributes 
 			{
@@ -43,20 +45,24 @@ Shader "Custom/TrueVision"
 				float4 color      : COLOR;
 			};
 
-			bool _VisibleWhenShipNearby;
+			CBUFFER_START(UnityPerMaterial)
+				float4 _MainTex_ST;
+				float _VisibleWhenShipNearby;
+			CBUFFER_END
 
-			sampler2D _MainTex;
-			float4 _MainTex_ST;
+			TEXTURE2D(_MainTex);
+			SAMPLER(sampler_MainTex);
 			
-			uniform float4 _GlobalPointsBuffer[128]; 
-			uniform int _GlobalPointsBufferCount;
+			float4 _GlobalPointsBuffer[128]; 
+			int _GlobalPointsBufferCount;
 
 			Varyings vert(Attributes input) 
 			{
 				Varyings output = (Varyings)0;
 
-				output.positionCS = UnityObjectToClipPos(input.positionOS.xyz);
-				output.positionWS = mul(unity_ObjectToWorld, input.positionOS).xyz;
+				VertexPositionInputs vertexInput = GetVertexPositionInputs(input.positionOS.xyz);
+				output.positionCS = vertexInput.positionCS;
+				output.positionWS = vertexInput.positionWS;
 				
 				output.uv = TRANSFORM_TEX(input.uv, _MainTex);
 				output.color = input.color;
@@ -66,7 +72,7 @@ Shader "Custom/TrueVision"
 
 			float4 frag(Varyings input) : SV_TARGET 
 			{
-				float4 orgColor = tex2D(_MainTex, input.uv) * input.color;
+				float4 orgColor = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, input.uv) * input.color;
 				orgColor.rgb *= orgColor.a;
 				float4 transColor = float4(0, 0, 0, 0);
 
@@ -86,7 +92,7 @@ Shader "Custom/TrueVision"
 
 						if (distSq < maxRadiusSq)
 						{
-							if (_VisibleWhenShipNearby == 1)
+							if (_VisibleWhenShipNearby == 1.0)
 							{
 								return orgColor;
 							}
@@ -98,7 +104,7 @@ Shader "Custom/TrueVision"
 					}
 				}
 
-				if (_VisibleWhenShipNearby == 1)
+				if (_VisibleWhenShipNearby == 1.0)
 				{
 					return transColor;
 				}
