@@ -24,8 +24,7 @@ Shader "Custom/TrueVision"
 			#pragma vertex vert
 			#pragma fragment frag
 
-			// Shader Model 4.5 is required to use StructuredBuffers in standard passes
-			#pragma target 4.5 
+			#pragma target 3.0 
 
 			#include "UnityCG.cginc"
 
@@ -44,29 +43,19 @@ Shader "Custom/TrueVision"
 				float4 color      : COLOR;
 			};
 
-			struct VisionCone
-			{
-				// Changed to float4 to prevent memory alignment/stride mismatches 
-				// between C# GraphicsBuffer/ComputeBuffer and HLSL.
-				float4 position;   
-				float visionRadius;
-				float3 padding;   // Fully pads out the structure block to 32 bytes (multiples of 16)
-			};
-
 			bool _VisibleWhenShipNearby;
-			float4 _MainTex_ST;
-			int _PointsBufferCount;
-			
-			StructuredBuffer<VisionCone> _PointsBuffer;
+
 			sampler2D _MainTex;
+			float4 _MainTex_ST;
+			
+			uniform float4 _GlobalPointsBuffer[128]; 
+			uniform int _GlobalPointsBufferCount;
 
 			Varyings vert(Attributes input) 
 			{
 				Varyings output = (Varyings)0;
 
 				output.positionCS = UnityObjectToClipPos(input.positionOS.xyz);
-				
-				// FIXED: Replaced URP's TransformObjectToWorld with standard matrix multiplication
 				output.positionWS = mul(unity_ObjectToWorld, input.positionOS).xyz;
 				
 				output.uv = TRANSFORM_TEX(input.uv, _MainTex);
@@ -81,19 +70,17 @@ Shader "Custom/TrueVision"
 				orgColor.rgb *= orgColor.a;
 				float4 transColor = float4(0, 0, 0, 0);
 
-				if (_PointsBufferCount == 0)
+				if (_GlobalPointsBufferCount == 0)
 				{
-					return orgColor; // FIXED: Added missing semicolon
+					return orgColor;
 				}
 
-				for (int i = 0; i < _PointsBufferCount; i++)
+				for (int i = 0; i < _GlobalPointsBufferCount; i++)
 				{
-					float maxRadius = _PointsBuffer[i].visionRadius;
+					float maxRadius = _GlobalPointsBuffer[i].w;
 					if(maxRadius > 0)
 					{
-						// input.positionWS is a 3D coordinate. Assuming a 2D plane gameplay loop,
-						// we use .xy matching the VisionCone position vector.
-						float2 diff = _PointsBuffer[i].position.xy - input.positionWS.xy;
+						float2 diff = _GlobalPointsBuffer[i].xy - input.positionWS.xy;
 						float distSq = dot(diff, diff);
 						float maxRadiusSq = maxRadius * maxRadius;
 
