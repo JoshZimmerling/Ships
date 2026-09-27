@@ -242,6 +242,18 @@ PrefabInstance:
       propertyPath: shipAcceleration
       value: 0.3
       objectReference: {fileID: 0}
+    - target: {fileID: 5144780205459394733, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
+      propertyPath: ShapeModule.m_Position.y
+      value: -1.22
+      objectReference: {fileID: 0}
+    - target: {fileID: 5144780205459394733, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
+      propertyPath: InitialModule.startSize.scalar
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5144780205459394733, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 0.3
+      objectReference: {fileID: 0}
     - target: {fileID: 5167211490098671168, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: m_Name
       value: Lightning
