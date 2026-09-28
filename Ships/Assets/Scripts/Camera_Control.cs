@@ -30,7 +30,7 @@ public class Camera_Control : Singleton<Camera_Control>
     void Update()
     {
         //Zooming in and out with scroll wheel
-        if(Input.mouseScrollDelta.y != 0 && GameplayInputManager.Singleton.IsMouseOverUI() != GameplayInputManager.UIHoverState.OTHER_NON_MINIMAP_UI)
+        if(Input.mouseScrollDelta.y != 0)
         {
             currentZoomLevel -= (Input.mouseScrollDelta.y * zoomSpeed);
 

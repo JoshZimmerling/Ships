@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using Unity.Collections;
 using Unity.Netcode;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
@@ -26,6 +27,7 @@ public class GameSceneManager : Singleton<GameSceneManager>
     [SerializeField] private GameObject gameUI;
     [SerializeField] private GameObject inputManager;
 
+    public GameObject minimap;
     public GameObject controlsWindow;
     public GameObject playersWindow;
     [SerializeField] private GameObject playersInfoPrefab;
@@ -37,9 +39,8 @@ public class GameSceneManager : Singleton<GameSceneManager>
 
         neutralObjectivesManager = GameObject.Find("Neutral Objectives Manager").GetComponent<NeutralObjectivesManager>();
 
-        prioritySpawnGroup = Random.Range(0, 2);
-        
         //Populate the spawn zones based on prio grouping
+        prioritySpawnGroup = Random.Range(0, 2);
         foreach (Transform prioSpawnZone in map.transform.Find("Mothership Spawn Positions").GetChild(prioritySpawnGroup))
         {
             prioPlayerSpawnZones.Add(prioSpawnZone);
@@ -57,6 +58,7 @@ public class GameSceneManager : Singleton<GameSceneManager>
             }
         }
 
+        minimap = GameObject.Find("Minimap");
         controlsWindow = GameObject.Find("Controls Window");
         controlsWindow.gameObject.SetActive(false);
         playersWindow = GameObject.Find("Players Window");

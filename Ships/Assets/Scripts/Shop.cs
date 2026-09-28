@@ -30,7 +30,7 @@ public class Shop : Singleton<Shop>
             float shipCost = shipPrefab.GetComponent<Ship>().GetShipCost();
             if (shipCost > 0)
             {
-                Transform button = Instantiate(shopButtonPrefab, transform.Find("Shop").Find("Button Container")).transform;
+                Transform button = Instantiate(shopButtonPrefab, transform.Find("Shop Buttons")).transform;
                 button.Find("Ship Name").GetComponent<TMP_Text>().text = shipPrefab.GetComponent<Ship>().GetShipType().ToString();
                 button.Find("Ship Sprite").GetComponent<Image>().sprite = shipPrefab.GetComponent<SpriteRenderer>().sprite;
                 button.Find("Ship Color").GetComponent<Image>().sprite = shipPrefab.Find("Ship Accent").GetComponent<SpriteRenderer>().sprite;
@@ -77,6 +77,6 @@ public class Shop : Singleton<Shop>
         if (shopOpen)
             transform.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
         else
-            transform.GetComponent<RectTransform>().anchoredPosition = new Vector2(150, 0);
+            transform.GetComponent<RectTransform>().anchoredPosition = new Vector2(GetComponent<RectTransform>().rect.width, 0);
     }
 }

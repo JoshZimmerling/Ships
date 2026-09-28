@@ -115,14 +115,25 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
             Camera_Control.Singleton.ToggleLockState();
         }
 
-        if (Input.GetKeyDown(KeyCode.Tab))
+        if (Input.GetKeyDown(KeyCode.BackQuote))
         {
             GameSceneManager.Singleton.controlsWindow.gameObject.SetActive(true);
+        }
+        if (Input.GetKeyUp(KeyCode.BackQuote))
+        {
+            GameSceneManager.Singleton.controlsWindow.gameObject.SetActive(false);
+        }
+
+        if (Input.GetKeyDown(KeyCode.Tab))
+        {
+            GameSceneManager.Singleton.minimap.transform.localScale = new Vector3(3f, 3f, 1);
+            GameSceneManager.Singleton.minimap.GetComponent<RectTransform>().anchoredPosition = new Vector3(300f, 75f, 0);
             GameSceneManager.Singleton.playersWindow.gameObject.SetActive(true);
         }
         if (Input.GetKeyUp(KeyCode.Tab))
         {
-            GameSceneManager.Singleton.controlsWindow.gameObject.SetActive(false);
+            GameSceneManager.Singleton.minimap.transform.localScale = new Vector3(1.3f, 1.3f, 1);
+            GameSceneManager.Singleton.minimap.GetComponent<RectTransform>().anchoredPosition = new Vector3(0, 0, 0);
             GameSceneManager.Singleton.playersWindow.gameObject.SetActive(false);
         }
 
