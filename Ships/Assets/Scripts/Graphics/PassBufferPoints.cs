@@ -42,10 +42,13 @@ public class PassBufferPoints : NetworkBehaviour
                 }
             }
 
+            VisionCone[] visionCones = Object.FindObjectsByType<VisionCone>(FindObjectsSortMode.None);
+
             // Go through ships
             for (int i = 0; i < ships.Length; i++)
             {
                 bufferData[i] = (Vector2)ships[i].transform.position;
+                bufferData[i].z = 1;
                 bufferData[i].w = ships[i].visionRange;
             }
 
@@ -53,10 +56,19 @@ public class PassBufferPoints : NetworkBehaviour
             for (int i = 0; i < missiles.Count; i++)
             {
                 bufferData[ships.Length + i] = (Vector2)missiles[i].transform.position;
+                bufferData[ships.Length + i].z = 1;
                 bufferData[ships.Length + i].w = missiles[i].visionRange;
             }
 
-            Shader.SetGlobalInt("_GlobalPointsBufferCount", ships.Length + missiles.Count);
+            // Go through vision cones
+            for (int i = 0; i < visionCones.Length; i++)
+            {
+                bufferData[ships.Length + missiles.Count + i] = (Vector2)visionCones[i].transform.position;
+                bufferData[ships.Length + missiles.Count + i].z = 1; //visionCones[i].alphaValue;
+                bufferData[ships.Length + missiles.Count + i].w = visionCones[i].visionRange;
+            }
+
+            Shader.SetGlobalInt("_GlobalPointsBufferCount", ships.Length + missiles.Count + visionCones.Length);
             Shader.SetGlobalVectorArray("_GlobalPointsBuffer", bufferData);
         }
     }

@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 1806700233533494444}
   - component: {fileID: 3236740793810044791}
   - component: {fileID: 5876138130406606486}
+  - component: {fileID: 1817207692374077978}
   m_Layer: 0
   m_Name: Missile Explosion
   m_TagString: Untagged
@@ -4894,3 +4895,19 @@ ParticleSystemRenderer:
   m_MeshWeighting1: 1
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
+--- !u!114 &1817207692374077978
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2655267347207458446}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd194d78973cc2b4487de194f283464b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VisionCone
+  decays: 1
+  decayDuration: 1
+  visionRange: 5
+  alphaValue: 1

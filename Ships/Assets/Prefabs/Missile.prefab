@@ -52,7 +52,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 674874955
+  GlobalObjectIdHash: 2217205669
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -225,6 +225,7 @@ MonoBehaviour:
   parentShip: {fileID: 0}
   isFromNeutralShip: 0
   explosionPrefab: {fileID: 2655267347207458446, guid: f5bf9d633df584e48a57e5574cc3d534, type: 3}
+  visionPrefab: {fileID: 36688948637157847, guid: 71648fd370415be4cbcb1704939ff6dd, type: 3}
 --- !u!50 &9170517788561288484
 Rigidbody2D:
   serializedVersion: 5

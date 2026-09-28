@@ -76,6 +76,8 @@ Shader "Custom/TrueVision"
 				orgColor.rgb *= orgColor.a;
 				float4 transColor = float4(0, 0, 0, 0);
 
+				float bestAlpha = 0;
+
 				if (_GlobalPointsBufferCount <= 0)
 				{
 					return orgColor;
@@ -94,7 +96,14 @@ Shader "Custom/TrueVision"
 						{
 							if (_VisibleWhenShipNearby == 1.0)
 							{
-								return orgColor;
+								if (_GlobalPointsBuffer[i].z == 1)
+								{
+									return orgColor;
+								}
+								else if (_GlobalPointsBuffer[i].z > bestAlpha)
+								{
+									bestAlpha = _GlobalPointsBuffer[i].z;
+								}
 							}
 							else
 							{
@@ -102,6 +111,12 @@ Shader "Custom/TrueVision"
 							}
 						}
 					}
+				}
+
+				if (bestAlpha > 0)
+				{
+					orgColor *= bestAlpha;
+					return orgColor;
 				}
 
 				if (_VisibleWhenShipNearby == 1.0)

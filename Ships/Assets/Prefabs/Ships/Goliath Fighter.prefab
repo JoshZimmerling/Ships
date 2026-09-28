@@ -717,6 +717,14 @@ PrefabInstance:
       propertyPath: m_Size.y
       value: 7.5
       objectReference: {fileID: 0}
+    - target: {fileID: 9174938702870074056, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
+      propertyPath: EmissionModule.rateOverTime.scalar
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 9174938702870074056, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
+      propertyPath: EmissionModule.rateOverDistance.scalar
+      value: 0.1
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 4275652453864163433, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
     - {fileID: 4637950062562444113, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
@@ -777,6 +785,7 @@ MonoBehaviour:
   popupTextPrefab: {fileID: 985385043950032243, guid: a6e0a522c1dcae445a22ddcda9f44396, type: 3}
   deathSound: {fileID: 0}
   explosionPrefab: {fileID: 2655267347207458446, guid: f5bf9d633df584e48a57e5574cc3d534, type: 3}
+  visionPrefab: {fileID: 0}
   moveSpeed: 15
   moveSpeedRandomness: 2
   orbitRadius: 6

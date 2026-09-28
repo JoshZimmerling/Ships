@@ -5478,6 +5478,7 @@ MonoBehaviour:
   popupTextPrefab: {fileID: 985385043950032243, guid: a6e0a522c1dcae445a22ddcda9f44396, type: 3}
   deathSound: {fileID: 8300000, guid: 0ea31790a1baca449a58d136452b34f2, type: 3}
   explosionPrefab: {fileID: 2655267347207458446, guid: 012aa9b41ffae0542b98ff29b26f3b1f, type: 3}
+  visionPrefab: {fileID: 36688948637157847, guid: a66c1b1c7c82d2d4c8e1a47f1912fdc5, type: 3}
 --- !u!114 &4637950062562444113
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5569,7 +5570,7 @@ ParticleSystem:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-  moveWithTransform: 1
+  moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
   randomSeed: 0

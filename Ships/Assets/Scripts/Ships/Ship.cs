@@ -41,6 +41,7 @@ public class Ship : NetworkBehaviour
     private ParticleSystemRenderer fireEmitter;
 
     [SerializeField] private GameObject explosionPrefab;
+    [SerializeField] private GameObject visionPrefab;
 
     public override void OnNetworkSpawn()
     {
@@ -277,5 +278,11 @@ public class Ship : NetworkBehaviour
             Destroy(explosion, 10f);
         else
             Destroy(explosion, 3f);
+
+        if (IsLocalPlayer && this.GetType() != typeof(NeutralShip))
+        {
+            GameObject vision = Instantiate(visionPrefab, transform.position, Quaternion.identity);
+            Destroy(explosion, 1f);
+        }
     }
 }

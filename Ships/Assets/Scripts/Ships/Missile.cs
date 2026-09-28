@@ -18,6 +18,7 @@ public class Missile : NetworkBehaviour
     private Color neutralShipColor = new Color(212 / 255f, 175 / 255f, 55 / 255f);
 
     [SerializeField] private GameObject explosionPrefab;
+    [SerializeField] private GameObject visionPrefab;
 
     private AudioSource inFlightAudio;
     private bool audioPlaying = false;
@@ -158,5 +159,11 @@ public class Missile : NetworkBehaviour
     {
         GameObject explosion = Instantiate(explosionPrefab, transform.position, Quaternion.identity);
         Destroy(explosion, 3f);
+
+        if (IsLocalPlayer && !isFromNeutralShip)
+        {
+            GameObject vision = Instantiate(visionPrefab, transform.position, Quaternion.identity);
+            Destroy(explosion, 1f);
+        }
     }
 }
