@@ -156,7 +156,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: -2112792379
+  m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
@@ -221,6 +221,7 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   parentShip: {fileID: 0}
   isFromNeutralShip: 0
+  explosionPrefab: {fileID: 2655267347207458446, guid: 4fc9fd432ff769247b93c524682a3517, type: 3}
 --- !u!50 &-4928937444001251224
 Rigidbody2D:
   serializedVersion: 5

@@ -1,3 +1,4 @@
+using Unity.Collections.LowLevel.Unsafe;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -36,6 +37,9 @@ public class Ship : NetworkBehaviour
     private GameObject minimapMarker; // Market on minimap (Both)
     private GameObject minimapScoutMarker; // Marker in minimap fog of war (Enemy)
 
+    private float hpPercentOnFire = 0.5f;
+    private ParticleSystemRenderer fireEmitter;
+
     [SerializeField] private GameObject explosionPrefab;
 
     public override void OnNetworkSpawn()
@@ -48,6 +52,8 @@ public class Ship : NetworkBehaviour
         minimapMarker = transform.Find("Minimap Marker").gameObject;
         minimapScoutMarker = transform.Find("Minimap Scout Marker").gameObject;
 
+        fireEmitter = transform.GetComponent<ParticleSystemRenderer>();
+        fireEmitter.enabled = false;
 
         // Setting up healthbar
         if (IsHost) currentShipHP.Value = maxShipHP;
@@ -56,6 +62,8 @@ public class Ship : NetworkBehaviour
             hpBar.transform.localScale = new Vector3(currentShipHP.Value / maxShipHP, 1, 1);
             hpBar.transform.localPosition = new Vector3((currentShipHP.Value / maxShipHP * 0.5f) - 0.5f, 0, 0);
 
+            fireEmitter.enabled = newValue / maxShipHP < hpPercentOnFire;
+
             if (IsOwner && newValue > previousValue)
             {
                 PopupText popupText = Instantiate(popupTextPrefab, transform.position + new Vector3(-1, 0) * correctionFactor * 0.5f, Quaternion.identity).GetComponent<PopupText>();
@@ -63,6 +71,8 @@ public class Ship : NetworkBehaviour
                 popupText = Instantiate(popupTextPrefab, transform.position + new Vector3(1, -1f) * correctionFactor * 0.5f, Quaternion.identity).GetComponent<PopupText>();
                 popupText.SetupText("+", Color.greenYellow, 1f);
             }
+
+
         };
 
         // If player owned ship
@@ -263,6 +273,9 @@ public class Ship : NetworkBehaviour
         }
         // Play effect
         GameObject explosion = Instantiate(explosionPrefab, transform.position, Quaternion.identity);
-        Destroy(explosion, 3f);
+        if (shipType == ShipTypes.Mothership)
+            Destroy(explosion, 10f);
+        else
+            Destroy(explosion, 3f);
     }
 }

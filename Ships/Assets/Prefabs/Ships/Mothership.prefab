@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4302687313774066624}
   - component: {fileID: 8086651124946202790}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Heal Aura
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -151,6 +151,10 @@ PrefabInstance:
       propertyPath: visionRange
       value: 55
       objectReference: {fileID: 0}
+    - target: {fileID: 1993422899511674839, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
+      propertyPath: explosionPrefab
+      value: 
+      objectReference: {fileID: 2655267347207458446, guid: 42a80fddb2ba672429a34e2af23bb448, type: 3}
     - target: {fileID: 1993422899511674839, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: correctionFactor
       value: 11

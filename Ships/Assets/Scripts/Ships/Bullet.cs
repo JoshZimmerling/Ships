@@ -14,6 +14,8 @@ public class Bullet : NetworkBehaviour
     public bool isFromNeutralShip = false;
     private Color neutralShipColor = new Color(212/255f, 175/255f, 55/255f);
 
+    [SerializeField] private GameObject explosionPrefab;
+
     void FixedUpdate()
     {
         if (!IsHost || spawnPos == null) return;
@@ -92,5 +94,12 @@ public class Bullet : NetworkBehaviour
     public void SetBulletColorRPC(Color bulletColor)
     {
         GetComponent<SpriteRenderer>().color = bulletColor;
+    }
+
+    public override void OnNetworkDespawn()
+    {
+        GameObject explosion = Instantiate(explosionPrefab, transform.position, Quaternion.identity);
+        explosion.transform.localScale = transform.localScale;
+        Destroy(explosion, 1f);
     }
 }
