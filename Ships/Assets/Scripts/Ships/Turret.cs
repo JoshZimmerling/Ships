@@ -49,7 +49,6 @@ public class Turret : NetworkBehaviour
         mv = GetComponentInParent<Movement>();
 
         isNeutralShipTurret = transform.parent.parent.GetComponent<NeutralShip>();
-        Debug.Log("IS ... " + isNeutralShipTurret);
 
         shotAudio = GetComponent<AudioSource>();
         if (shotAudio != null)
