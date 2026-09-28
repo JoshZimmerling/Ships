@@ -41,10 +41,15 @@ public class Turret : NetworkBehaviour
     private float baselinePitch;
     private float baselineVolume;
 
+    private bool isNeutralShipTurret;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public override void OnNetworkSpawn()
     {
         mv = GetComponentInParent<Movement>();
+
+        isNeutralShipTurret = transform.parent.parent.GetComponent<NeutralShip>();
+        Debug.Log("IS ... " + isNeutralShipTurret);
 
         shotAudio = GetComponent<AudioSource>();
         if (shotAudio != null)
@@ -128,10 +133,6 @@ public class Turret : NetworkBehaviour
                 {
                     targetedPos = Vector2.Lerp(new Vector2(bestTarget.transform.position.x, bestTarget.transform.position.y), bestTarget.GetComponent<Movement>().GetFuturePosition(timeToTarget), .8f); //This somewhat leads the ship, but not fully
                 }
-                else if (bestTarget.GetComponent<NeutralShip>() != null)
-                {
-                    targetedPos = Vector2.Lerp(new Vector2(bestTarget.transform.position.x, bestTarget.transform.position.y), bestTarget.GetComponent<Movement>().GetFuturePosition(timeToTarget), .8f); //This somewhat leads the ship, but not fully
-                }
                 else if (bestTarget.GetComponent<Missile>() != null)
                 {
                     targetedPos = bestTarget.position;
@@ -168,19 +169,19 @@ public class Turret : NetworkBehaviour
     {
         int corrVal = 0;
 
-        if (target.GetComponent<Ship>() != null)
+        if (target.GetComponent<NeutralShip>() != null)
         {
-            if (target.GetComponent<Ship>().OwnerClientId == OwnerClientId && !transform.parent.parent.GetComponent<NeutralShip>()) return false; // Is owned by me
+            if (isNeutralShipTurret) return false; // Neutral ships should not shoot other neutral ships
             corrVal = target.GetComponent<Ship>().correctionFactor;
         }
-        else if (target.GetComponent<NeutralShip>() != null)
+        else if(target.GetComponent<Ship>() != null)
         {
-            if (transform.parent.parent.GetComponent<NeutralShip>()) return false; // Neutral ships should not shoot other neutral ships
-            corrVal = target.GetComponent<NeutralShip>().correctionFactor;
+            if (target.GetComponent<Ship>().OwnerClientId == OwnerClientId && !isNeutralShipTurret) return false; // Is owned by me and not on a neutral ship
+            corrVal = target.GetComponent<Ship>().correctionFactor;
         }
         else if (target.GetComponent<Missile>() != null)
         {
-            if ((target.GetComponent<Missile>().OwnerClientId == OwnerClientId && !target.GetComponent<Missile>().isFromNeutralShip && !transform.parent.parent.GetComponent<NeutralShip>()) || (transform.parent.parent.GetComponent<NeutralShip>() && target.GetComponent<Missile>().isFromNeutralShip)) return false; // Is owned by me
+            if ((target.GetComponent<Missile>().OwnerClientId == OwnerClientId && !target.GetComponent<Missile>().isFromNeutralShip && !isNeutralShipTurret) || (isNeutralShipTurret && target.GetComponent<Missile>().isFromNeutralShip)) return false; // Is owned by me
         }
 
         Vector2 delta = target.transform.position - transform.position;

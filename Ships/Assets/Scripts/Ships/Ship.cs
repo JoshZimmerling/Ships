@@ -14,8 +14,6 @@ public class Ship : NetworkBehaviour
         Drone,
         Scout,
         Mothership
-
-        //Marauder,
     }
 
     // Ship Variables
@@ -38,10 +36,10 @@ public class Ship : NetworkBehaviour
     private GameObject minimapMarker; // Market on minimap (Both)
     private GameObject minimapScoutMarker; // Marker in minimap fog of war (Enemy)
 
+    [SerializeField] private GameObject explosionPrefab;
+
     public override void OnNetworkSpawn()
     {
-        playerData = PlayerDataList.Singleton.players[OwnerClientId];
-
         // Finding ship components
         hpBar = transform.Find("Health Bar/Health");
         outlineSprite = transform.Find("Outline").GetComponent<SpriteRenderer>();
@@ -67,39 +65,40 @@ public class Ship : NetworkBehaviour
             }
         };
 
-        // Set the team color
-        Color teamColor = playerData.playerColor;
-        transform.Find("Ship Accent").GetComponent<SpriteRenderer>().color = teamColor;
-        scoutMarker.GetComponent<SpriteRenderer>().color = teamColor;
-        minimapMarker.GetComponent<SpriteRenderer>().color = teamColor;
-        minimapScoutMarker.GetComponent<SpriteRenderer>().color = teamColor;
-        teamColor.a = 0f;
-        outlineSprite.color = teamColor;
+        // If player owned ship
+        if (this.GetType() != typeof(NeutralShip))
+        {
+            playerData = PlayerDataList.Singleton.players[OwnerClientId];
 
-        //Ship specific setup
-        SetupBasedOnShipType();
+            // Set the team color
+            Color teamColor = playerData.playerColor;
+            transform.Find("Ship Accent").GetComponent<SpriteRenderer>().color = teamColor;
+            scoutMarker.GetComponent<SpriteRenderer>().color = teamColor;
+            minimapMarker.GetComponent<SpriteRenderer>().color = teamColor;
+            minimapScoutMarker.GetComponent<SpriteRenderer>().color = teamColor;
+            teamColor.a = 0f;
+            outlineSprite.color = teamColor;
+
+            // Select the ship
+            if (IsOwner && shipType != ShipTypes.GoliathFighter)
+                GameplayInputManager.Singleton.AddNewSelectedShip(this);
+        }
 
         // Changes based on ship owner
-        if (!IsOwner)
+        if (!IsOwner || this.GetType() == typeof(NeutralShip))
         {
             outlineSprite.gameObject.SetActive(false);
             scoutMarker.SetActive(true);
         }
-        else
-        {
-            if (shipType != ShipTypes.GoliathFighter)
-                GameplayInputManager.Singleton.AddNewSelectedShip(this);
-        }
+
+        //Ship specific setup
+        SetupBasedOnShipType();
     }
 
     public void FixedUpdate()
     {
         //Ship specific updates
         UpdateBasedOnShipType();
-
-
-        //if (shipType == ShipTypes.GoliathFighter)
-            //Debug.Log(
 
         //Don't rotate minimap icons
         scoutMarker.transform.rotation = Quaternion.identity;
@@ -173,7 +172,6 @@ public class Ship : NetworkBehaviour
         //Cleaning up old references
         GameSceneManager.Singleton.shipsInScene.Remove(gameObject);
         UnselectShipRPC();
-        PlayDeathSoundRPC();
 
         if (shipDamageCameFrom != null)
             InformShipWhoKilled(shipDamageCameFrom);
@@ -240,18 +238,6 @@ public class Ship : NetworkBehaviour
         UnselectShip();
     }
 
-    [Rpc(SendTo.ClientsAndHost)]
-    public void PlayDeathSoundRPC()
-    {
-        if (Camera_Control.Singleton.IsOnScreen(transform) && Camera_Control.Singleton.IsSeenByMyShips(transform) && deathSound != null)
-        {
-            if (shipType != ShipTypes.GoliathFighter)
-                AudioSource.PlayClipAtPoint(deathSound, Camera.main.transform.position, 0.4f);
-            else
-                AudioSource.PlayClipAtPoint(deathSound, Camera.main.transform.position, 0.2f);
-        }
-    }
-
     public ShipTypes GetShipType()
     {
         return shipType;
@@ -260,5 +246,20 @@ public class Ship : NetworkBehaviour
     public float GetShipCost()
     {
         return shipCost;
+    }
+
+    public override void OnNetworkDespawn()
+    {
+        // Play sound
+        if (Camera_Control.Singleton.IsOnScreen(transform) && Camera_Control.Singleton.IsSeenByMyShips(transform) && deathSound != null)
+        {
+            if (shipType != ShipTypes.GoliathFighter)
+                AudioSource.PlayClipAtPoint(deathSound, Camera.main.transform.position, 0.4f);
+            else
+                AudioSource.PlayClipAtPoint(deathSound, Camera.main.transform.position, 0.2f);
+        }
+        // Play effect
+        GameObject explosion = Instantiate(explosionPrefab, transform.position, Quaternion.identity);
+        Destroy(explosion, 3f);
     }
 }

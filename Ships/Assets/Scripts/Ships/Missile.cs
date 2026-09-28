@@ -17,14 +17,14 @@ public class Missile : NetworkBehaviour
     public bool isFromNeutralShip = false;
     private Color neutralShipColor = new Color(212 / 255f, 175 / 255f, 55 / 255f);
 
+    [SerializeField] private GameObject explosionPrefab;
+
     private AudioSource inFlightAudio;
     private bool audioPlaying = false;
 
     public override void OnNetworkSpawn()
     {
         GetComponent<SpriteRenderer>().color = PlayerDataList.Singleton.players[OwnerClientId].playerColor;
-        if (!IsOwner) transform.Find("Fog Remover").gameObject.SetActive(false);
-
         inFlightAudio = GetComponent<AudioSource>();
     }
 
@@ -81,19 +81,19 @@ public class Missile : NetworkBehaviour
             if (collision.transform.parent.GetComponent<Ship>().OwnerClientId == this.OwnerClientId && !isFromNeutralShip)
                 return;
         }
-        else if (collision.GetComponent<Ship>() != null)
-        { 
-            if (collision.GetComponent<Ship>().OwnerClientId == this.OwnerClientId && !isFromNeutralShip)
-                return;
-            else
-                collision.GetComponent<Ship>().DoDamage(dmg, parentShip);
-        }
         else if (collision.GetComponent<NeutralShip>() != null)
         {
             if (isFromNeutralShip)
                 return;
             else
                 collision.GetComponent<NeutralShip>().DoDamage(dmg, parentShip);
+        }
+        else if (collision.GetComponent<Ship>() != null)
+        { 
+            if (collision.GetComponent<Ship>().OwnerClientId == this.OwnerClientId && !isFromNeutralShip)
+                return;
+            else
+                collision.GetComponent<Ship>().DoDamage(dmg, parentShip);
         }
         else if (collision.GetComponent<Missile>() != null)
         {
@@ -131,7 +131,6 @@ public class Missile : NetworkBehaviour
         if (isFromNeutralShip)
         {
             SetMissileColorRPC(neutralShipColor);
-            transform.Find("Fog Remover").gameObject.SetActive(false);
         }
         else
             SetMissileColorRPC(PlayerDataList.Singleton.players[OwnerClientId].playerColor);
@@ -153,5 +152,11 @@ public class Missile : NetworkBehaviour
         GameSceneManager.Singleton.missilesInScene.Remove(gameObject);
         GetComponent<NetworkObject>().Despawn();
         Destroy(this);
+    }
+
+    public override void OnNetworkDespawn()
+    {
+        GameObject explosion = Instantiate(explosionPrefab, transform.position, Quaternion.identity);
+        Destroy(explosion, 3f);
     }
 }

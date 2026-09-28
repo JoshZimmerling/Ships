@@ -60,13 +60,6 @@ public class Fighter : Ship
 
     }
 
-    public override void OnDestroy()
-    {
-        if (!IsHost) return;
-
-        goliath.GetComponent<GoliathAbility>().fighters.Remove(gameObject);
-    }
-
     public void SetupFighter(GameObject ship)
     {
         goliath = ship;
@@ -89,5 +82,13 @@ public class Fighter : Ship
     public Vector2 GetFuturePosition(float seconds)
     {
         return transform.position + moveDirection * moveSpeed * seconds;
+    }
+
+    public override void OnNetworkDespawn()
+    {
+        if (IsHost)
+            goliath.GetComponent<GoliathAbility>().fighters.Remove(gameObject);
+        
+        base.OnNetworkDespawn();
     }
 }
