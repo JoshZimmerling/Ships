@@ -35,18 +35,18 @@ public class Bullet : NetworkBehaviour
             if(collision.transform.parent.GetComponent<Ship>().OwnerClientId == this.OwnerClientId && !isFromNeutralShip)
                 return;
         }
+        else if (collision.GetComponent<NeutralShip>() != null)
+        {
+            if (isFromNeutralShip)
+                return;
+            collision.GetComponent<NeutralShip>().DoDamage(dmg, parentShip);
+        }
         else if (collision.GetComponent<Ship>() != null)
         {
             if (collision.GetComponent<Ship>().OwnerClientId == this.OwnerClientId && !isFromNeutralShip)
                 return;
             else
                 collision.GetComponent<Ship>().DoDamage(dmg, parentShip);
-        }
-        else if (collision.GetComponent<NeutralShip>() != null)
-        {
-            if (isFromNeutralShip)
-                return;
-            collision.GetComponent<NeutralShip>().DoDamage(dmg, parentShip);
         }
         else if (collision.GetComponent<Missile>() != null)
         {

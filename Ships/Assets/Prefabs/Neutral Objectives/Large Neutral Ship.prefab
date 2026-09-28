@@ -488,8 +488,7 @@ PrefabInstance:
     - {fileID: 1993422899511674839, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
     m_RemovedGameObjects:
     - {fileID: 7897495226217979558, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
-    - {fileID: 6055569452642492732, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
-    - {fileID: 4074649399070216136, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
+    - {fileID: 0}
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 813458412376552807, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       insertIndex: -1
@@ -539,11 +538,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NeutralShip
   ShowTopMostFoldoutHeaderGroup: 1
+  shipType: 0
+  shipCost: 0
   maxShipHP: 100
-  goldOnKill: 20
+  correctionFactor: 2
+  visionRange: 0
   popupTextPrefab: {fileID: 985385043950032243, guid: a6e0a522c1dcae445a22ddcda9f44396, type: 3}
   deathSound: {fileID: 8300000, guid: 0ea31790a1baca449a58d136452b34f2, type: 3}
-  correctionFactor: 2
+  explosionPrefab: {fileID: 2655267347207458446, guid: 012aa9b41ffae0542b98ff29b26f3b1f, type: 3}
+  goldOnKill: 20
 --- !u!1001 &3400123671905513826
 PrefabInstance:
   m_ObjectHideFlags: 0

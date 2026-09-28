@@ -768,6 +768,7 @@ MonoBehaviour:
   visionRange: 10
   popupTextPrefab: {fileID: 985385043950032243, guid: a6e0a522c1dcae445a22ddcda9f44396, type: 3}
   deathSound: {fileID: 0}
+  explosionPrefab: {fileID: 2655267347207458446, guid: f5bf9d633df584e48a57e5574cc3d534, type: 3}
   moveSpeed: 15
   moveSpeedRandomness: 2
   orbitRadius: 6

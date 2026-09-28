@@ -2,57 +2,27 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
-public class NeutralShip : NetworkBehaviour
+public class NeutralShip : Ship
 {
-    private Transform hpBar;
-    [SerializeField] protected float maxShipHP;
-    protected NetworkVariable<float> currentShipHP = new NetworkVariable<float>();
-
     private Transform spawn;
-
     private Movement movement;
+    private bool moved = false;
     private List<Transform> patrolRouteLocations = new List<Transform>();
     private int currentPatrolTarget = 0;
 
     [SerializeField] int goldOnKill = 10;
 
-    [SerializeField] GameObject popupTextPrefab;
-    [SerializeField] AudioClip deathSound;
-
-    public int correctionFactor; // Opponent range adjustments
-
-    private bool moved = false;
-
-    private GameObject scoutMarker; // Marker in fog of war
-    //private GameObject scoutMarkerHider;
-    private GameObject minimapMarker; // Market on minimap
-    private GameObject minimapScoutMarker; // Marker in minimap fog of war
-
     public override void OnNetworkSpawn()
     {
+        base.OnNetworkSpawn();
+
         // Finding ship components
-        hpBar = transform.Find("Health Bar/Health");
         movement = GetComponent<Movement>();
-
-        // Setting up healthbar
-        if (IsHost) currentShipHP.Value = maxShipHP;
-
-        currentShipHP.OnValueChanged += (float previousValue, float newValue) => {
-            hpBar.transform.localScale = new Vector3(currentShipHP.Value / maxShipHP, 1, 1);
-            hpBar.transform.localPosition = new Vector3((currentShipHP.Value / maxShipHP * 0.5f) - 0.5f, 0, 0);
-        };
-
-        scoutMarker = transform.Find("Scout Marker").gameObject;
-        minimapMarker = transform.Find("Minimap Marker").gameObject;
-        minimapScoutMarker = transform.Find("Minimap Scout Marker").gameObject;
     }
 
-    void FixedUpdate()
+    public new void FixedUpdate()
     {
-        //Don't rotate minimap icons
-        scoutMarker.transform.rotation = Quaternion.identity;
-        minimapMarker.transform.rotation = Quaternion.identity;
-        minimapScoutMarker.transform.rotation = Quaternion.identity;
+        base.FixedUpdate();
 
         if (!IsHost || spawn == null) return;
 
@@ -76,20 +46,12 @@ public class NeutralShip : NetworkBehaviour
             patrolRouteLocations.Add(patrolStop);
     }
 
-    public void DoDamage(float damage, GameObject shipDamageCameFrom)
-    {
-        currentShipHP.Value -= damage;
-        if (currentShipHP.Value <= 0)
-            DestroyShip(shipDamageCameFrom);
-    }
-
-    public void DestroyShip(GameObject shipDamageCameFrom)
+    public new void DestroyShip(GameObject shipDamageCameFrom)
     {
         GameSceneManager.Singleton.neutralObjectivesManager.NeutralShipDeath(spawn);
         GameSceneManager.Singleton.shipsInScene.Remove(gameObject);
         ReceiveNeutralObjectivePayoutRPC(shipDamageCameFrom.GetComponent<Ship>().OwnerClientId);
         InformShipWhoKilled(shipDamageCameFrom);
-        PlayDeathSoundRPC();
 
         GetComponent<NetworkObject>().Despawn();
         Destroy(this.gameObject);
@@ -104,31 +66,6 @@ public class NeutralShip : NetworkBehaviour
             PopupText popupText = Instantiate(popupTextPrefab, transform.position, Quaternion.identity).GetComponent<PopupText>();
             popupText.SetupText("+ $" + goldOnKill, Color.gold, 2.5f);
             Shop.Singleton.AddGold(goldOnKill);
-        }
-    }
-
-    [Rpc(SendTo.ClientsAndHost)]
-    public void PlayDeathSoundRPC()
-    {
-        if (Camera_Control.Singleton.IsOnScreen(transform) && Camera_Control.Singleton.IsSeenByMyShips(transform) && deathSound != null)
-        {
-            AudioSource.PlayClipAtPoint(deathSound, Camera.main.transform.position, 0.4f);
-        }
-    }
-
-    public void InformShipWhoKilled(GameObject shipDamageCameFrom)
-    {
-        Ship shipScript = shipDamageCameFrom.GetComponent<Ship>();
-        if (shipScript != null)
-        {
-            switch (shipScript.shipType)
-            {
-                case Ship.ShipTypes.Lightning:
-                    shipDamageCameFrom.GetComponent<Movement>().ChangeSpeed(1.5f, 7f);
-                    break;
-                default:
-                    break;
-            }
         }
     }
 }
