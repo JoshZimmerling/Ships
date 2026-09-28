@@ -61,31 +61,44 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
     // Update is called once per frame
     void Update()
     {
-        // Setting the target destination for the ships
+        // Setting the target destination for the ships on right click
         if (Input.GetMouseButtonDown(1))
         {
+            float lowestMaxSpeed = -1f;
+            //If control is held, we are grabbing the lowest max speed of all ships we have selected
+            if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))
+            {
+                if (selectedShips.Count > 1)
+                {
+                    lowestMaxSpeed = int.MaxValue;
+                    foreach (Ship selectedShip in selectedShips)
+                        if (selectedShip.gameObject.GetComponent<Movement>().GetMaxSpeed() < lowestMaxSpeed)
+                            lowestMaxSpeed = selectedShip.gameObject.GetComponent<Movement>().GetMaxSpeed();
+                }
+            }
+
             UIHoverState ui_click = IsMouseOverUI();
             if (ui_click == UIHoverState.MINIMAP)
             {
-                DirectShips(GetMinimapMouseLocation() * (mapWidth/minimapWidth), false);
+                DirectShips(GetMinimapMouseLocation() * (mapWidth/minimapWidth), false, lowestMaxSpeed);
             }
             else if (ui_click == UIHoverState.NONE)
             {
-                DirectShips(Camera.main.ScreenToWorldPoint(Input.mousePosition), false);
+                DirectShips(Camera.main.ScreenToWorldPoint(Input.mousePosition), false, lowestMaxSpeed);
             }
         }
 
-        // Rotate only ships
+        // Rotate only ships on middle mouse click
         if (Input.GetMouseButtonDown(2))
         {
             UIHoverState ui_click = IsMouseOverUI();
             if (ui_click == UIHoverState.MINIMAP)
             {
-                DirectShips(GetMinimapMouseLocation() * (mapWidth / minimapWidth), true);
+                DirectShips(GetMinimapMouseLocation() * (mapWidth / minimapWidth), true, -1f);
             }
             else if (ui_click == UIHoverState.NONE)
             {
-                DirectShips(Camera.main.ScreenToWorldPoint(Input.mousePosition), true);
+                DirectShips(Camera.main.ScreenToWorldPoint(Input.mousePosition), true, -1f);
             }
         }
 
@@ -144,7 +157,7 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
             {
                 mouseDownInMinimap = true;
             }
-            else if (ui_click == UIHoverState.NONE) //If we did not click on a UI element, start drawing our ship selection box
+            else if (ui_click == UIHoverState.NONE) //If we did not click on a UI element, do ship selection
             {
                 //If control is held, we are grabbing all ships of the type we clicked
                 if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))
@@ -152,7 +165,7 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
                     SetShips(null);
                     Collider2D clickedOnShip = Physics2D.OverlapPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition));
                     
-                    if (clickedOnShip != null && clickedOnShip.GetComponent<Fighter>() == null && clickedOnShip.GetComponent<Ship>() != null && clickedOnShip.GetComponent<Ship>().IsOwner)
+                    if (clickedOnShip != null && clickedOnShip.GetComponent<Fighter>() == null && clickedOnShip.GetComponent<Ship>() != null && clickedOnShip.GetComponent<NeutralShip>() == null && clickedOnShip.GetComponent<Ship>().IsOwner)
                     {
                         foreach (Transform ship in PlayerDataList.Singleton.GetLocalPlayer().transform)
                         {
@@ -163,6 +176,18 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
                                 selectedShips.Add(shipScript);
                             }
                         }
+                    }
+                    return;
+                }
+                //If shift is held, we are adding the current clicked ships to our selection
+                if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
+                {
+                    Collider2D clickedOnShip = Physics2D.OverlapPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+
+                    if (clickedOnShip != null && clickedOnShip.GetComponent<Fighter>() == null && clickedOnShip.GetComponent<Ship>() != null && clickedOnShip.GetComponent<NeutralShip>() == null && clickedOnShip.GetComponent<Ship>().IsOwner)
+                    {
+                        clickedOnShip.GetComponent<Ship>().SelectShip();
+                        selectedShips.Add(clickedOnShip.GetComponent<Ship>());
                     }
                     return;
                 }
@@ -227,21 +252,26 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
         }
     }
 
-    private void DirectShips(Vector2 directPosition, bool rotateOnly)
+    private void DirectShips(Vector2 directPosition, bool rotateOnly, float speedCap)
     {
         VerifySelection();
 
         if (selectedShips.Count == 1)
         {
-            selectedShips[0].GetComponent<Movement>().SetTargetDestinationRPC(directPosition, rotateOnly);
+            if (rotateOnly)
+                selectedShips[0].GetComponent<Movement>().SetTargetRotationRPC(directPosition);
+            else if (speedCap != -1f)
+                selectedShips[0].GetComponent<Movement>().SetTargetDestinationWithSpeedCapRPC(directPosition, speedCap);
+            else
+                selectedShips[0].GetComponent<Movement>().SetTargetDestinationRPC(directPosition);
         }
         else if (selectedShips.Count > 1)
         {
-            SetDestinationInFormation(directPosition, rotateOnly);
+            SetDestinationInFormation(directPosition, rotateOnly, speedCap);
         }
     }
 
-    void SetDestinationInFormation(Vector2 target, bool rotateOnly)
+    void SetDestinationInFormation(Vector2 target, bool rotateOnly, float speedCap)
     {   
         xMax = selectedShips[0].transform.position.x;
         yMax = selectedShips[0].transform.position.y;
@@ -264,9 +294,13 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
 
         foreach (Ship ship in selectedShips)
         {
-            ship.GetComponent<Movement>().SetTargetDestinationRPC(target + ((Vector2) ship.transform.position - shipCenter), rotateOnly);
+            if (rotateOnly)
+                ship.GetComponent<Movement>().SetTargetRotationRPC(target + ((Vector2)ship.transform.position - shipCenter));
+            else if (speedCap != -1f)
+                ship.GetComponent<Movement>().SetTargetDestinationWithSpeedCapRPC(target + ((Vector2)ship.transform.position - shipCenter), speedCap);
+            else
+                ship.GetComponent<Movement>().SetTargetDestinationRPC(target + ((Vector2)ship.transform.position - shipCenter));
         }
-
     }
 
     void SetShips(List<Ship> ships)
@@ -321,7 +355,7 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
         foreach (Collider2D col in hitColliders)
         {
             Ship ship = col.GetComponent<Ship>();
-            if (ship != null && col.GetComponent<Fighter>() == null)
+            if (ship != null && col.GetComponent<Fighter>() == null && col.GetComponent<NeutralShip>() == null)
                 if (NetworkManager.Singleton.LocalClientId == ship.OwnerClientId)
                     shipsFromHit.Add(ship);
         }

@@ -31,7 +31,7 @@ public class NeutralShip : Ship
             currentPatrolTarget++;
             if (currentPatrolTarget >= patrolRouteLocations.Count) currentPatrolTarget = 0;
 
-            movement.SetTargetDestinationRPC((Vector2)patrolRouteLocations[currentPatrolTarget].position, false);
+            movement.SetTargetDestinationRPC((Vector2)patrolRouteLocations[currentPatrolTarget].position);
             moved = true;
         }
         if (movement.moving) moved = false;

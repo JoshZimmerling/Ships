@@ -144,7 +144,10 @@ public class Ship : NetworkBehaviour
     {
         currentShipHP.Value -= damage;
         if (currentShipHP.Value <= 0)
-            DestroyShip(shipDamageCameFrom);
+            if (gameObject.GetComponent<NeutralShip>() != null)
+                gameObject.GetComponent<NeutralShip>().DestroyShip(shipDamageCameFrom);
+            else
+                DestroyShip(shipDamageCameFrom);
     }
 
     [Rpc(SendTo.Server)]
