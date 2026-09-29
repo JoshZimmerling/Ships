@@ -15,7 +15,6 @@ public class Turret : NetworkBehaviour
         LightTurret,
         MissilePods,
         LightningGun,
-        ChallengerGun,
         HawkGun
     }
 
@@ -23,12 +22,15 @@ public class Turret : NetworkBehaviour
     [SerializeField] private int damage;
     [SerializeField] private float fireRate;
     [SerializeField] private int range;
+    [SerializeField] private int rangeSpread = 0;
+    [SerializeField] private int projectiles = 1;
 
     [SerializeField] private int aimDirection;
     [SerializeField] private int firingArc;
     [SerializeField] private int firingSpread;
 
     [SerializeField] private int projectileSpeed;
+    [SerializeField] private int projectileSpeedSpread = 0;
     [SerializeField] private float missileTurningSpeed = 60f;
     [SerializeField] private float missileLifetimeMax = 8f;
     [SerializeField] private float counter = 0;
@@ -56,6 +58,7 @@ public class Turret : NetworkBehaviour
             baselinePitch = shotAudio.pitch;
             baselineVolume = shotAudio.volume;
         }
+
     }
 
     // Find closest
@@ -83,6 +86,7 @@ public class Turret : NetworkBehaviour
         fireVector = new Vector2(Mathf.Cos(maxRadians), Mathf.Sin(maxRadians));
 
         rangeMod = (turretType == TurretType.HawkGun && !mv.moving ? 2 : 1);
+
 
         foreach (GameObject enemyShip in GameSceneManager.Singleton.shipsInScene)
         {
@@ -144,16 +148,26 @@ public class Turret : NetworkBehaviour
                 // Clamping shot angle to inside the bounds of our spread
                 if (firingArc != 360 && Mathf.Abs(angleDiff) > firingArc / 2)
                     angleDiff = firingArc / 2 * Mathf.Sign(angleDiff);
+                
+                // Fire bullets
+                for (int i = 0; i < projectiles; i++)
+                {
+                    // Calculate final fire angle
+                    float fireAngle = (aimDirection + transform.rotation.eulerAngles.z - angleDiff + Random.Range(-firingSpread / 2, firingSpread / 2)) * Mathf.Deg2Rad;
+                    fireVector = new Vector2(Mathf.Cos(fireAngle), Mathf.Sin(fireAngle));
 
-                // Calculate final fiire angle
-                float fireAngle = (aimDirection + transform.rotation.eulerAngles.z - angleDiff + Random.Range(-firingSpread / 2, firingSpread / 2)) * Mathf.Deg2Rad;
-                fireVector = new Vector2(Mathf.Cos(fireAngle), Mathf.Sin(fireAngle));
-
-                // Fire the bullet at the angle calculated
-                GameObject bullet = Instantiate(bulletPrefab, transform.position, Quaternion.LookRotation(new Vector3(0, 0, 1), fireVector));
-                bullet.GetComponent<NetworkObject>().SpawnWithOwnership(OwnerClientId);
-                bullet.GetComponent<Bullet>().SetupBullet(range * rangeMod, damage, projectileSpeed * rangeMod, turretType, transform.parent.parent.gameObject);
-                bullet.transform.parent = GameSceneManager.Singleton.bulletContainer;
+                    // Fire the bullet at the angle calculated
+                    GameObject bullet = Instantiate(bulletPrefab, transform.position, Quaternion.LookRotation(new Vector3(0, 0, 1), fireVector));
+                    bullet.GetComponent<NetworkObject>().SpawnWithOwnership(OwnerClientId);
+                    bullet.GetComponent<Bullet>().SetupBullet(
+                        range * rangeMod + Random.Range(-rangeSpread / 2, rangeSpread / 2), 
+                        damage, 
+                        projectileSpeed * rangeMod + Random.Range(-projectileSpeedSpread / 2, projectileSpeedSpread / 2), 
+                        turretType, 
+                        transform.parent.parent.gameObject
+                    );
+                    bullet.transform.parent = GameSceneManager.Singleton.bulletContainer;
+                }
             }
 
             // Play sound for firing bullet
