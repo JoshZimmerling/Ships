@@ -36,13 +36,22 @@ Material:
     - _SrcBlend: 5
     m_Floats:
     - _AphaThreshold: 0.5
+    - _CloudScale: 15
+    - _CloudSpeed: 0.1
     - _Glossiness: 0.5
+    - _GrainSize: 2
     - _Metallic: 0
+    - _MinFogVisibility: 0.4
     - _RevealedByShips: 0
     - _ShowInFog: 0
+    - _StaticSpeed: 25
+    - _VisibleWhenShipNearby: 0
+    - _VisionSmoothness: 0.15
+    - _WarpStrength: 2
     m_Colors:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _ScrollSpeed: {r: 0, g: 0, b: 0, a: 0}
+    - _ShiftColor: {r: 0, g: 0.7, b: 1, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
