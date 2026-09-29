@@ -4,8 +4,8 @@ Shader "Custom/TrueVision"
 	{
 		_MainTex("Base Texture", 2D) = "white" {}
 		_VisibleWhenShipNearby("Visible When Ship Nearby", Float) = 0
-		[Enum(UnityEngine.Rendering.BlendMode)] _SrcBlend("Source Blend Mode", Integer) = 5
-		[Enum(UnityEngine.Rendering.BlendMode)] _DstBlend("Destination Blend Mode", Integer) = 10
+		[Enum(UnityEngine.Rendering.BlendMode)] _SrcBlend("Source Blend Mode", Integer) = 5 // SrcAlpha
+		[Enum(UnityEngine.Rendering.BlendMode)] _DstBlend("Destination Blend Mode", Integer) = 10 // OneMinusSrcAlpha
 	}
 
 	SubShader 
@@ -70,19 +70,25 @@ Shader "Custom/TrueVision"
 				return output;
 			}
 
-			float4 frag(Varyings input) : SV_TARGET 
+			float4 frag(Varyings input) : SV_Target 
 			{
+				// 1. Fetch base texture color safely without premature RGB alpha premultiplication
 				float4 orgColor = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, input.uv) * input.color;
-				orgColor.rgb *= orgColor.a;
-				float4 transColor = float4(0, 0, 0, 0);
-
 				float bestAlpha = 0;
 
 				if (_GlobalPointsBufferCount <= 0)
 				{
-					return orgColor;
+					if (_VisibleWhenShipNearby == 1.0)
+					{
+						return float4(0, 0, 0, 0);
+					}
+					else
+					{
+						return orgColor;
+					}
 				}
 
+				// 2. Scan buffer for nearby point bounds
 				for (int i = 0; i < _GlobalPointsBufferCount; i++)
 				{
 					float maxRadius = _GlobalPointsBuffer[i].w;
@@ -92,43 +98,28 @@ Shader "Custom/TrueVision"
 						float distSq = dot(diff, diff);
 						float maxRadiusSq = maxRadius * maxRadius;
 
-						if (distSq < maxRadiusSq)
+						if (distSq < maxRadiusSq) 
 						{
-							if (_VisibleWhenShipNearby == 1.0)
+							if (_GlobalPointsBuffer[i].z > bestAlpha)
 							{
-								if (_GlobalPointsBuffer[i].z == 1)
-								{
-									return orgColor;
-								}
-								else if (_GlobalPointsBuffer[i].z > bestAlpha)
-								{
-									bestAlpha = _GlobalPointsBuffer[i].z;
-								}
-							}
-							else
-							{
-								return transColor;
+								bestAlpha = _GlobalPointsBuffer[i].z;
 							}
 						}
 					}
 				}
 
-				if (bestAlpha > 0)
-				{
-					orgColor *= bestAlpha;
-					return orgColor;
-				}
-
+				// 3. Correctly apply dynamic opacity to the texture instead of returning pure black
 				if (_VisibleWhenShipNearby == 1.0)
 				{
-					return transColor;
+					orgColor.a *= bestAlpha;
 				}
 				else
 				{
-					return orgColor;
+					orgColor.a *= (1.0 - bestAlpha);
 				}
-			}
 
+				return orgColor;
+			}
 			ENDHLSL
 		}
 	}

@@ -64,7 +64,7 @@ public class PassBufferPoints : NetworkBehaviour
             for (int i = 0; i < visionCones.Length; i++)
             {
                 bufferData[ships.Length + missiles.Count + i] = (Vector2)visionCones[i].transform.position;
-                bufferData[ships.Length + missiles.Count + i].z = 1; //visionCones[i].alphaValue;
+                bufferData[ships.Length + missiles.Count + i].z = visionCones[i].alphaValue;
                 bufferData[ships.Length + missiles.Count + i].w = visionCones[i].visionRange;
             }
 

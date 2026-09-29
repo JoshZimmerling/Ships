@@ -279,10 +279,11 @@ public class Ship : NetworkBehaviour
         else
             Destroy(explosion, 3f);
 
-        if (IsLocalPlayer && this.GetType() != typeof(NeutralShip))
+        if (IsOwner && GetComponent<NeutralShip>() == null)
         {
             GameObject vision = Instantiate(visionPrefab, transform.position, Quaternion.identity);
-            Destroy(explosion, 1f);
+            vision.GetComponent<VisionCone>().visionRange = visionRange;
+            Destroy(vision, vision.GetComponent<VisionCone>().decayDuration);
         }
     }
 }

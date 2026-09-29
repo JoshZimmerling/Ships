@@ -45,6 +45,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VisionCone
   decays: 1
-  decayDuration: 0.2
-  visionRange: 10
+  decayDuration: 1
+  visionRange: 0
   alphaValue: 1

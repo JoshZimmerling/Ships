@@ -160,10 +160,12 @@ public class Missile : NetworkBehaviour
         GameObject explosion = Instantiate(explosionPrefab, transform.position, Quaternion.identity);
         Destroy(explosion, 3f);
 
-        if (IsLocalPlayer && !isFromNeutralShip)
+        if (IsOwner && !isFromNeutralShip)
         {
             GameObject vision = Instantiate(visionPrefab, transform.position, Quaternion.identity);
-            Destroy(explosion, 1f);
+            vision.GetComponent<VisionCone>().visionRange = visionRange;
+            Destroy(vision, vision.GetComponent<VisionCone>().decayDuration);
         }
+        
     }
 }

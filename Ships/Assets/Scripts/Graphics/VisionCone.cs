@@ -4,9 +4,9 @@ public class VisionCone : MonoBehaviour
 {
     [SerializeField] private bool decays = true;
 
-    [SerializeField] private float decayDuration = 0.5f;
+    public float decayDuration = 0.5f;
     private float timer;
-    public float visionRange = 10f;
+    public float visionRange;
     public float alphaValue = 1f;
 
     private void Start()
@@ -20,9 +20,9 @@ public class VisionCone : MonoBehaviour
         if (decays)
         {
             timer -= Time.deltaTime;
+            //visionRange -= Time.deltaTime * 0.2f;
             alphaValue = timer / decayDuration;
             if (alphaValue < 0f) alphaValue = 0f;
-            Debug.Log(alphaValue);
         }
     }
 }
