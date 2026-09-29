@@ -6,6 +6,9 @@ Shader "Custom/TrueVision"
 		_VisibleWhenShipNearby("Visible When Ship Nearby", Float) = 0
 		[Enum(UnityEngine.Rendering.BlendMode)] _SrcBlend("Source Blend Mode", Integer) = 5 // SrcAlpha
 		[Enum(UnityEngine.Rendering.BlendMode)] _DstBlend("Destination Blend Mode", Integer) = 10 // OneMinusSrcAlpha
+		
+		// Adjust edge falloff thickness (0.0 = sharp edge, 0.5 = very soft blend)
+		_VisionSmoothness("Vision Edge Smoothness", Range(0.001, 1.0)) = 0.25
 	}
 
 	SubShader 
@@ -46,12 +49,13 @@ Shader "Custom/TrueVision"
 			};
 
 			CBUFFER_START(UnityPerMaterial)
-				float4 _MainTex_ST;
 				float _VisibleWhenShipNearby;
+				float _VisionSmoothness;
 			CBUFFER_END
 
 			TEXTURE2D(_MainTex);
 			SAMPLER(sampler_MainTex);
+			float4 _MainTex_ST;
 			
 			float4 _GlobalPointsBuffer[128]; 
 			int _GlobalPointsBufferCount;
@@ -74,7 +78,7 @@ Shader "Custom/TrueVision"
 			{
 				// 1. Fetch base texture color safely without premature RGB alpha premultiplication
 				float4 orgColor = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, input.uv) * input.color;
-				float bestAlpha = 0;
+				float combinedAlpha = 0;
 
 				if (_GlobalPointsBufferCount <= 0)
 				{
@@ -95,27 +99,36 @@ Shader "Custom/TrueVision"
 					if(maxRadius > 0)
 					{
 						float2 diff = _GlobalPointsBuffer[i].xy - input.positionWS.xy;
-						float distSq = dot(diff, diff);
-						float maxRadiusSq = maxRadius * maxRadius;
+						float dist = length(diff); 
 
-						if (distSq < maxRadiusSq) 
+						if (dist < maxRadius) 
 						{
-							if (_GlobalPointsBuffer[i].z > bestAlpha)
-							{
-								bestAlpha = _GlobalPointsBuffer[i].z;
-							}
+							// Calculate the falloff edge threshold boundary
+							float innerRadius = maxRadius * (1.0 - _VisionSmoothness);
+							
+							// Taper intensity dynamically: 1.0 at inner radius down to 0.0 at outer radius perimeter
+							float edgeFalloff = 1.0 - smoothstep(innerRadius, maxRadius, dist);
+							
+							// Scale the stored buffer point alpha by our new edge falloff multiplier
+							float pointAlpha = _GlobalPointsBuffer[i].z * edgeFalloff;
+
+							// This merges overlapping falloffs naturally without exceeding 1.0.
+							combinedAlpha = combinedAlpha + pointAlpha - (combinedAlpha * pointAlpha);
 						}
 					}
 				}
 
+				// Clamp the final merged value safely between 0.0 and 1.0
+				combinedAlpha = saturate(combinedAlpha);
+
 				// 3. Correctly apply dynamic opacity to the texture instead of returning pure black
 				if (_VisibleWhenShipNearby == 1.0)
 				{
-					orgColor.a *= bestAlpha;
+					orgColor.a *= combinedAlpha;
 				}
 				else
 				{
-					orgColor.a *= (1.0 - bestAlpha);
+					orgColor.a *= (1.0 - combinedAlpha);
 				}
 
 				return orgColor;
