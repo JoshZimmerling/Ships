@@ -9933,6 +9933,11 @@ MonoBehaviour:
   secondsUntilFirstNeutralShipSpawns: 10
   secondsBetweenNeutralShipSpawns: 30
   maxNeutralShips: 4
+  supplyDropPrefab: {fileID: 5386678104189029594, guid: a76544d0ef6c706489bda4dd2fa4bfaf, type: 3}
+  secondsUntilFirstSupplyDropSpawns: 30
+  secondsBetweenSupplyDropSpawns: 120
+  supplyDropLifetime: 60
+  supplyDropTotalPayout: 50
 --- !u!4 &2052264805
 Transform:
   m_ObjectHideFlags: 0
@@ -10243,22 +10248,6 @@ PrefabInstance:
     - target: {fileID: 4197134435304196912, guid: f9a585a1066b8b643adb66b7e75f0698, type: 3}
       propertyPath: m_Name
       value: Solar Satellites
-      objectReference: {fileID: 0}
-    - target: {fileID: 7021487182286860583, guid: f9a585a1066b8b643adb66b7e75f0698, type: 3}
-      propertyPath: m_Color.a
-      value: 0.019607844
-      objectReference: {fileID: 0}
-    - target: {fileID: 7021487182286860583, guid: f9a585a1066b8b643adb66b7e75f0698, type: 3}
-      propertyPath: m_Color.b
-      value: 0.08685965
-      objectReference: {fileID: 0}
-    - target: {fileID: 7021487182286860583, guid: f9a585a1066b8b643adb66b7e75f0698, type: 3}
-      propertyPath: m_Color.g
-      value: 0.4811321
-      objectReference: {fileID: 0}
-    - target: {fileID: 7021487182286860583, guid: f9a585a1066b8b643adb66b7e75f0698, type: 3}
-      propertyPath: m_Color.r
-      value: 0.052198302
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
