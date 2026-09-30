@@ -5,18 +5,23 @@ using UnityEngine;
 public class SupplyDrop : NetworkBehaviour
 {
     private float remainingTime;
+    private float initialLifetime;
     private int totalPayout;
-    private Collider2D myCollider;
     private List<ulong> playersToPay;
+
+    private Collider2D myCollider;
+    Transform rotatingHand;
 
     [SerializeField] GameObject popupTextPrefab;
 
     public void Setup(float lifetime, int payout)
     {
+        initialLifetime = lifetime;
         remainingTime = lifetime;
         totalPayout = payout;
 
         myCollider = GetComponent<Collider2D>();
+        rotatingHand = transform.Find("Rotating Hand");
     }
 
     void FixedUpdate()
@@ -24,6 +29,7 @@ public class SupplyDrop : NetworkBehaviour
         if (!IsHost) return;
 
         remainingTime -= Time.deltaTime;
+        rotatingHand.rotation = Quaternion.Euler(0, 0, -360f * (1 - (remainingTime/initialLifetime)));
 
         if (remainingTime < 0)
             DoPayout();
