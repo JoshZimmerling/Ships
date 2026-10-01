@@ -1,5 +1,6 @@
 using Unity.Netcode;
 using UnityEngine;
+using static Ship;
 
 public class Missile : NetworkBehaviour
 {
@@ -20,6 +21,7 @@ public class Missile : NetworkBehaviour
     [SerializeField] private GameObject explosionPrefab;
     [SerializeField] private GameObject visionPrefab;
 
+    [SerializeField] AudioClip deathSound;
     private AudioSource inFlightAudio;
     private bool audioPlaying = false;
 
@@ -159,6 +161,12 @@ public class Missile : NetworkBehaviour
     {
         GameObject explosion = Instantiate(explosionPrefab, transform.position, Quaternion.identity);
         Destroy(explosion, 3f);
+
+        // Play sound
+        if (Camera_Control.Singleton.IsOnScreen(transform) && (Camera_Control.Singleton.IsSeenByMyShips(transform) || (IsOwner && !isFromNeutralShip)) && deathSound != null)
+        {
+            AudioSource.PlayClipAtPoint(deathSound, Camera.main.transform.position, 0.2f);
+        }
 
         if (IsOwner && !isFromNeutralShip)
         {
