@@ -8,9 +8,11 @@ using Unity.Services.Lobbies;
 using Unity.Services.Lobbies.Models;
 using Unity.Services.Relay;
 using Unity.Services.Relay.Models;
+using UnityEditor.PackageManager;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using static System.Net.Mime.MediaTypeNames;
 
 public class MenuScreenManager : Singleton<MenuScreenManager>
 {
@@ -45,7 +47,8 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
 
     private string playerName;
 
-    //public List<PlayerData> playerDatas = new List<PlayerData>();
+    bool everyoneReady = false;
+    public Color[] playerColors = new Color[12];
 
     void Start()
     {
@@ -75,8 +78,10 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
         lobbyScreen = transform.Find("Lobby Screen").gameObject;
         lobbyName = transform.Find("Lobby Screen").transform.Find("Header").GetComponentInChildren<TextMeshProUGUI>();
         playerViewerObject = transform.Find("Lobby Screen").Find("Player Viewer").gameObject;
+        foreach (Transform t in playerViewerObject.transform)
+            Destroy(t.gameObject);
         startGameButton = transform.Find("Lobby Screen").Find("Start Game Button").GetComponent<Button>();
-        startGameButton.onClick.AddListener(() => StartGame());
+        startGameButton.onClick.AddListener(() => ReadyOrStartGame());
 
         //Get player username from save file
         playerName = Save.myGlobalSaveData.username;
@@ -94,43 +99,29 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
     private readonly float lobbyRefreshTimeMax = 1.1f;
     private float lobbyRefreshTimer = 0f;
 
-    private readonly float lobbyVisualTimeMax = 0.1f;
-    private float lobbyVisualTimer = 0f;
-
     private readonly float heartbeatTimeMax = 15f;
     private float heartbeatTimer = 0f;
-    async void FixedUpdate()
+
+    private void Update()
     {
-        lobbyRefreshTimer -= Time.deltaTime;
+        if (usernameScreen.activeSelf && Input.GetKeyDown(KeyCode.Return))
+            SetUsername();
 
         switch (currentScreen)
         {
             case ScreenNames.LobbyListScreen:
+                lobbyRefreshTimer -= Time.deltaTime;
                 if (lobbyRefreshTimer < 0f)
                 {
                     RefreshLobbyList();
                 }
                 break;
             case ScreenNames.LobbyScreen:
-                if (lobbyRefreshTimer < 0f)
-                {
-                    await RefreshLobbyInfo();
-                }
-                lobbyVisualTimer -= Time.deltaTime;
-                if (lobbyVisualTimer < 0f)
-                {
-                    RefreshLobbyVisuals();
-                }
+                RefreshLobbyVisuals();
                 break;
         }
 
         HandleLobbyHeartbeat();
-    }
-
-    private void Update()
-    {
-        if (usernameScreen.activeSelf && Input.GetKeyDown(KeyCode.Return))
-            SetUsername();
     }
 
     // Pings lobby to keep it active
@@ -152,12 +143,12 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
     public void ChangeScreen(ScreenNames newScreen)
     {
         currentScreen = newScreen;
-        lobbyRefreshTimer = 0f; //Starts immediately data refresh
 
         // Updates screen state
         usernameScreen.SetActive(false);
         spinner.SetActive(false);
         canClickButtons = true;
+
         lobbyListScreen.SetActive(currentScreen == ScreenNames.LobbyListScreen);
         lobbyScreen.SetActive(currentScreen == ScreenNames.LobbyScreen);
 
@@ -165,6 +156,8 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
         switch (currentScreen)
         {
             case ScreenNames.LobbyListScreen:
+                lobbyRefreshTimer = 0f;
+                currentLobby = null;
                 usernameText.text = playerName;
                 return;
             case ScreenNames.LobbyScreen:
@@ -210,14 +203,13 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
             };
             
             currentLobby = await LobbyService.Instance.CreateLobbyAsync(lobbyName, maxPlayers, options);
-
-            currentLobby = await LobbyService.Instance.GetLobbyAsync(currentLobby.Id);
         }
         catch (LobbyServiceException e)
         {
             Debug.Log(e);
         }
 
+        lobbyName.text = currentLobby.Name;
         ChangeScreen(ScreenNames.LobbyScreen);
     }
 
@@ -256,7 +248,7 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
             Debug.Log(e);
         }
 
-        await RefreshLobbyInfo();
+        lobbyName.text = currentLobby.Name;
     }
 
     private async void RefreshLobbyList()
@@ -299,120 +291,39 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
         }
     }
 
-    private async Task RefreshLobbyInfo()
-    {
-        lobbyRefreshTimer = lobbyRefreshTimeMax;
-
-        // Checks are in an active lobby
-        if (currentLobby == null)
-            return;
-        // Gets updated lobby info
-        try
-        {
-            currentLobby = await LobbyService.Instance.GetLobbyAsync(currentLobby.Id);
-        }
-        catch (LobbyServiceException e)
-        {
-            Debug.Log(e);
-        }
-
-        InLobbyCheck();
-    }
-
-    private void InLobbyCheck()
-    {
-        // Verifies if player is still in lobby
-        bool inLobby = false;
-        if (currentLobby != null)
-            foreach (Player player in currentLobby.Players)
-                if (player.Id == AuthenticationService.Instance.PlayerId) inLobby = true;
-        if (!inLobby)
-        {
-            PlayerDataList.Singleton.players = new();
-            NetworkManager.Singleton.Shutdown();
-            currentLobby = null;
-
-            ChangeScreen(ScreenNames.LobbyListScreen);
-        }
-    }
-
     private void RefreshLobbyVisuals()
     {
-        if (currentLobby == null) return;
+        // Get clients in scene
+        IReadOnlyList<NetworkClient> clients = NetworkManager.Singleton.ConnectedClientsList;
 
-        lobbyVisualTimer = lobbyVisualTimeMax;
-
-        // Checks if new players have entered lobby
-        foreach (Player player in currentLobby.Players)
+        everyoneReady = true;
+        foreach (NetworkClient client in clients)
         {
-            Transform t = playerViewerObject.transform.Find(player.Id);
-            GameObject playerObject;
-            if (t == null)
+            // Checks if new players have entered lobby
+            if (playerViewerObject.transform.Find(client.ClientId.ToString()) == null)
             {
-                playerObject = Instantiate(playerRepeaterPrefab, playerViewerObject.transform);
-                playerObject.GetComponent<PlayerRepeater>().menuManager = this;
-                playerObject.name = player.Id;
-            }
-            else
-                playerObject = t.gameObject;
-            // Updates the data in the repeaters
-            playerObject.GetComponent<PlayerRepeater>().UpdatePlayerDetails(player, currentLobby.HostId);
-        }
-
-        // Remove players that have left the lobby
-        for (int i = playerViewerObject.transform.childCount - 1; i >= 0; i--)
-        {
-            Transform child = playerViewerObject.transform.GetChild(i);
-            bool exists = false;
-            foreach (Player player in currentLobby.Players)
-                if (child.name == player.Id)
-                    exists = true;
-            if (!exists)
-                Destroy(child.gameObject);
-        }
-
-        // Update lobby info
-        lobbyName.text = currentLobby.Name;
-        startGameButton.gameObject.SetActive(AuthenticationService.Instance.PlayerId == currentLobby.HostId);
-    }
-
-    public async void RemovePlayerFromLobby(string playerId)
-    {
-        await RefreshLobbyInfo();
-        try
-        {
-            // Migrate host if needed
-            if (playerId == currentLobby.HostId && currentLobby.Players.Count > 1)
-            {
-                currentLobby = await LobbyService.Instance.UpdateLobbyAsync(currentLobby.Id, new UpdateLobbyOptions
-                {
-                    HostId = currentLobby.Players[1].Id
-                });
+                GameObject playerObject = Instantiate(playerRepeaterPrefab, playerViewerObject.transform);
+                playerObject.name = client.ClientId.ToString();
+                playerObject.GetComponent<PlayerRepeater>().client = client;
             }
 
-            // Remove from lobby
-            await LobbyService.Instance.RemovePlayerAsync(currentLobby.Id, playerId);
-
-            ulong kickId = new ulong();
-            foreach (var (id, playerData) in PlayerDataList.Singleton.players)
-                if (playerData.authenticationServicePlayerId.Value == playerId)
-                    kickId = id;
-            PlayerDataList.Singleton.players.Remove(kickId);
-
-            // Remove reference to lobby if you leave
-            if (playerId == AuthenticationService.Instance.PlayerId)
-            {
-                PlayerDataList.Singleton.players = new();
-                NetworkManager.Singleton.Shutdown();
-                currentLobby = null;
-                ChangeScreen(ScreenNames.LobbyListScreen);
-            }
+            // Check that everyones ready
+            if (!client.PlayerObject.GetComponent<PlayerData>().playerReady.Value)
+                everyoneReady = false;
         }
-        catch (LobbyServiceException e)
+
+        if (NetworkManager.Singleton.IsHost)
+        {   // Set button to clickable game
+            startGameButton.interactable = everyoneReady;
+            startGameButton.GetComponentInChildren<TextMeshProUGUI>().text = "Start Game";
+        }
+        else
         {
-            Debug.Log(e);
+            startGameButton.GetComponentInChildren<TextMeshProUGUI>().text = "Ready";
+            //ColorBlock colors = startGameButton.colors; //TODO: Fix later
+            //colors.normalColor = NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerData>().playerReady.Value ? Color.gray : Color.white;
+            //startGameButton.colors = colors;
         }
-        RefreshLobbyVisuals();
     }
 
     private Player GetLocalPlayer()
@@ -424,16 +335,17 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
                 }
         };
     }
-
-    public Color[] playerColors = new Color[12];
     
-    private int GetAvailableColor(int colorValue)
+    public void ChangePlayerColor(PlayerData player)
     {
-        List<int> colors = new List<int>();
-        foreach (var (id, player) in PlayerDataList.Singleton.players)
-            colors.Add(player.playerColorIndex.Value);
+        int colorValue = player.playerColorIndex.Value;
 
-        
+        List<int> colors = new List<int>();
+        foreach (NetworkClient client in NetworkManager.Singleton.ConnectedClientsList)
+        {
+            colors.Add(client.PlayerObject.GetComponent<PlayerData>().playerColorIndex.Value);
+        }
+
         while (true)
         {
             if (colors.Contains(colorValue))
@@ -445,38 +357,38 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
                 break;
         }
 
-        return colorValue;
-    }
-    
-    public void ChangePlayerColor(string playerId)
-    {
-        foreach (var (id, player) in PlayerDataList.Singleton.players)
-            if (player.authenticationServicePlayerId.Value == playerId)
-                player.playerColorIndex.Value = GetAvailableColor(player.playerColorIndex.Value);
+        player.playerColorIndex.Value = colorValue;
     }
 
-    private void StartGame()
+    private void ReadyOrStartGame() //TODO: and ready
     {
         if (!canClickButtons) return;
 
-        spinner.SetActive(true);
-        canClickButtons = false;
-        try
+        if (NetworkManager.Singleton.IsHost)
         {
-            UpdateLobbyOptions options = new UpdateLobbyOptions
+            spinner.SetActive(true);
+            canClickButtons = false;
+            try
             {
-                IsLocked = true,
-                IsPrivate = true
-            };
+                UpdateLobbyOptions options = new UpdateLobbyOptions
+                {
+                    IsLocked = true,
+                    IsPrivate = true
+                };
 
-            LobbyService.Instance.UpdateLobbyAsync(currentLobby.Id, options);
+                LobbyService.Instance.UpdateLobbyAsync(currentLobby.Id, options);
+            }
+            catch (LobbyServiceException e)
+            {
+                Debug.Log(e);
+            }
+
+            NetworkManager.Singleton.SceneManager.LoadScene("Multiplayer Scene", LoadSceneMode.Single);
         }
-        catch (LobbyServiceException e)
+        else
         {
-            Debug.Log(e);
+            NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerData>().playerReady.Value = !NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerData>().playerReady.Value;
         }
-
-        NetworkManager.Singleton.SceneManager.LoadScene("Multiplayer Scene", LoadSceneMode.Single);
     }
 
     private void OpenUsernamePopup()

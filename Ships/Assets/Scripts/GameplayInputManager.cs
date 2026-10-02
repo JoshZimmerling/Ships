@@ -167,7 +167,7 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
                     
                     if (clickedOnShip != null && clickedOnShip.GetComponent<Fighter>() == null && clickedOnShip.GetComponent<Ship>() != null && clickedOnShip.GetComponent<NeutralShip>() == null && clickedOnShip.GetComponent<Ship>().IsOwner)
                     {
-                        foreach (Transform ship in PlayerDataList.Singleton.GetLocalPlayer().transform)
+                        foreach (Transform ship in NetworkManager.Singleton.LocalClient.PlayerObject.transform)
                         {
                             Ship shipScript = ship.GetComponent<Ship>();
                             if (Camera_Control.Singleton.IsOnScreen(ship) && shipScript != null && shipScript.IsOwner && shipScript.GetShipType() == clickedOnShip.GetComponent<Ship>().GetShipType())
@@ -429,7 +429,6 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
     private void LeaveGame()
     {
         NetworkManager.Singleton.Shutdown();
-        PlayerDataList.Singleton.players = new();
         SceneManager.LoadScene("Main Menu");
     }
 }

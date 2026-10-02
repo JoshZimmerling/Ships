@@ -8,18 +8,16 @@ public class PlayerData : NetworkBehaviour
     private GameSceneManager gameManager;
 
     private Ship motherShip;
-    //private GameObject mapFogRemover;
 
     public NetworkVariable<int> playerColorIndex = new NetworkVariable<int>(-1, writePerm : NetworkVariableWritePermission.Owner);
     public Color playerColor;
 
     public NetworkVariable<FixedString32Bytes> authenticationServicePlayerId = new NetworkVariable<FixedString32Bytes>(writePerm: NetworkVariableWritePermission.Owner);
-    public NetworkVariable<FixedString32Bytes> playerUsername = new NetworkVariable<FixedString32Bytes>(writePerm: NetworkVariableWritePermission.Owner);
+    public NetworkVariable<FixedString32Bytes> playerUsername = new NetworkVariable<FixedString32Bytes>("Test", writePerm: NetworkVariableWritePermission.Owner);
+    public NetworkVariable<bool> playerReady = new NetworkVariable<bool>(false, writePerm: NetworkVariableWritePermission.Owner);
 
     public override void OnNetworkSpawn()
     {
-        PlayerDataList.Singleton.players.Add(OwnerClientId, this);
-
         playerColorIndex.OnValueChanged += (int previousValue, int newValue) =>
         {
             playerColor = MenuScreenManager.Singleton.playerColors[newValue];
@@ -28,8 +26,8 @@ public class PlayerData : NetworkBehaviour
         if (IsOwner) 
         {
             authenticationServicePlayerId.Value = AuthenticationService.Instance.PlayerId;
-            MenuScreenManager.Singleton.ChangePlayerColor(AuthenticationService.Instance.PlayerId);
             playerUsername.Value = Save.myGlobalSaveData.username;
+            if (IsHost) playerReady.Value = true;
 
             // Change screen after syncronize is complete
             NetworkManager.Singleton.SceneManager.OnSceneEvent += (SceneEvent sceneEvent) => {
@@ -38,7 +36,18 @@ public class PlayerData : NetworkBehaviour
             };
         }
 
-        if (playerColorIndex.Value != -1) playerColor = MenuScreenManager.Singleton.playerColors[playerColorIndex.Value];
+        if (playerColorIndex.Value != -1)
+        {
+            playerColor = MenuScreenManager.Singleton.playerColors[playerColorIndex.Value];
+        }
+    }
+
+    private void FixedUpdate()
+    {
+        if (playerColorIndex.Value == -1 && IsSpawned && IsLocalPlayer)
+        {
+            MenuScreenManager.Singleton.ChangePlayerColor(this);
+        }
     }
 
     public void PlayerSetup()
@@ -52,7 +61,7 @@ public class PlayerData : NetworkBehaviour
 
             SetRevealMap(false);
 
-            if (PlayerDataList.Singleton.players.Count <= 1)
+            if (NetworkManager.Singleton.ConnectedClientsList.Count <= 1)
                 GameplayInputManager.Singleton.ShowLeaveGameButton();
         }
 
@@ -110,7 +119,7 @@ public class PlayerData : NetworkBehaviour
         if (!IsHost)
             GameplayInputManager.Singleton.ShowLeaveGameButton();
         //Update everyones tab menu to show you died
-        UpdateTabMenuRPC(authenticationServicePlayerId.Value);
+        UpdateTabMenuRPC(NetworkManager.Singleton.LocalClientId);
 
         //Check if you are last mothership standing, if so show the leave lobby button
         int numMothershipsLeft = 0;
@@ -130,7 +139,7 @@ public class PlayerData : NetworkBehaviour
     public void ShowAllPlayersLeaveButtonRPC()
     {
         GameplayInputManager.Singleton.ShowLeaveGameButton();
-        PlayerDataList.Singleton.GetLocalPlayer().SetRevealMap(true);
+        NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerData>().SetRevealMap(true);
     }
 
     public void SetRevealMap(bool b)
@@ -139,7 +148,7 @@ public class PlayerData : NetworkBehaviour
     }
 
     [Rpc(SendTo.ClientsAndHost)]
-    public void UpdateTabMenuRPC(FixedString32Bytes playerID)
+    public void UpdateTabMenuRPC(ulong playerID)
     {
         GameSceneManager.Singleton.ShowPlayerAsDeadInPlayersMenu(playerID);
     }

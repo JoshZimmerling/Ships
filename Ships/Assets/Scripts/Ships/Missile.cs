@@ -27,7 +27,7 @@ public class Missile : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
-        GetComponent<SpriteRenderer>().color = PlayerDataList.Singleton.players[OwnerClientId].playerColor;
+        //GetComponent<SpriteRenderer>().color = NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerData>().playerColor;
         inFlightAudio = GetComponent<AudioSource>();
     }
 
@@ -136,7 +136,7 @@ public class Missile : NetworkBehaviour
             SetMissileColorRPC(neutralShipColor);
         }
         else
-            SetMissileColorRPC(PlayerDataList.Singleton.players[OwnerClientId].playerColor);
+            SetMissileColorRPC(NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerData>().playerColor);
 
         inFlightAudio.Play();
         inFlightAudio.Pause();

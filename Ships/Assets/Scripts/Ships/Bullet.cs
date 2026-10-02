@@ -87,7 +87,7 @@ public class Bullet : NetworkBehaviour
         if (isFromNeutralShip)
             SetBulletColorRPC(neutralShipColor);
         else
-            SetBulletColorRPC(PlayerDataList.Singleton.players[OwnerClientId].playerColor);
+            SetBulletColorRPC(NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerData>().playerColor);
     }
 
     [Rpc(SendTo.ClientsAndHost)]

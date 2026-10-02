@@ -30,7 +30,7 @@ public class GameSceneManager : Singleton<GameSceneManager>
     public GameObject controlsWindow;
     public GameObject playersWindow;
     [SerializeField] private GameObject playersInfoPrefab;
-    private Dictionary<FixedString32Bytes, Transform> allPlayersInfoInTabMenu;
+    private Dictionary<ulong, Transform> allPlayersInfoInTabMenu;
 
     protected override void Awake()
     {
@@ -62,24 +62,27 @@ public class GameSceneManager : Singleton<GameSceneManager>
         controlsWindow.gameObject.SetActive(false);
         playersWindow = GameObject.Find("Players Window");
         playersWindow.gameObject.SetActive(true);
-        allPlayersInfoInTabMenu = new Dictionary<FixedString32Bytes, Transform>();
+        allPlayersInfoInTabMenu = new Dictionary<ulong, Transform>();
         //Initialize player window
-        foreach (var (id, player) in PlayerDataList.Singleton.players)
+        foreach (NetworkClient client in NetworkManager.Singleton.ConnectedClientsList)
         {
+            PlayerData playerData = client.PlayerObject.GetComponent<PlayerData>();
+            
             Transform playersMenuItem = Instantiate(playersInfoPrefab, playersWindow.transform.Find("Players List")).transform;
-            playersMenuItem.Find("Players Color Image").GetComponent<Image>().color = player.playerColor;
+            playersMenuItem.Find("Players Color Image").GetComponent<Image>().color = playerData.playerColor;
+
             playersMenuItem.Find("Skull Icon").gameObject.SetActive(false);
-            playersMenuItem.Find("Background Color").GetComponent<Image>().color = player.authenticationServicePlayerId.Value == PlayerDataList.Singleton.GetLocalPlayer().authenticationServicePlayerId.Value ? new Color(.6f, .6f, .6f, .6f) : new Color(0, 0, 0, 0);
-            playersMenuItem.Find("Players Name Text").GetComponent<TMP_Text>().text = "- " + player.playerUsername.Value;
-            allPlayersInfoInTabMenu.Add(player.authenticationServicePlayerId.Value, playersMenuItem);
+            playersMenuItem.Find("Background Color").GetComponent<Image>().color = (client.PlayerObject.IsLocalPlayer ? new Color(.6f, .6f, .6f, .6f) : new Color(0, 0, 0, 0));
+            playersMenuItem.Find("Players Name Text").GetComponent<TMP_Text>().text = "- " + playerData.playerUsername.Value;
+            allPlayersInfoInTabMenu.Add(client.ClientId, playersMenuItem);
         }
         playersWindow.gameObject.SetActive(false);
     }
 
     public void Start()
     {
-        foreach (var (id, player) in PlayerDataList.Singleton.players)
-            player.PlayerSetup();
+        foreach (NetworkClient client in NetworkManager.Singleton.ConnectedClientsList)
+            client.PlayerObject.GetComponent<PlayerData>().PlayerSetup();
     }
 
     public GameObject GetShipPrefab(int shipNum)
@@ -144,7 +147,7 @@ public class GameSceneManager : Singleton<GameSceneManager>
         return spawnLoc;
     }
 
-    public void ShowPlayerAsDeadInPlayersMenu(FixedString32Bytes playerAuthId)
+    public void ShowPlayerAsDeadInPlayersMenu(ulong playerAuthId)
     {
         Transform playerWhoDiedItem = allPlayersInfoInTabMenu.GetValueOrDefault(playerAuthId);
         playerWhoDiedItem.Find("Players Name Text").GetComponent<TMP_Text>().text = "<s>" + playerWhoDiedItem.Find("Players Name Text").GetComponent<TMP_Text>().text + "</s>";
