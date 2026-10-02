@@ -124,7 +124,8 @@ public class Ship : NetworkBehaviour
                     transform.Find("Scout Radar").gameObject.SetActive(true);
                 break;
             case ShipTypes.Mothership:
-                playerData.SetMothership(this);
+                if (IsOwner)
+                    playerData.SetMothership(this);
                 break;
         }
     }
