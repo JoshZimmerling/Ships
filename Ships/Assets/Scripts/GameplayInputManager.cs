@@ -139,7 +139,7 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
 
         if (Input.GetKeyDown(KeyCode.Tab))
         {
-            GameSceneManager.Singleton.minimap.GetComponent<RectTransform>().sizeDelta = new Vector3(3f, 3f, 1);
+            GameSceneManager.Singleton.minimap.transform.localScale = new Vector3(3f, 3f, 1);
             GameSceneManager.Singleton.minimap.GetComponent<RectTransform>().anchoredPosition = new Vector3(300f, 75f, 0);
             GameSceneManager.Singleton.playersWindow.gameObject.SetActive(true);
         }
