@@ -48,7 +48,6 @@ public class SupplyDrop : NetworkBehaviour
             {
                 if (!playersToPay.Contains(shipScript.OwnerClientId))
                 {
-                    Debug.Log("Adding player " + shipScript.OwnerClientId + " to the payout list");
                     playersToPay.Add(shipScript.OwnerClientId);
                 }
             }

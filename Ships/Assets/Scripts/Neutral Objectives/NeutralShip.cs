@@ -10,6 +10,8 @@ public class NeutralShip : Ship
     private List<Transform> patrolRouteLocations = new List<Transform>();
     private int currentPatrolTarget = 0;
 
+    private NeutralPatrol patrolGroup;
+
     [SerializeField] int goldOnKill = 10;
 
     public override void OnNetworkSpawn()
@@ -31,16 +33,21 @@ public class NeutralShip : Ship
             currentPatrolTarget++;
             if (currentPatrolTarget >= patrolRouteLocations.Count) currentPatrolTarget = 0;
 
-            movement.SetTargetDestinationRPC((Vector2)patrolRouteLocations[currentPatrolTarget].position);
+            if (patrolGroup == null)
+                movement.SetTargetDestinationRPC((Vector2)patrolRouteLocations[currentPatrolTarget].position);
+            else
+                movement.SetTargetDestinationWithSpeedCapRPC(patrolGroup.GetDestinationBasedOnGroup(gameObject, (Vector2)patrolRouteLocations[currentPatrolTarget].position), patrolGroup.GetGroupSpeed());
+
             moved = true;
         }
         if (movement.moving) moved = false;
     }
 
-    public void SetupShipSpawn(Transform spawnObject)
+    public void SetupShipSpawn(Transform spawnObject, NeutralPatrol patrolGroup)
     {
         spawn = spawnObject;
         transform.position = spawn.position;
+        this.patrolGroup = patrolGroup;
 
         foreach (Transform patrolStop in spawn.Find("Patrol Route"))
             patrolRouteLocations.Add(patrolStop);
@@ -48,24 +55,34 @@ public class NeutralShip : Ship
 
     public new void DestroyShip(GameObject shipDamageCameFrom)
     {
-        GameSceneManager.Singleton.neutralObjectivesManager.NeutralShipDeath(spawn);
+        if (patrolGroup == null)
+        {
+            GameSceneManager.Singleton.neutralObjectivesManager.NeutralShipDeath(spawn);
+            ReceiveNeutralObjectivePayoutRPC(shipDamageCameFrom.GetComponent<Ship>().OwnerClientId, goldOnKill);
+        }
+        else
+        {
+            if (patrolGroup.IsLastPatrolShipToDie(gameObject))
+            {
+                ReceiveNeutralObjectivePayoutRPC(shipDamageCameFrom.GetComponent<Ship>().OwnerClientId, patrolGroup.goldOnKill);
+            }
+        }
         GameSceneManager.Singleton.shipsInScene.Remove(gameObject);
-        ReceiveNeutralObjectivePayoutRPC(shipDamageCameFrom.GetComponent<Ship>().OwnerClientId);
         InformShipWhoKilled(shipDamageCameFrom);
 
         GetComponent<NetworkObject>().Despawn();
-        Destroy(this.gameObject);
+        Destroy(gameObject);
     }
 
     [Rpc(SendTo.ClientsAndHost)]
-    public void ReceiveNeutralObjectivePayoutRPC(ulong damageDealersClientID)
+    public void ReceiveNeutralObjectivePayoutRPC(ulong damageDealersClientID, int payoutAmount)
     {
         //If my client ID is the one who killed the neutral ship, gain money
         if (damageDealersClientID == NetworkManager.LocalClientId)
         {
             PopupText popupText = Instantiate(popupTextPrefab, transform.position, Quaternion.identity).GetComponent<PopupText>();
-            popupText.SetupText("+ $" + goldOnKill, Color.gold, 2.5f);
-            Shop.Singleton.AddGold(goldOnKill);
+            popupText.SetupText("+ $" + payoutAmount, Color.gold, 2.5f);
+            Shop.Singleton.AddGold(payoutAmount);
         }
     }
 }

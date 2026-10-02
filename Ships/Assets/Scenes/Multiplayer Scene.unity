@@ -9895,90 +9895,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2034567107}
   m_CullTransparentMesh: 1
---- !u!1 &2052264803
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2052264805}
-  - component: {fileID: 2052264806}
-  - component: {fileID: 2052264804}
-  m_Layer: 0
-  m_Name: Neutral Objectives Manager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &2052264804
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2052264803}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f0aca1a1d65e88b4683fbcad0d6e4052, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::NeutralObjectivesManager
-  ShowTopMostFoldoutHeaderGroup: 1
-  neutralShipPrefabs:
-  - {fileID: 6845531929139960284, guid: 59f56c76215ce6b47b8c2b460533f51a, type: 3}
-  - {fileID: 6845531929139960284, guid: 2f8d4fd9358ee1c438e2c3c8887bd1a9, type: 3}
-  neutralShipSpawnRates: 460000001e000000
-  secondsUntilFirstNeutralShipSpawns: 10
-  secondsBetweenNeutralShipSpawns: 30
-  maxNeutralShips: 4
-  supplyDropPrefab: {fileID: 5386678104189029594, guid: a76544d0ef6c706489bda4dd2fa4bfaf, type: 3}
-  secondsUntilFirstSupplyDropSpawns: 30
-  secondsBetweenSupplyDropSpawns: 120
-  supplyDropLifetime: 60
-  supplyDropTotalPayout: 50
---- !u!4 &2052264805
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2052264803}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2052264806
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2052264803}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 381145616
-  InScenePlacedSourceGlobalObjectIdHash: 0
-  DeferredDespawnTick: 0
-  Ownership: 1
-  AlwaysReplicateAsRoot: 0
-  SynchronizeTransform: 1
-  m_InScenePlaced: 1
-  ActiveSceneSynchronization: 0
-  SceneMigrationSynchronization: 0
-  SpawnWithObservers: 1
-  DontDestroyWithOwner: 0
-  AutoObjectParentSync: 1
-  SyncOwnerTransformWhenParented: 1
-  AllowOwnerToParent: 0
 --- !u!1 &2052633882
 GameObject:
   m_ObjectHideFlags: 0
@@ -10249,6 +10165,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Solar Satellites
       objectReference: {fileID: 0}
+    - target: {fileID: 8453350081420294240, guid: f9a585a1066b8b643adb66b7e75f0698, type: 3}
+      propertyPath: m_InScenePlaced
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8453350081420294240, guid: f9a585a1066b8b643adb66b7e75f0698, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 2967520419
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -10335,7 +10259,6 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 1306694288}
-  - {fileID: 2052264805}
   - {fileID: 519420032}
   - {fileID: 2345823541580576492}
   - {fileID: 659025215}
