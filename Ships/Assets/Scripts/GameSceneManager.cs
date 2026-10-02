@@ -66,8 +66,7 @@ public class GameSceneManager : Singleton<GameSceneManager>
         //Initialize player window
         foreach (var (id, player) in PlayerDataList.Singleton.players)
         {
-            Transform playersMenuItem = Instantiate(playersInfoPrefab).transform;
-            playersMenuItem.SetParent(playersWindow.transform.Find("Players List"));
+            Transform playersMenuItem = Instantiate(playersInfoPrefab, playersWindow.transform.Find("Players List")).transform;
             playersMenuItem.Find("Players Color Image").GetComponent<Image>().color = player.playerColor;
             playersMenuItem.Find("Skull Icon").gameObject.SetActive(false);
             playersMenuItem.Find("Background Color").GetComponent<Image>().color = player.authenticationServicePlayerId.Value == PlayerDataList.Singleton.GetLocalPlayer().authenticationServicePlayerId.Value ? new Color(.6f, .6f, .6f, .6f) : new Color(0, 0, 0, 0);
