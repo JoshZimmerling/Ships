@@ -198,8 +198,8 @@ public class NeutralObjectivesManager : NetworkBehaviour
     public void NeutralPatrolDestroyed(Transform spawn)
     {
         neutralPatrolSpawnPositions[spawn] = false;
-        if (currentNumOfNeutralPatrols == maxNeutralPatrols && currentPatrolSpawningTimer < secondsBetweenNeutralPatrolSpawns)
-            currentPatrolSpawningTimer = secondsBetweenNeutralPatrolSpawns; //Give a cooldown on respawning if we were previously at the max number of patrols
+        if (currentNumOfNeutralPatrols == maxNeutralPatrols && currentPatrolSpawningTimer < 15f)
+            currentPatrolSpawningTimer = 15f; //Give a cooldown on respawning if we were previously at the max number of patrols
         currentNumOfNeutralPatrols--;
     }
 }
