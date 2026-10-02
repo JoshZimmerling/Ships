@@ -79,7 +79,7 @@ public class Ship : NetworkBehaviour
         // If player owned ship
         if (this.GetType() != typeof(NeutralShip))
         {
-            playerData = PlayerDataList.Singleton.players[OwnerClientId];
+            playerData = NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerData>();
 
             // Set the team color
             Color teamColor = playerData.playerColor;
@@ -126,9 +126,7 @@ public class Ship : NetworkBehaviour
                     transform.Find("Scout Radar").gameObject.SetActive(true);
                 break;
             case ShipTypes.Mothership:
-                foreach (var (id, player) in PlayerDataList.Singleton.players)
-                    if (player.OwnerClientId == OwnerClientId)
-                        player.SetMothership(this);
+                playerData.SetMothership(this);
                 break;
         }
     }
@@ -221,13 +219,13 @@ public class Ship : NetworkBehaviour
         {
             if (Shop.Singleton.GetGold() <= 0)
             { // If I have no money, loop through my remaining alive ships and if they are all not my mothership, this ship, or Goliath Fighters, we can consider ourselves still alive. Otherwise, kill my mothership
-                foreach (Transform myShip in PlayerDataList.Singleton.GetLocalPlayer().transform)
+                foreach (Transform myShip in NetworkManager.Singleton.LocalClient.PlayerObject.transform)
                 {
                     if (myShip.GetComponent<Ship>().shipType != ShipTypes.Mothership && myShip.GetComponent<Ship>().shipType != ShipTypes.GoliathFighter && myShip != transform)
                         return;
                 }
                 playerData.KillMothershipRPC();
-                PlayerDataList.Singleton.GetLocalPlayer().transform.GetChild(0).GetComponent<Ship>().SelfDestroyShipRPC();
+                NetworkManager.Singleton.LocalClient.PlayerObject.transform.GetChild(0).GetComponent<Ship>().SelfDestroyShipRPC();
             }
         }
     }

@@ -1,3 +1,4 @@
+using Unity.Netcode;
 using UnityEngine;
 
 public class Camera_Control : Singleton<Camera_Control>
@@ -76,7 +77,7 @@ public class Camera_Control : Singleton<Camera_Control>
         if (Input.GetKey(KeyCode.Space))
         {
             //Center camera on mothership
-            MoveCameraToWorldSpace(PlayerDataList.Singleton.GetLocalPlayer().GetMothership().gameObject.transform.position);
+            MoveCameraToWorldSpace(NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerData>().GetMothership().gameObject.transform.position);
             MoveViewport();
         }
     }
@@ -120,14 +121,17 @@ public class Camera_Control : Singleton<Camera_Control>
 
     public bool IsSeenByMyShips(Transform obj)
     {
-        foreach (Transform ship in PlayerDataList.Singleton.GetLocalPlayer().transform)
+        if (Shader.GetGlobalInteger("_GlobalPointsBufferCount") == 0) return true; // Mothership is dead
+
+        Shader.GetGlobalVectorArray("_GlobalPointsBuffer");
+
+        foreach (Vector4 visionCone in Shader.GetGlobalVectorArray("_GlobalPointsBuffer"))
         {
-            Ship myShip = ship.GetComponent<Ship>();
-            if ((myShip.transform.position - obj.position).magnitude < myShip.visionRange)
+            if (((Vector2)visionCone - (Vector2)obj.position).magnitude < visionCone.w)
             {
                 return true;
             }
         }
-        return !PlayerDataList.Singleton.GetLocalPlayer().IsMothershipAlive(); //Returns false when you have a mothership, if you don't have a mothership you are already dead and should be able to hear everything that is on your screen
+        return false;
     }
 }

@@ -17,10 +17,10 @@ public class Shop : Singleton<Shop>
     public void SetupShop()
     {
         playerId = NetworkManager.Singleton.LocalClientId;
+        playerData = NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerData>();
 
         transform.Find("Toggle Window Button").GetComponent<Button>().onClick.AddListener(() => ToggleShop()); ;
 
-        playerData = PlayerDataList.Singleton.players[playerId];
         goldDisplay = transform.Find("Money Display").Find("Money Text").GetComponent<TMP_Text>();
 
         Color playerColor = playerData.playerColor;
@@ -54,7 +54,7 @@ public class Shop : Singleton<Shop>
         if (playerGold >= cost && playerData.IsMothershipAlive())
         {
             playerGold -= cost;
-            PlayerDataList.Singleton.players[playerId].SpawnShipServerRPC(type);
+            playerData.SpawnShipServerRPC(type);
         }
 
         UpdateGold();
