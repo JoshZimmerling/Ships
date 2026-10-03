@@ -8,6 +8,7 @@ public class Movement : NetworkBehaviour
     [SerializeField] private float shipAcceleration;
     [SerializeField] private float shipMaxSpeed;
     private float currentAllowedMaxSpeed;
+    private float currentAllowedMaxRotationSpeed;
     [SerializeField] private float shipTurnRate;
     [SerializeField] float distToStop = 2;
 
@@ -54,7 +55,7 @@ public class Movement : NetworkBehaviour
         if (!backingUp)
         {
             // Turning
-            if (shipTurnRate >= 1000) // Insta turn if you have really high turn rate
+            if (currentAllowedMaxRotationSpeed >= 1000) // Insta turn if you have really high turn rate
             {
                 transform.rotation = Quaternion.LookRotation(Vector3.forward, targetPos - (Vector2)transform.position);
             }
@@ -62,11 +63,11 @@ public class Movement : NetworkBehaviour
             {
                 if (angle > 0)
                 {
-                    transform.Rotate(0, 0, -shipTurnRate * Time.deltaTime);
+                    transform.Rotate(0, 0, -currentAllowedMaxRotationSpeed * Time.deltaTime);
                 }
                 else
                 {
-                    transform.Rotate(0, 0, shipTurnRate * Time.deltaTime);
+                    transform.Rotate(0, 0, currentAllowedMaxRotationSpeed * Time.deltaTime);
                 }
             }
             // Slowing turns
@@ -137,6 +138,11 @@ public class Movement : NetworkBehaviour
         return shipMaxSpeed;
     }
 
+    public float GetRotationSpeed()
+    {
+        return shipTurnRate;
+    }
+
     public void ChangeSpeed(float speedChange, float duration)
     {
         StartCoroutine(ChangeSpeedCoroutine(speedChange, duration));
@@ -167,6 +173,7 @@ public class Movement : NetworkBehaviour
         targetPos = target;
         rotateOnly = false;
         currentAllowedMaxSpeed = shipMaxSpeed;
+        currentAllowedMaxRotationSpeed = shipTurnRate;
     }
 
     [Rpc(SendTo.Server)]
@@ -177,20 +184,22 @@ public class Movement : NetworkBehaviour
         targetPos = target;
         rotateOnly = true;
         currentAllowedMaxSpeed = shipMaxSpeed;
-        
+        currentAllowedMaxRotationSpeed = shipTurnRate;
+
         //Stop movement since this is for rotation only
         totalVelocity = 0;
         moving = false;
     }
 
     [Rpc(SendTo.Server)]
-    public void SetTargetDestinationWithSpeedCapRPC(Vector2 target, float maxSpeedAllowed)
+    public void SetTargetDestinationWithSpeedCapRPC(Vector2 target, float maxSpeedAllowed, float maxRotationSpeedAllowed)
     {
         noTarget = false;
         backingUp = false;
         targetPos = target;
         rotateOnly = false;
         currentAllowedMaxSpeed = maxSpeedAllowed;
+        currentAllowedMaxRotationSpeed = maxRotationSpeedAllowed;
     }
 
     private IEnumerator ChangeSpeedCoroutine(float speedChange, float time)

@@ -65,6 +65,7 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
         if (Input.GetMouseButtonDown(1))
         {
             float lowestMaxSpeed = -1f;
+            float lowestMaxRotationSpeed = -1f;
             //If control is held, we are grabbing the lowest max speed of all ships we have selected
             if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))
             {
@@ -74,17 +75,22 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
                     foreach (Ship selectedShip in selectedShips)
                         if (selectedShip.gameObject.GetComponent<Movement>().GetMaxSpeed() < lowestMaxSpeed)
                             lowestMaxSpeed = selectedShip.gameObject.GetComponent<Movement>().GetMaxSpeed();
+
+                    lowestMaxRotationSpeed = int.MaxValue;
+                    foreach (Ship selectedShip in selectedShips)
+                        if (selectedShip.gameObject.GetComponent<Movement>().GetRotationSpeed() < lowestMaxRotationSpeed)
+                            lowestMaxRotationSpeed = selectedShip.gameObject.GetComponent<Movement>().GetRotationSpeed();
                 }
             }
 
             UIHoverState ui_click = IsMouseOverUI();
             if (ui_click == UIHoverState.MINIMAP)
             {
-                DirectShips(GetMinimapMouseLocation() * (mapWidth/minimapWidth), false, lowestMaxSpeed);
+                DirectShips(GetMinimapMouseLocation() * (mapWidth/minimapWidth), false, lowestMaxSpeed, lowestMaxRotationSpeed);
             }
             else if (ui_click == UIHoverState.NONE)
             {
-                DirectShips(Camera.main.ScreenToWorldPoint(Input.mousePosition), false, lowestMaxSpeed);
+                DirectShips(Camera.main.ScreenToWorldPoint(Input.mousePosition), false, lowestMaxSpeed, lowestMaxRotationSpeed);
             }
         }
 
@@ -94,11 +100,11 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
             UIHoverState ui_click = IsMouseOverUI();
             if (ui_click == UIHoverState.MINIMAP)
             {
-                DirectShips(GetMinimapMouseLocation() * (mapWidth / minimapWidth), true, -1f);
+                DirectShips(GetMinimapMouseLocation() * (mapWidth / minimapWidth), true, -1f, -1f);
             }
             else if (ui_click == UIHoverState.NONE)
             {
-                DirectShips(Camera.main.ScreenToWorldPoint(Input.mousePosition), true, -1f);
+                DirectShips(Camera.main.ScreenToWorldPoint(Input.mousePosition), true, -1f, -1f);
             }
         }
 
@@ -252,7 +258,7 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
         }
     }
 
-    private void DirectShips(Vector2 directPosition, bool rotateOnly, float speedCap)
+    private void DirectShips(Vector2 directPosition, bool rotateOnly, float speedCap, float rotationSpeedCap)
     {
         VerifySelection();
 
@@ -261,17 +267,17 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
             if (rotateOnly)
                 selectedShips[0].GetComponent<Movement>().SetTargetRotationRPC(directPosition);
             else if (speedCap != -1f)
-                selectedShips[0].GetComponent<Movement>().SetTargetDestinationWithSpeedCapRPC(directPosition, speedCap);
+                selectedShips[0].GetComponent<Movement>().SetTargetDestinationWithSpeedCapRPC(directPosition, speedCap, rotationSpeedCap);
             else
                 selectedShips[0].GetComponent<Movement>().SetTargetDestinationRPC(directPosition);
         }
         else if (selectedShips.Count > 1)
         {
-            SetDestinationInFormation(directPosition, rotateOnly, speedCap);
+            SetDestinationInFormation(directPosition, rotateOnly, speedCap, rotationSpeedCap);
         }
     }
 
-    void SetDestinationInFormation(Vector2 target, bool rotateOnly, float speedCap)
+    void SetDestinationInFormation(Vector2 target, bool rotateOnly, float speedCap, float rotationSpeedCap)
     {   
         xMax = selectedShips[0].transform.position.x;
         yMax = selectedShips[0].transform.position.y;
@@ -297,7 +303,7 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
             if (rotateOnly)
                 ship.GetComponent<Movement>().SetTargetRotationRPC(target + ((Vector2)ship.transform.position - shipCenter));
             else if (speedCap != -1f)
-                ship.GetComponent<Movement>().SetTargetDestinationWithSpeedCapRPC(target + ((Vector2)ship.transform.position - shipCenter), speedCap);
+                ship.GetComponent<Movement>().SetTargetDestinationWithSpeedCapRPC(target + ((Vector2)ship.transform.position - shipCenter), speedCap, rotationSpeedCap);
             else
                 ship.GetComponent<Movement>().SetTargetDestinationRPC(target + ((Vector2)ship.transform.position - shipCenter));
         }

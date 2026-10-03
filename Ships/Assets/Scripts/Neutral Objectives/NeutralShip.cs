@@ -11,6 +11,7 @@ public class NeutralShip : Ship
     private int currentPatrolTarget = 0;
 
     private NeutralPatrol patrolGroup;
+    private Vector2 patrolOffset;
 
     [SerializeField] int goldOnKill = 10;
 
@@ -36,7 +37,7 @@ public class NeutralShip : Ship
             if (patrolGroup == null)
                 movement.SetTargetDestinationRPC((Vector2)patrolRouteLocations[currentPatrolTarget].position);
             else
-                movement.SetTargetDestinationWithSpeedCapRPC(patrolGroup.GetDestinationBasedOnGroup(gameObject, (Vector2)patrolRouteLocations[currentPatrolTarget].position), patrolGroup.GetGroupSpeed());
+                movement.SetTargetDestinationWithSpeedCapRPC((Vector2)patrolRouteLocations[currentPatrolTarget].position + patrolOffset, patrolGroup.GetGroupSpeed(), patrolGroup.GetGroupRotationSpeed());
 
             moved = true;
         }
@@ -46,8 +47,11 @@ public class NeutralShip : Ship
     public void SetupShipSpawn(Transform spawnObject, NeutralPatrol patrolGroup)
     {
         spawn = spawnObject;
-        transform.position = spawn.position;
         this.patrolGroup = patrolGroup;
+        if (patrolGroup != null)
+        {
+            patrolOffset = transform.localPosition;
+        }
 
         foreach (Transform patrolStop in spawn.Find("Patrol Route"))
             patrolRouteLocations.Add(patrolStop);

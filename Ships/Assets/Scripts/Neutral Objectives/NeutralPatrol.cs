@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
 
 public class NeutralPatrol : NetworkBehaviour
 {
@@ -12,7 +11,6 @@ public class NeutralPatrol : NetworkBehaviour
 
     private List<GameObject> spawnedShipsList;
     private Transform spawn;
-
     
     void Awake()
     {
@@ -45,37 +43,6 @@ public class NeutralPatrol : NetworkBehaviour
         }
     }
 
-    public Vector2 GetDestinationBasedOnGroup(GameObject ship, Vector2 baseDestionationPoint)
-    {
-        if (spawnedShipsList.Count == 1)
-        {
-            return baseDestionationPoint;
-        }
-        else
-        {
-            float xMax = spawnedShipsList[0].transform.position.x;
-            float yMax = spawnedShipsList[0].transform.position.y;
-            float xMin = spawnedShipsList[0].transform.position.x;
-            float yMin = spawnedShipsList[0].transform.position.y;
-
-            foreach (GameObject patrolShip in spawnedShipsList)
-            {
-                if (patrolShip.transform.position.x > xMax) { xMax = patrolShip.transform.position.x; }
-                if (patrolShip.transform.position.x < xMin) { xMin = patrolShip.transform.position.x; }
-                if (patrolShip.transform.position.y > yMax) { yMax = patrolShip.transform.position.y; }
-                if (patrolShip.transform.position.y < yMin) { yMin = patrolShip.transform.position.y; }
-            }
-
-            float xDiff = xMax - xMin;
-            float yDiff = yMax - yMin;
-
-            Vector2 patrolGroupCenter = new Vector2(xMin + (xDiff / 2), yMin + (yDiff / 2));
-
-            return baseDestionationPoint + ((Vector2)ship.transform.position - patrolGroupCenter);
-        }
-    }
-
-
     public float GetGroupSpeed()
     {
         float lowestMaxSpeed = float.MaxValue;
@@ -83,6 +50,15 @@ public class NeutralPatrol : NetworkBehaviour
             if (patrolShip.gameObject.GetComponent<Movement>().GetMaxSpeed() < lowestMaxSpeed)
                 lowestMaxSpeed = patrolShip.gameObject.GetComponent<Movement>().GetMaxSpeed();
         return lowestMaxSpeed;
+    }
+
+    public float GetGroupRotationSpeed()
+    {
+        float lowestMaxRotationSpeed = float.MaxValue;
+        foreach (GameObject patrolShip in spawnedShipsList)
+            if (patrolShip.gameObject.GetComponent<Movement>().GetRotationSpeed() < lowestMaxRotationSpeed)
+                lowestMaxRotationSpeed = patrolShip.gameObject.GetComponent<Movement>().GetRotationSpeed();
+        return lowestMaxRotationSpeed;
     }
 
     public bool IsLastPatrolShipToDie(GameObject shipThatDied)
