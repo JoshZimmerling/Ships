@@ -72,7 +72,7 @@ public class Ship : NetworkBehaviour
                 popupText = Instantiate(popupTextPrefab, transform.position + new Vector3(1, -1f) * correctionFactor * 0.5f, Quaternion.identity).GetComponent<PopupText>();
                 popupText.SetupText("+", Color.greenYellow, 1f);
             }
-            if (IsOwner && shipType == ShipTypes.Mothership && newValue < previousValue && Camera_Control.Singleton.IsOnScreen(transform))
+            if (IsOwner && shipType == ShipTypes.Mothership && newValue < previousValue && !Camera_Control.Singleton.IsOnScreen(transform))
             {   // Notify players there mothership is under attack
                 MothershipDamageEffect.Singleton.TakeDamage();
             }
