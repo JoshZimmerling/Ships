@@ -136,7 +136,9 @@ public class Missile : NetworkBehaviour
             SetMissileColorRPC(neutralShipColor);
         }
         else
-            SetMissileColorRPC(NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerData>().playerColor);
+            foreach (NetworkClient client in NetworkManager.Singleton.ConnectedClientsList)
+                if (client.ClientId == OwnerClientId)
+                    SetMissileColorRPC(client.PlayerObject.GetComponent<PlayerData>().playerColor);
 
         inFlightAudio.Play();
         inFlightAudio.Pause();

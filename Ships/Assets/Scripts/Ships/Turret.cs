@@ -153,7 +153,12 @@ public class Turret : NetworkBehaviour
                 for (int i = 0; i < projectiles; i++)
                 {
                     // Calculate final fire angle
-                    float fireAngle = (aimDirection + transform.rotation.eulerAngles.z - angleDiff + Random.Range(-firingSpread / 2, firingSpread / 2)) * Mathf.Deg2Rad;
+
+                    float fireAngle = 0;
+                    if (TurretType.HawkGun == turretType && !mv.moving)
+                        fireAngle = (aimDirection + transform.rotation.eulerAngles.z - angleDiff) * Mathf.Deg2Rad;
+                    else
+                        fireAngle = (aimDirection + transform.rotation.eulerAngles.z - angleDiff + Random.Range(-firingSpread / 2, firingSpread / 2)) * Mathf.Deg2Rad;
                     fireVector = new Vector2(Mathf.Cos(fireAngle), Mathf.Sin(fireAngle));
 
                     // Fire the bullet at the angle calculated

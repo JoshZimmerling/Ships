@@ -77,7 +77,9 @@ public class Ship : NetworkBehaviour
         // If player owned ship
         if (this.GetType() != typeof(NeutralShip))
         {
-            playerData = NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerData>();
+            foreach (NetworkClient client in NetworkManager.Singleton.ConnectedClientsList)
+                if (client.ClientId == OwnerClientId)
+                    playerData = client.PlayerObject.GetComponent<PlayerData>();
 
             // Set the team color
             Color teamColor = playerData.playerColor;
