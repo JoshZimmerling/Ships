@@ -14,7 +14,9 @@ public class Ship : NetworkBehaviour
         Lightning,
         Drone,
         Scout,
-        Mothership
+        Mothership,
+        Raptor,
+        Stalker
     }
 
     // Ship Variables

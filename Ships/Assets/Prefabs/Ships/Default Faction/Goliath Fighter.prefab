@@ -792,6 +792,14 @@ PrefabInstance:
       value: 7.5
       objectReference: {fileID: 0}
     - target: {fileID: 9174938702870074056, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
+      propertyPath: moveWithTransform
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9174938702870074056, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
+      propertyPath: InitialModule.startSize.minScalar
+      value: 0.15
+      objectReference: {fileID: 0}
+    - target: {fileID: 9174938702870074056, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: EmissionModule.rateOverTime.scalar
       value: 0.2
       objectReference: {fileID: 0}
