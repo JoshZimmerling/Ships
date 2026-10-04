@@ -89,7 +89,9 @@ public class GoliathAbility : NetworkBehaviour
         GameObject ship = Instantiate(fighterPrefab, spawnPos, Quaternion.LookRotation(new Vector3(0, 0, 1), -spawnPos));
 
         ship.GetComponent<NetworkObject>().SpawnWithOwnership(OwnerClientId);
-        ship.transform.parent = NetworkManager.Singleton.LocalClient.PlayerObject.transform;
+        foreach (NetworkClient client in NetworkManager.Singleton.ConnectedClientsList)
+            if (client.ClientId == OwnerClientId)
+                ship.transform.parent = client.PlayerObject.transform;
 
         GameSceneManager.Singleton.shipsInScene.Add(ship);
         fighters.Add(ship);

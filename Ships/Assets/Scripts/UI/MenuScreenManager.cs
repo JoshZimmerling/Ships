@@ -80,6 +80,13 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
         createLobbyButton = transform.Find("Lobby List Screen/Create Lobby Button").GetComponent<Button>();
         createLobbyButton.onClick.AddListener(() => CreateLobby());
 
+        nextMapButton = transform.Find("Lobby Screen/Map Settings Window/Minimap/Next Map Button").GetComponent<Button>();
+        nextMapButton.onClick.AddListener(() => gameSettingsManager.NextMap());
+        lastMapButton = transform.Find("Lobby Screen/Map Settings Window/Minimap/Last Map Button").GetComponent<Button>();
+        lastMapButton.onClick.AddListener(() => gameSettingsManager.LastMap());
+        mapName = transform.Find("Lobby Screen/Map Settings Window/Minimap/Map Name").GetComponent<TextMeshProUGUI>();
+        mapImage = transform.Find("Lobby Screen/Map Settings Window/Minimap").GetComponent<Image>();
+
         lobbyScreen = transform.Find("Lobby Screen").gameObject;
         lobbyName = transform.Find("Lobby Screen/Header").GetComponentInChildren<TextMeshProUGUI>();
         playerViewerObject = transform.Find("Lobby Screen/Player Viewer").gameObject;
@@ -87,13 +94,6 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
             Destroy(t.gameObject);
         startGameButton = transform.Find("Lobby Screen/Start Game Button").GetComponent<Button>();
         startGameButton.onClick.AddListener(() => ReadyOrStartGame());
-
-        nextMapButton = transform.Find("Lobby Screen/Map Settings Window/Minimap/Next Map Button").GetComponent<Button>();
-        nextMapButton.onClick.AddListener(() => gameSettingsManager.NextMap());
-        lastMapButton = transform.Find("Lobby Screen/Map Settings Window/Minimap/Last Map Button").GetComponent<Button>();
-        lastMapButton.onClick.AddListener(() => gameSettingsManager.LastMap());
-        mapName = transform.Find("Lobby Screen/Map Settings Window/Minimap/Map Name").GetComponent<TextMeshProUGUI>();
-        mapImage = transform.Find("Lobby Screen/Map Settings Window/Minimap").GetComponent<Image>();
 
         //Get player username from save file
         playerName = Save.myGlobalSaveData.username;
@@ -322,7 +322,7 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
             }
 
             // Check that everyones ready
-            if (!client.PlayerObject.GetComponent<PlayerData>().playerReady.Value)
+            if (!client.PlayerObject.GetComponent<PlayerData>().playerReady.Value && !client.PlayerObject.IsLocalPlayer)
                 everyoneReady = false;
         }
 
@@ -339,8 +339,9 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
             //startGameButton.colors = colors;
         }
 
+        nextMapButton.gameObject.SetActive(NetworkManager.Singleton.IsHost);
+        lastMapButton.gameObject.SetActive(NetworkManager.Singleton.IsHost);
         mapName.text = gameSettingsManager.mapsList.PrefabList[gameSettingsManager.mapIndex.Value].Prefab.name.ToString();
-        Debug.Log(mapImage.ToString());
         mapImage.sprite = gameSettingsManager.mapSprites[gameSettingsManager.mapIndex.Value];
     }
 
@@ -376,6 +377,7 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
         }
 
         player.playerColorIndex.Value = colorValue;
+        player.playerReady.Value = false;
     }
 
     private void ReadyOrStartGame() //TODO: and ready
