@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using TMPro;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
@@ -8,11 +7,9 @@ using Unity.Services.Lobbies;
 using Unity.Services.Lobbies.Models;
 using Unity.Services.Relay;
 using Unity.Services.Relay.Models;
-using UnityEditor.PackageManager;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using static System.Net.Mime.MediaTypeNames;
 
 public class MenuScreenManager : Singleton<MenuScreenManager>
 {
@@ -50,6 +47,13 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
     bool everyoneReady = false;
     public Color[] playerColors = new Color[12];
 
+    private GameSettingsManager gameSettingsManager;
+    private Button nextMapButton;
+    private Button lastMapButton;
+    private TextMeshProUGUI mapName;
+
+    private 
+
     void Start()
     {
         // Activate all ui elements (for if they are disabled for testing)
@@ -60,28 +64,34 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
         spinner = transform.Find("Spinner").gameObject;
 
         usernameScreen = transform.Find("Choose Username Screen").gameObject;
-        usernameTitleText = transform.Find("Choose Username Screen").Find("Header").GetComponentInChildren<TMP_Text>();
-        closeUsernameScreenButton = transform.Find("Choose Username Screen").Find("Close Button").GetComponent<Button>();
+        usernameTitleText = transform.Find("Choose Username Screen/Header").GetComponentInChildren<TMP_Text>();
+        closeUsernameScreenButton = transform.Find("Choose Username Screen/Close Button").GetComponent<Button>();
         closeUsernameScreenButton.onClick.AddListener(() => usernameScreen.SetActive(false));
-        usernameTextInput = transform.Find("Choose Username Screen").Find("Username Text Input").GetComponentInChildren<TMP_InputField>();
-        submitUsernameButton = transform.Find("Choose Username Screen").Find("Submit Username Button").GetComponent<Button>();
+        usernameTextInput = transform.Find("Choose Username Screen/Username Text Input").GetComponentInChildren<TMP_InputField>();
+        submitUsernameButton = transform.Find("Choose Username Screen/Submit Username Button").GetComponent<Button>();
         submitUsernameButton.onClick.AddListener(SetUsername);
 
         lobbyListScreen = transform.Find("Lobby List Screen").gameObject;
-        lobbyViewerObject = transform.Find("Lobby List Screen").Find("Lobby Viewer").gameObject;
-        usernameText = transform.Find("Lobby List Screen").Find("Your Username").Find("Username Text").GetComponentInChildren<TMP_Text>();
-        updateUsernameButton = transform.Find("Lobby List Screen").Find("Your Username").Find("Edit Username Button").GetComponent<Button>();
+        lobbyViewerObject = transform.Find("Lobby List Screen/Lobby Viewer").gameObject;
+        usernameText = transform.Find("Lobby List Screen/Your Username/Username Text").GetComponentInChildren<TMP_Text>();
+        updateUsernameButton = transform.Find("Lobby List Screen/Your Username/Edit Username Button").GetComponent<Button>();
         updateUsernameButton.onClick.AddListener(() => OpenUsernamePopup());
-        createLobbyButton = transform.Find("Lobby List Screen").Find("Create Lobby Button").GetComponent<Button>();
+        createLobbyButton = transform.Find("Lobby List Screen/Create Lobby Button").GetComponent<Button>();
         createLobbyButton.onClick.AddListener(() => CreateLobby());
 
         lobbyScreen = transform.Find("Lobby Screen").gameObject;
-        lobbyName = transform.Find("Lobby Screen").transform.Find("Header").GetComponentInChildren<TextMeshProUGUI>();
-        playerViewerObject = transform.Find("Lobby Screen").Find("Player Viewer").gameObject;
+        lobbyName = transform.Find("Lobby Screen/Header").GetComponentInChildren<TextMeshProUGUI>();
+        playerViewerObject = transform.Find("Lobby Screen/Player Viewer").gameObject;
         foreach (Transform t in playerViewerObject.transform)
             Destroy(t.gameObject);
-        startGameButton = transform.Find("Lobby Screen").Find("Start Game Button").GetComponent<Button>();
+        startGameButton = transform.Find("Lobby Screen/Start Game Button").GetComponent<Button>();
         startGameButton.onClick.AddListener(() => ReadyOrStartGame());
+
+        nextMapButton = transform.Find("Lobby Screen/Map Settings Window/Minimap/Next Map Button").GetComponent<Button>();
+        nextMapButton.onClick.AddListener(() => gameSettingsManager.NextMap());
+        lastMapButton = transform.Find("Lobby Screen/Map Settings Window/Minimap/Last Map Button").GetComponent<Button>();
+        lastMapButton.onClick.AddListener(() => gameSettingsManager.LastMap());
+        mapName = transform.Find("Lobby Screen/Map Settings Window/Minimap/Map Name").GetComponent<TextMeshProUGUI>();
 
         //Get player username from save file
         playerName = Save.myGlobalSaveData.username;
@@ -93,6 +103,8 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
             OpenUsernamePopup();
             lobbyListScreen.SetActive(false);
         }
+
+        gameSettingsManager = GameObject.Find("Game Settings Manager").GetComponent<GameSettingsManager>();
     }
 
     // Update timer parameters
@@ -323,6 +335,19 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
             //ColorBlock colors = startGameButton.colors; //TODO: Fix later
             //colors.normalColor = NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerData>().playerReady.Value ? Color.gray : Color.white;
             //startGameButton.colors = colors;
+        }
+
+        for (int i = 0; i < gameSettingsManager.transform.childCount; i++)
+        {
+            if (i == gameSettingsManager.mapIndex.Value)
+            {
+                gameSettingsManager.transform.GetChild(i).gameObject.SetActive(true);
+                mapName.text = gameSettingsManager.mapsList.PrefabList[i].Prefab.name.ToString();
+            }
+            else
+            {
+                gameSettingsManager.transform.GetChild(i).gameObject.SetActive(false);
+            }
         }
     }
 

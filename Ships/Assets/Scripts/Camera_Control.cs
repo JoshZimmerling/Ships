@@ -121,13 +121,13 @@ public class Camera_Control : Singleton<Camera_Control>
 
     public bool IsSeenByMyShips(Transform obj)
     {
-        if (Shader.GetGlobalInteger("_GlobalPointsBufferCount") == 0) return true; // Mothership is dead
+        Debug.Log(Shader.GetGlobalInt("_GlobalPointsBufferCount"));
 
-        Shader.GetGlobalVectorArray("_GlobalPointsBuffer");
+        if (Shader.GetGlobalInt("_GlobalPointsBufferCount") == 0) return true; // Mothership is dead
 
         foreach (Vector4 visionCone in Shader.GetGlobalVectorArray("_GlobalPointsBuffer"))
         {
-            if (((Vector2)visionCone - (Vector2)obj.position).magnitude < visionCone.w)
+            if (visionCone.w > 0 && ((Vector2)visionCone - (Vector2)obj.position).magnitude < visionCone.w)
             {
                 return true;
             }

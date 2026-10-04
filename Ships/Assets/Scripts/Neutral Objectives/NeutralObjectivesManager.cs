@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class NeutralObjectivesManager : NetworkBehaviour
 {
@@ -34,6 +35,8 @@ public class NeutralObjectivesManager : NetworkBehaviour
 
     void Start()
     {
+        if (SceneManager.GetActiveScene().name != "Multiplayer Scene") gameObject.SetActive(false); // To not run in menu
+
         //Setup stuff for neutral ships
         currentShipSpawningTimer = secondsUntilFirstNeutralShipSpawns;
 
