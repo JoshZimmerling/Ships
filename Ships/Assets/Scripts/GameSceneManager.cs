@@ -69,11 +69,11 @@ public class GameSceneManager : Singleton<GameSceneManager>
             PlayerData playerData = client.PlayerObject.GetComponent<PlayerData>();
             
             Transform playersMenuItem = Instantiate(playersInfoPrefab, playersWindow.transform.Find("Players List")).transform;
-            playersMenuItem.Find("Players Color Image").GetComponent<Image>().color = playerData.playerColor;
+            playersMenuItem.Find("Background Color/Players Color Image").GetComponent<Image>().color = playerData.playerColor;
 
-            playersMenuItem.Find("Skull Icon").gameObject.SetActive(false);
+            playersMenuItem.Find("Background Color/Skull Icon").gameObject.SetActive(false);
             playersMenuItem.Find("Background Color").GetComponent<Image>().color = (client.PlayerObject.IsLocalPlayer ? new Color(.6f, .6f, .6f, .6f) : new Color(0, 0, 0, 0));
-            playersMenuItem.Find("Players Name Text").GetComponent<TMP_Text>().text = "- " + playerData.playerUsername.Value;
+            playersMenuItem.Find("Background Color/Players Name Text").GetComponent<TMP_Text>().text = "- " + playerData.playerUsername.Value;
             allPlayersInfoInTabMenu.Add(client.ClientId, playersMenuItem);
         }
         playersWindow.gameObject.SetActive(false);
