@@ -123,9 +123,11 @@ public class Camera_Control : Singleton<Camera_Control>
     {
         if (Shader.GetGlobalInt("_GlobalPointsBufferCount") == 0) return true; // Mothership is dead
 
-        foreach (Vector4 visionCone in Shader.GetGlobalVectorArray("_GlobalPointsBuffer"))
+        Vector4[] visionCones = Shader.GetGlobalVectorArray("_GlobalPointsBuffer");
+
+        for (int i = 0; i < Shader.GetGlobalInt("_GlobalPointsBufferCount"); i++)
         {
-            if (visionCone.w > 0 && ((Vector2)visionCone - (Vector2)obj.position).magnitude < visionCone.w)
+            if (visionCones[i].w > 0 && ((Vector2)visionCones[i] - (Vector2)obj.position).magnitude < visionCones[i].w)
             {
                 return true;
             }
