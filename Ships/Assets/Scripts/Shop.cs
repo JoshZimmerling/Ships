@@ -2,11 +2,12 @@ using TMPro;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
+using static Unity.VisualScripting.Member;
 
 public class Shop : Singleton<Shop>
 {
-    [SerializeField] 
-    private GameObject shopButtonPrefab;
+    [SerializeField] private GameObject shopButtonPrefab;
+    [SerializeField] private GameObject shopThrusterPrefab;
     private bool shopOpen = false;
     private ulong playerId;
     private PlayerData playerData;
@@ -36,6 +37,52 @@ public class Shop : Singleton<Shop>
                 button.Find("Ship Color").GetComponent<Image>().sprite = shipPrefab.Find("Ship Accent").GetComponent<SpriteRenderer>().sprite;
                 button.Find("Ship Color").GetComponent<Image>().color = playerColor;
                 button.Find("Ship Cost").GetComponent<TMP_Text>().text = "" + shipCost;
+
+                foreach (Transform thruster in shipPrefab.transform.Find("Thrusters"))
+                {
+                    ParticleSystem srcThruster = thruster.GetComponent<ParticleSystem>();
+                    ParticleSystem dstThruster = Instantiate(shopThrusterPrefab, button.Find("Ship Thrusters")).GetComponent<ParticleSystem>();
+
+                    // 1. Main Module Settings
+                    ParticleSystem.MainModule srcMain = srcThruster.main;
+                    ParticleSystem.MainModule dstMain = dstThruster.main;
+
+                    dstMain.duration = srcMain.duration;
+                    dstMain.startLifetime = srcMain.startLifetime;
+                    dstMain.startSpeed = srcMain.startSpeed;
+                    dstMain.startSize = srcMain.startSize;
+                    dstMain.simulationSpace = srcMain.simulationSpace;
+
+                    // 2. Emission Module Settings
+                    ParticleSystem.EmissionModule srcEmission = srcThruster.emission;
+                    ParticleSystem.EmissionModule dstEmission = dstThruster.emission;
+
+                    dstEmission.rateOverTime = srcEmission.rateOverTime;
+
+                    // 3. Shape Module Settings
+                    ParticleSystem.ShapeModule srcShape = srcThruster.shape;
+                    ParticleSystem.ShapeModule dstShape = dstThruster.shape;
+
+                    dstShape.shapeType = srcShape.shapeType;
+                    dstShape.radius = srcShape.radius;
+                    dstShape.position = srcShape.position;
+                    dstShape.rotation = srcShape.rotation;
+
+                    // 4. Color Over Lifetime Module Settings
+                    ParticleSystem.ColorOverLifetimeModule srcCLT = srcThruster.colorOverLifetime;
+                    ParticleSystem.ColorOverLifetimeModule dstCLT = dstThruster.colorOverLifetime;
+
+                    dstCLT.color = srcCLT.color;
+
+                    // 5. Size Over Lifetime Module Settings
+                    ParticleSystem.SizeOverLifetimeModule srcSLT = srcThruster.sizeOverLifetime;
+                    ParticleSystem.SizeOverLifetimeModule dstSLT = dstThruster.sizeOverLifetime;
+
+                    dstSLT.size = srcSLT.size;
+
+                    // 6. Start
+                    dstThruster.Play();
+                }
 
                 button.GetComponent<Button>().onClick.AddListener(() => BuyShip(shipPrefab.GetComponent<Ship>().GetShipType(), shipCost));
             }
