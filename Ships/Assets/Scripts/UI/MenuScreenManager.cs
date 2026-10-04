@@ -51,6 +51,7 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
     private Button nextMapButton;
     private Button lastMapButton;
     private TextMeshProUGUI mapName;
+    private Image mapImage;
 
     private 
 
@@ -92,6 +93,7 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
         lastMapButton = transform.Find("Lobby Screen/Map Settings Window/Minimap/Last Map Button").GetComponent<Button>();
         lastMapButton.onClick.AddListener(() => gameSettingsManager.LastMap());
         mapName = transform.Find("Lobby Screen/Map Settings Window/Minimap/Map Name").GetComponent<TextMeshProUGUI>();
+        mapImage = transform.Find("Lobby Screen/Map Settings Window/Minimap").GetComponent<Image>();
 
         //Get player username from save file
         playerName = Save.myGlobalSaveData.username;
@@ -337,18 +339,9 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
             //startGameButton.colors = colors;
         }
 
-        for (int i = 0; i < gameSettingsManager.transform.childCount; i++)
-        {
-            if (i == gameSettingsManager.mapIndex.Value)
-            {
-                gameSettingsManager.transform.GetChild(i).gameObject.SetActive(true);
-                mapName.text = gameSettingsManager.mapsList.PrefabList[i].Prefab.name.ToString();
-            }
-            else
-            {
-                gameSettingsManager.transform.GetChild(i).gameObject.SetActive(false);
-            }
-        }
+        mapName.text = gameSettingsManager.mapsList.PrefabList[gameSettingsManager.mapIndex.Value].Prefab.name.ToString();
+        Debug.Log(mapImage.ToString());
+        mapImage.sprite = gameSettingsManager.mapSprites[gameSettingsManager.mapIndex.Value];
     }
 
     private Player GetLocalPlayer()

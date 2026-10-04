@@ -1,21 +1,21 @@
+using NUnit.Framework;
+using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameSettingsManager : NetworkBehaviour
 {
     public NetworkVariable<int> mapIndex = new NetworkVariable<int>(0, writePerm: NetworkVariableWritePermission.Server);
     public NetworkPrefabsList mapsList;
+    public List<Sprite> mapSprites = new List<Sprite>();
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public override void OnNetworkSpawn()
     {
-        if (!IsHost) return;
         foreach (NetworkPrefab map in mapsList.PrefabList)
         {
-            GameObject obj = Instantiate(map.Prefab);
-            obj.GetComponent<NetworkObject>().Spawn();
-            obj.transform.parent = transform;
-            obj.SetActive(false);
+            mapSprites.Add(map.Prefab.GetComponent<Image>().sprite);
         }
     }
 
