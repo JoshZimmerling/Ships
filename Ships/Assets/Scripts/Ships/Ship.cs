@@ -72,6 +72,10 @@ public class Ship : NetworkBehaviour
                 popupText = Instantiate(popupTextPrefab, transform.position + new Vector3(1, -1f) * correctionFactor * 0.5f, Quaternion.identity).GetComponent<PopupText>();
                 popupText.SetupText("+", Color.greenYellow, 1f);
             }
+            if (IsOwner && shipType == ShipTypes.Mothership && newValue < previousValue)
+            {   // Notify players there mothership is under attack
+                MothershipDamageEffect.Singleton.TakeDamage();
+            }
         };
 
         // If player owned ship
@@ -265,12 +269,20 @@ public class Ship : NetworkBehaviour
     public override void OnNetworkDespawn()
     {
         // Play sound
-        if (Camera_Control.Singleton.IsOnScreen(transform) && Camera_Control.Singleton.IsSeenByMyShips(transform) && deathSound != null)
+        if (((Camera_Control.Singleton.IsOnScreen(transform) && Camera_Control.Singleton.IsSeenByMyShips(transform)) || shipType == ShipTypes.Mothership) && deathSound != null)
         {
-            if (shipType != ShipTypes.GoliathFighter)
-                AudioSource.PlayClipAtPoint(deathSound, Camera.main.transform.position, 0.4f);
-            else
-                AudioSource.PlayClipAtPoint(deathSound, Camera.main.transform.position, 0.2f);
+            switch (shipType)
+            {
+                case ShipTypes.Mothership:
+                    AudioSource.PlayClipAtPoint(deathSound, Camera.main.transform.position, 0.6f);
+                    break;
+                case ShipTypes.GoliathFighter:
+                    AudioSource.PlayClipAtPoint(deathSound, Camera.main.transform.position, 0.2f);
+                    break;
+                default:
+                    AudioSource.PlayClipAtPoint(deathSound, Camera.main.transform.position, 0.4f);
+                    break;
+            }
         }
         // Play effect
         GameObject explosion = Instantiate(explosionPrefab, transform.position, Quaternion.identity);
