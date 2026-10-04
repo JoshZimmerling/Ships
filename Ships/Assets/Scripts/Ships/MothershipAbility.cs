@@ -34,7 +34,8 @@ public class MothershipAbility : NetworkBehaviour
                     ship.OwnerClientId == OwnerClientId &&
                     ship.shipType != ShipTypes.Mothership &&
                     (transform.position - go.transform.position).magnitude + ship.correctionFactor <= mothershipHealRadius &&
-                    ship.currentShipHP.Value != ship.maxShipHP)
+                    ship.currentShipHP.Value != ship.maxShipHP &&
+                    ship.GetType() != typeof(NeutralShip))
                 {
                     ship.currentShipHP.Value = Mathf.Min(ship.currentShipHP.Value + mothershipHealAmountFlat + mothershipHealAmountPercent * ship.maxShipHP, ship.maxShipHP);
                 }
