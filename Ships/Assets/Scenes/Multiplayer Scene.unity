@@ -10165,6 +10165,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: Solar Satellites
       objectReference: {fileID: 0}
+    - target: {fileID: 4320845295125756050, guid: f9a585a1066b8b643adb66b7e75f0698, type: 3}
+      propertyPath: m_InScenePlaced
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4320845295125756050, guid: f9a585a1066b8b643adb66b7e75f0698, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 3272290719
+      objectReference: {fileID: 0}
+    - target: {fileID: 4320845295125756050, guid: f9a585a1066b8b643adb66b7e75f0698, type: 3}
+      propertyPath: SceneMigrationSynchronization
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4320845295125756050, guid: f9a585a1066b8b643adb66b7e75f0698, type: 3}
+      propertyPath: InScenePlacedSourceGlobalObjectIdHash
+      value: 633087689
+      objectReference: {fileID: 0}
     - target: {fileID: 8453350081420294240, guid: f9a585a1066b8b643adb66b7e75f0698, type: 3}
       propertyPath: m_InScenePlaced
       value: 1
