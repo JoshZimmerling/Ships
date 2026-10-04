@@ -121,8 +121,6 @@ public class Camera_Control : Singleton<Camera_Control>
 
     public bool IsSeenByMyShips(Transform obj)
     {
-        Debug.Log(Shader.GetGlobalInt("_GlobalPointsBufferCount"));
-
         if (Shader.GetGlobalInt("_GlobalPointsBufferCount") == 0) return true; // Mothership is dead
 
         foreach (Vector4 visionCone in Shader.GetGlobalVectorArray("_GlobalPointsBuffer"))
