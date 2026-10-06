@@ -1,4 +1,3 @@
-using Unity.Collections.LowLevel.Unsafe;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -15,8 +14,8 @@ public class Ship : NetworkBehaviour
         Drone,
         Scout,
         Mothership,
-        Raptor,
-        Stalker
+        //Raptor,
+        //Stalker
     }
 
     // Ship Variables
