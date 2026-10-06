@@ -26,6 +26,7 @@ public class Ship : NetworkBehaviour
     public readonly NetworkVariable<float> currentShipHP = new NetworkVariable<float>();
     public int correctionFactor; // Opponent range adjustments
     public int visionRange;
+    private bool shipAlreadyBelowZeroHealth = false;
 
     // Ship Components
     private Transform hpBar;
@@ -160,11 +161,14 @@ public class Ship : NetworkBehaviour
     public void DoDamage(float damage, GameObject shipDamageCameFrom)
     {
         currentShipHP.Value -= damage;
-        if (currentShipHP.Value <= 0)
+        if (currentShipHP.Value <= 0 && !shipAlreadyBelowZeroHealth)
+        {
+            shipAlreadyBelowZeroHealth = true;
             if (gameObject.GetComponent<NeutralShip>() != null)
                 gameObject.GetComponent<NeutralShip>().DestroyShip(shipDamageCameFrom);
             else
                 DestroyShip(shipDamageCameFrom);
+        }
     }
 
     [Rpc(SendTo.Server)]
