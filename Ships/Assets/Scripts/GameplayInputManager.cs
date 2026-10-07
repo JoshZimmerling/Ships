@@ -430,6 +430,8 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
     public void ShowLeaveGameButton()
     {
         leaveGameButton.gameObject.SetActive(true);
+        if (NetworkManager.Singleton.ConnectedClientsList.Count <= 1)
+            leaveGameButton.transform.position = new Vector3(leaveGameButton.transform.position.x - 150f, leaveGameButton.transform.position.y, leaveGameButton.transform.position.z);
     }
 
     private void LeaveGame()

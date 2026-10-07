@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using TMPro;
 using Unity.Netcode;
 using UnityEngine;
@@ -9,22 +10,26 @@ public class Shop : Singleton<Shop>
     [SerializeField] private GameObject shopButtonPrefab;
     [SerializeField] private GameObject shopThrusterPrefab;
     private bool shopOpen = false;
-    private ulong playerId;
     private PlayerData playerData;
     private TMP_Text goldDisplay;
+    private TMP_Text shopToggleButtonText;
+
+    List<ParticleSystem> thrusterParticlesSystemList;
 
     float playerGold = 100f;
 
     public void SetupShop()
     {
-        playerId = NetworkManager.Singleton.LocalClientId;
         playerData = NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerData>();
 
         transform.Find("Toggle Window Button").GetComponent<Button>().onClick.AddListener(() => ToggleShop()); ;
 
-        goldDisplay = transform.Find("Money Display").Find("Money Text").GetComponent<TMP_Text>();
+        goldDisplay = transform.Find("Money Display/Money Text").GetComponent<TMP_Text>();
+        shopToggleButtonText = transform.Find("Toggle Window Button/Toggle Shop Text").GetComponent<TMP_Text>();
 
         Color playerColor = playerData.playerColor;
+
+        thrusterParticlesSystemList = new List<ParticleSystem>();
         foreach (NetworkPrefab prefab in GameSceneManager.Singleton.shipList.PrefabList)
         {
             Transform shipPrefab = prefab.Prefab.transform;
@@ -37,6 +42,8 @@ public class Shop : Singleton<Shop>
                 button.Find("Ship Color").GetComponent<Image>().sprite = shipPrefab.Find("Ship Accent").GetComponent<SpriteRenderer>().sprite;
                 button.Find("Ship Color").GetComponent<Image>().color = playerColor;
                 button.Find("Ship Cost").GetComponent<TMP_Text>().text = "" + shipCost;
+
+                button.GetComponent<Button>().onClick.AddListener(() => BuyShip(shipPrefab.GetComponent<Ship>().GetShipType(), shipCost));
 
                 foreach (Transform thruster in shipPrefab.transform.Find("Thrusters"))
                 {
@@ -82,9 +89,8 @@ public class Shop : Singleton<Shop>
 
                     // 6. Start
                     dstThruster.Play();
+                    thrusterParticlesSystemList.Add(dstThruster);
                 }
-
-                button.GetComponent<Button>().onClick.AddListener(() => BuyShip(shipPrefab.GetComponent<Ship>().GetShipType(), shipCost));
             }
         }
 
@@ -122,8 +128,18 @@ public class Shop : Singleton<Shop>
     {
         shopOpen = !shopOpen;
         if (shopOpen)
+        {
             transform.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
+            shopToggleButtonText.text = ">";
+            foreach (ParticleSystem thrusterParticles in thrusterParticlesSystemList)
+                thrusterParticles.Play();
+        }
         else
+        {
             transform.GetComponent<RectTransform>().anchoredPosition = new Vector2(GetComponent<RectTransform>().rect.width, 0);
+            shopToggleButtonText.text = "<";
+            foreach (ParticleSystem thrusterParticles in thrusterParticlesSystemList)
+                thrusterParticles.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+        }
     }
 }
