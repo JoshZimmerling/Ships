@@ -25,6 +25,8 @@ public class Missile : NetworkBehaviour
     private AudioSource inFlightAudio;
     private bool audioPlaying = false;
 
+    private bool destroyInProgress = false;
+
     public override void OnNetworkSpawn()
     {
         //GetComponent<SpriteRenderer>().color = NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerData>().playerColor;
@@ -152,7 +154,9 @@ public class Missile : NetworkBehaviour
 
     public void DestroyMissile()
     {
-        if (!IsHost) return;
+        if (!IsHost || destroyInProgress) return;
+
+        destroyInProgress = true;
 
         GameSceneManager.Singleton.missilesInScene.Remove(gameObject);
         GetComponent<NetworkObject>().Despawn();

@@ -16,6 +16,8 @@ public class Bullet : NetworkBehaviour
 
     [SerializeField] private GameObject explosionPrefab;
 
+    private bool destroyInProgress = false;
+
     void FixedUpdate()
     {
         if (!IsHost || spawnPos == null) return;
@@ -30,7 +32,7 @@ public class Bullet : NetworkBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (!IsHost) return;
+        if (!IsHost || destroyInProgress) return;
 
         if (collision.gameObject.name == "Challenger Shield")
         {
@@ -56,6 +58,7 @@ public class Bullet : NetworkBehaviour
                 return;
         }
 
+        destroyInProgress = true;
         GetComponent<NetworkObject>().Despawn();
         Destroy(this);
     }
