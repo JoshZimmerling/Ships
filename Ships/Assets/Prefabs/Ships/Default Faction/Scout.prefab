@@ -427,6 +427,11 @@ PrefabInstance:
       propertyPath: correctionFactor
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1993422899511674839, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
+      propertyPath: shipDescriptionForUI
+      value: The Scout has a radar that can detect enemy ships even further out than
+        normal vision range.
+      objectReference: {fileID: 0}
     - target: {fileID: 3985505458702315912, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: m_Size.y
       value: 3

@@ -9,13 +9,13 @@ public class Ship : NetworkBehaviour
         Hawk,
         Challenger,
         Goliath,
-        GoliathFighter,
+        Legionnaire,
         Lightning,
         Drone,
         Scout,
         Mothership,
-        //Raptor,
-        //Stalker
+        Raptor,
+        Stalker
     }
 
     // Ship Variables
@@ -44,6 +44,8 @@ public class Ship : NetworkBehaviour
 
     [SerializeField] private GameObject explosionPrefab;
     [SerializeField] private GameObject visionPrefab;
+
+    [SerializeField] public string shipDescriptionForUI;
 
     public override void OnNetworkSpawn()
     {
@@ -97,7 +99,7 @@ public class Ship : NetworkBehaviour
             outlineSprite.color = teamColor;
 
             // Select the ship
-            if (IsOwner && shipType != ShipTypes.GoliathFighter)
+            if (IsOwner && shipType != ShipTypes.Legionnaire)
                 GameplayInputManager.Singleton.AddNewSelectedShip(this);
         }
 
@@ -211,7 +213,7 @@ public class Ship : NetworkBehaviour
             switch (shipScript.shipType)
             {
                 case ShipTypes.Lightning:
-                    if (shipType == ShipTypes.GoliathFighter)
+                    if (shipType == ShipTypes.Legionnaire)
                         shipDamageCameFrom.GetComponent<Movement>().ChangeSpeed(1.25f, 7f);
                     else
                         shipDamageCameFrom.GetComponent<Movement>().ChangeSpeed(1.5f, 7f);
@@ -232,7 +234,7 @@ public class Ship : NetworkBehaviour
             { // If I have no money, loop through my remaining alive ships and if they are all not my mothership, this ship, or Goliath Fighters, we can consider ourselves still alive. Otherwise, kill my mothership
                 foreach (Transform myShip in NetworkManager.Singleton.LocalClient.PlayerObject.transform)
                 {
-                    if (myShip.GetComponent<Ship>().shipType != ShipTypes.Mothership && myShip.GetComponent<Ship>().shipType != ShipTypes.GoliathFighter && myShip != transform)
+                    if (myShip.GetComponent<Ship>().shipType != ShipTypes.Mothership && myShip.GetComponent<Ship>().shipType != ShipTypes.Legionnaire && myShip != transform)
                         return;
                 }
                 playerData.KillMothershipRPC();
@@ -281,7 +283,7 @@ public class Ship : NetworkBehaviour
                 case ShipTypes.Mothership:
                     AudioSource.PlayClipAtPoint(deathSound, Camera.main.transform.position, 0.6f);
                     break;
-                case ShipTypes.GoliathFighter:
+                case ShipTypes.Legionnaire:
                     AudioSource.PlayClipAtPoint(deathSound, Camera.main.transform.position, 0.2f);
                     break;
                 default:

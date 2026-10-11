@@ -334,6 +334,11 @@ PrefabInstance:
       propertyPath: correctionFactor
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 1993422899511674839, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
+      propertyPath: shipDescriptionForUI
+      value: The Challenger has a forward facing shield that will destroy all enemy
+        projectiles it collides with.
+      objectReference: {fileID: 0}
     - target: {fileID: 2470878593215569971, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: m_IsActive
       value: 1

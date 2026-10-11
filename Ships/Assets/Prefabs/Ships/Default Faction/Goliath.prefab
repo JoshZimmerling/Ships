@@ -2230,6 +2230,11 @@ PrefabInstance:
       propertyPath: correctionFactor
       value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 1993422899511674839, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
+      propertyPath: shipDescriptionForUI
+      value: The Goliath spawns in Legionnaires that swarm onto it's targets, causing
+        chaos in the enemy ranks.
+      objectReference: {fileID: 0}
     - target: {fileID: 3985505458702315912, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: m_Size.x
       value: 3

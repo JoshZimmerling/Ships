@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
@@ -29,15 +31,35 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
     private Button updateUsernameButton;
     [SerializeField] private GameObject lobbyRepeaterPrefab;
     private Button createLobbyButton;
+    private Button showShipInfoScreenButton;
     // Lobby screen
     private GameObject lobbyScreen;
     private TextMeshProUGUI lobbyName;
     private GameObject playerViewerObject;
     [SerializeField] private GameObject playerRepeaterPrefab;
     private Button startGameButton;
+    // Ship info screen
+    private GameObject shipInfoScreen;
+    private Button exitShipInfoScreenButton;
+    private int currentViewedFactionIndex = 0;
+    private TextMeshProUGUI factionNameText;
+    private TextMeshProUGUI factionDescriptionText;
+    private Button prevFactionButton;
+    private Button nextFactionButton;
+    [SerializeField] private GameObject shipRepeaterPrefab;
+    private GameObject shipList;
+
+    private GameObject shipDetailsPanel;
+    private TextMeshProUGUI shipNameText;
+    private Image shipImage;
+    private TextMeshProUGUI shipHealthText;
+    private TextMeshProUGUI shipTopSpeedText;
+    private TextMeshProUGUI shipAccelerationText;
+    private TextMeshProUGUI shipTurningSpeedText;
+    private TextMeshProUGUI shipDescriptionText;
 
     // Runtime variables
-    public enum ScreenNames { LobbyListScreen, LobbyScreen };
+    public enum ScreenNames { LobbyListScreen, LobbyScreen, ShipInfoScreen };
     private ScreenNames currentScreen;
 
     public Lobby currentLobby;
@@ -52,8 +74,6 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
     private Button lastMapButton;
     private TextMeshProUGUI mapName;
     private Image mapImage;
-
-    private 
 
     void Start()
     {
@@ -79,6 +99,8 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
         updateUsernameButton.onClick.AddListener(() => OpenUsernamePopup());
         createLobbyButton = transform.Find("Lobby List Screen/Create Lobby Button").GetComponent<Button>();
         createLobbyButton.onClick.AddListener(() => CreateLobby());
+        showShipInfoScreenButton = transform.Find("Lobby List Screen/Ship Info Button").GetComponent<Button>();
+        showShipInfoScreenButton.onClick.AddListener(() => ChangeScreen(ScreenNames.ShipInfoScreen));
 
         nextMapButton = transform.Find("Lobby Screen/Map Settings Window/Minimap/Next Map Button").GetComponent<Button>();
         nextMapButton.onClick.AddListener(() => gameSettingsManager.NextMap());
@@ -94,6 +116,27 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
             Destroy(t.gameObject);
         startGameButton = transform.Find("Lobby Screen/Start Game Button").GetComponent<Button>();
         startGameButton.onClick.AddListener(() => ReadyOrStartGame());
+
+        shipInfoScreen = transform.Find("Ship Info Screen").gameObject;
+        exitShipInfoScreenButton = transform.Find("Ship Info Screen/Back Button").GetComponent<Button>();
+        exitShipInfoScreenButton.onClick.AddListener(() => ChangeScreen(ScreenNames.LobbyListScreen));
+        factionNameText = transform.Find("Ship Info Screen/Faction Panel/Faction Name Text").GetComponentInChildren<TextMeshProUGUI>();
+        factionDescriptionText = transform.Find("Ship Info Screen/Faction Panel/Faction Description Text").GetComponentInChildren<TextMeshProUGUI>();
+        prevFactionButton = transform.Find("Ship Info Screen/Faction Panel/Previous Faction Button").GetComponent<Button>();
+        prevFactionButton.onClick.AddListener(() => SetupShipInfoPanel(-1));
+        nextFactionButton = transform.Find("Ship Info Screen/Faction Panel/Next Faction Button").GetComponent<Button>();
+        nextFactionButton.onClick.AddListener(() => SetupShipInfoPanel(1));
+        shipList = transform.Find("Ship Info Screen/Ships Panel/Ship List").gameObject;
+
+        shipDetailsPanel = transform.Find("Ship Info Screen/Ship Details Panel").gameObject;
+        shipNameText = shipDetailsPanel.transform.Find("Ship Name").GetComponent<TextMeshProUGUI>();
+        shipImage = shipDetailsPanel.transform.Find("Ship Image").GetComponent<Image>();
+        shipHealthText = shipDetailsPanel.transform.Find("Ship Stats Panel/Health Text").GetComponent<TextMeshProUGUI>();
+        shipTopSpeedText = shipDetailsPanel.transform.Find("Ship Stats Panel/Top Speed Text").GetComponent<TextMeshProUGUI>();
+        shipAccelerationText = shipDetailsPanel.transform.Find("Ship Stats Panel/Acceleration Text").GetComponent<TextMeshProUGUI>();
+        shipTurningSpeedText = shipDetailsPanel.transform.Find("Ship Stats Panel/Turning Speed Text").GetComponent<TextMeshProUGUI>();
+        shipDescriptionText = shipDetailsPanel.transform.Find("Ship Stats Panel/Description Text").GetComponent<TextMeshProUGUI>();
+        shipDetailsPanel.SetActive(false);
 
         //Get player username from save file
         playerName = Save.myGlobalSaveData.username;
@@ -165,6 +208,7 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
 
         lobbyListScreen.SetActive(currentScreen == ScreenNames.LobbyListScreen);
         lobbyScreen.SetActive(currentScreen == ScreenNames.LobbyScreen);
+        shipInfoScreen.SetActive(currentScreen == ScreenNames.ShipInfoScreen);
 
         // Does additional code if needed
         switch (currentScreen)
@@ -175,6 +219,11 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
                 usernameText.text = playerName;
                 return;
             case ScreenNames.LobbyScreen:
+                return;
+            case ScreenNames.ShipInfoScreen:
+                //currentViewedFactionIndex = 0; Right now will reopen with the same faction it was last closed with, if we want it reset back to default faction everytime uncomment this
+                SetupShipInfoPanel(0);
+                shipDetailsPanel.SetActive(false);
                 return;
         }
     }
@@ -451,5 +500,61 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
                     return;
             }
         }
+    }
+
+    private void SetupShipInfoPanel(int changeFaction)
+    {
+        //Change factions to view if applicable
+        currentViewedFactionIndex += changeFaction;
+        if (currentViewedFactionIndex < 0)
+            currentViewedFactionIndex = Factions.Singleton.factionList.Count - 1;
+        else if (currentViewedFactionIndex >= Factions.Singleton.factionList.Count)
+            currentViewedFactionIndex = 0;
+
+        Faction factionToSetup = Factions.Singleton.factionList[currentViewedFactionIndex];
+        factionNameText.text = factionToSetup.factionName;
+        factionDescriptionText.text = factionToSetup.factionDescription;
+
+        //Clear out the ships panel of old ship repeaters
+        foreach (Transform shipRepeater in shipList.transform)
+            Destroy(shipRepeater.gameObject);
+
+        //Hide selected ship details
+        shipDetailsPanel.SetActive(false);
+
+        //Populate the ships list
+        foreach (NetworkPrefab prefab in factionToSetup.factionShipList.PrefabList)
+        {
+            GameObject shipRepeater = Instantiate(shipRepeaterPrefab, shipList.transform);
+            shipRepeater.GetComponent<ShipRepeater>().Setup(prefab);
+        }
+    }
+
+    public void SelectedShipChange(NetworkPrefab selectedShipPrefab)
+    {
+        //Set the background colors for all the other repeaters to unselected
+        foreach (Transform shipRepeater in shipList.transform)
+            shipRepeater.GetComponent<ShipRepeater>().Unselect();
+
+        //Setup ship details panel
+        shipDetailsPanel.SetActive(true);
+        Ship selectedShipScript = selectedShipPrefab.Prefab.GetComponent<Ship>();
+        Movement selectedShipMovementScript = selectedShipPrefab.Prefab.GetComponent<Movement>();
+        shipNameText.text = selectedShipScript.GetShipType().ToString();
+        shipImage.sprite = selectedShipPrefab.Prefab.GetComponent<SpriteRenderer>().sprite;
+        shipHealthText.text = "Health: " + selectedShipScript.maxShipHP;
+        if (selectedShipMovementScript != null)
+        {
+            shipTopSpeedText.text = "Top Speed: " + selectedShipMovementScript.GetMaxSpeed();
+            shipAccelerationText.text = "Acceleration: " + selectedShipMovementScript.GetAcceleration();
+            shipTurningSpeedText.text = "Turning Speed: " + (selectedShipMovementScript.GetRotationSpeed() > 999 ? "\u221E" : selectedShipMovementScript.GetRotationSpeed()); //Infinity sign if high rotation speed
+        }
+        else
+        {
+            shipTopSpeedText.text = "Top Speed: N/A";
+            shipAccelerationText.text = "Acceleration: N/A";
+            shipTurningSpeedText.text = "Turning Speed: N/A";
+        }
+        shipDescriptionText.text = selectedShipScript.shipDescriptionForUI;
     }
 }

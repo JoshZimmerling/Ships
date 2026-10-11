@@ -673,7 +673,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5167211490098671168, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: m_Name
-      value: Goliath Fighter
+      value: Legionnaire
       objectReference: {fileID: 0}
     - target: {fileID: 5248488840569974850, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: m_InScenePlaced
@@ -871,6 +871,8 @@ MonoBehaviour:
   deathSound: {fileID: 8300000, guid: 0ea31790a1baca449a58d136452b34f2, type: 3}
   explosionPrefab: {fileID: 2655267347207458446, guid: f5bf9d633df584e48a57e5574cc3d534, type: 3}
   visionPrefab: {fileID: 36688948637157847, guid: 71648fd370415be4cbcb1704939ff6dd, type: 3}
+  shipDescriptionForUI: Legionnaires are tiny ships controlled by the Goliath. Whenever
+    they return to their Goliath, they heal back to full.
   moveSpeed: 15
   moveSpeedRandomness: 2
   orbitRadius: 6

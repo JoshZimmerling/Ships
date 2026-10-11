@@ -32,8 +32,6 @@ public class GameSceneManager : Singleton<GameSceneManager>
     [SerializeField] private GameObject playersInfoPrefab;
     private Dictionary<ulong, Transform> allPlayersInfoInTabMenu;
 
-
-
     protected override void Awake()
     {
         base.Awake();

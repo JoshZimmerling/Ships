@@ -44,7 +44,7 @@ public class SupplyDrop : NetworkBehaviour
         foreach (Collider2D collider in collidersInSupplyDropArea)
         {
             Ship shipScript = collider.gameObject.GetComponent<Ship>();
-            if (shipScript != null && shipScript.shipType != Ship.ShipTypes.GoliathFighter && collider.gameObject.GetComponent<NeutralShip>() == null)
+            if (shipScript != null && shipScript.shipType != Ship.ShipTypes.Legionnaire && collider.gameObject.GetComponent<NeutralShip>() == null)
             {
                 if (!playersToPay.Contains(shipScript.OwnerClientId))
                 {

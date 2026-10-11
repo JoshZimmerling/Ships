@@ -143,6 +143,11 @@ public class Movement : NetworkBehaviour
         return shipTurnRate;
     }
 
+    public float GetAcceleration()
+    {
+        return shipAcceleration;
+    }
+
     public void ChangeSpeed(float speedChange, float duration)
     {
         StartCoroutine(ChangeSpeedCoroutine(speedChange, duration));
