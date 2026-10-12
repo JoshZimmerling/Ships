@@ -58,6 +58,16 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
     private TextMeshProUGUI shipTurningSpeedText;
     private TextMeshProUGUI shipDescriptionText;
 
+    [SerializeField] private GameObject turretRepeaterPrefab;
+    private GameObject turretDetailsPanel;
+    private TextMeshProUGUI turretTypeText;
+    private TextMeshProUGUI turretDmgText;
+    private TextMeshProUGUI turretFireRateText;
+    private TextMeshProUGUI turretProjectileSpeedText;
+    private TextMeshProUGUI turretRangeText;
+    private Transform turretLine_Left;
+    private Transform turretLine_Right;
+
     // Runtime variables
     public enum ScreenNames { LobbyListScreen, LobbyScreen, ShipInfoScreen };
     private ScreenNames currentScreen;
@@ -123,9 +133,9 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
         factionNameText = transform.Find("Ship Info Screen/Faction Panel/Faction Name Text").GetComponentInChildren<TextMeshProUGUI>();
         factionDescriptionText = transform.Find("Ship Info Screen/Faction Panel/Faction Description Text").GetComponentInChildren<TextMeshProUGUI>();
         prevFactionButton = transform.Find("Ship Info Screen/Faction Panel/Previous Faction Button").GetComponent<Button>();
-        prevFactionButton.onClick.AddListener(() => SetupShipInfoPanel(-1));
+        prevFactionButton.onClick.AddListener(() => SetupShipListPanel(-1));
         nextFactionButton = transform.Find("Ship Info Screen/Faction Panel/Next Faction Button").GetComponent<Button>();
-        nextFactionButton.onClick.AddListener(() => SetupShipInfoPanel(1));
+        nextFactionButton.onClick.AddListener(() => SetupShipListPanel(1));
         shipList = transform.Find("Ship Info Screen/Ships Panel/Ship List").gameObject;
 
         shipDetailsPanel = transform.Find("Ship Info Screen/Ship Details Panel").gameObject;
@@ -137,6 +147,16 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
         shipTurningSpeedText = shipDetailsPanel.transform.Find("Ship Stats Panel/Turning Speed Text").GetComponent<TextMeshProUGUI>();
         shipDescriptionText = shipDetailsPanel.transform.Find("Ship Stats Panel/Description Text").GetComponent<TextMeshProUGUI>();
         shipDetailsPanel.SetActive(false);
+
+        turretDetailsPanel = transform.Find("Ship Info Screen/Ship Details Panel/Turret Stats Panel").gameObject;
+        turretTypeText = turretDetailsPanel.transform.Find("Turret Type Text").GetComponent<TextMeshProUGUI>();
+        turretDmgText = turretDetailsPanel.transform.Find("Damage Text").GetComponent<TextMeshProUGUI>();
+        turretFireRateText = turretDetailsPanel.transform.Find("Fire Rate Text").GetComponent<TextMeshProUGUI>();
+        turretProjectileSpeedText = turretDetailsPanel.transform.Find("Projectile Speed Text").GetComponent<TextMeshProUGUI>();
+        turretRangeText = turretDetailsPanel.transform.Find("Range Text").GetComponent<TextMeshProUGUI>();
+        turretLine_Left = shipDetailsPanel.transform.Find("Turret Line - Left");
+        turretLine_Right = shipDetailsPanel.transform.Find("Turret Line - Right");
+        SetTurretLinesVisibility(false);
 
         //Get player username from save file
         playerName = Save.myGlobalSaveData.username;
@@ -222,7 +242,7 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
                 return;
             case ScreenNames.ShipInfoScreen:
                 //currentViewedFactionIndex = 0; Right now will reopen with the same faction it was last closed with, if we want it reset back to default faction everytime uncomment this
-                SetupShipInfoPanel(0);
+                SetupShipListPanel(0);
                 shipDetailsPanel.SetActive(false);
                 return;
         }
@@ -502,7 +522,7 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
         }
     }
 
-    private void SetupShipInfoPanel(int changeFaction)
+    private void SetupShipListPanel(int changeFaction)
     {
         //Change factions to view if applicable
         currentViewedFactionIndex += changeFaction;
@@ -538,6 +558,8 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
 
         //Setup ship details panel
         shipDetailsPanel.SetActive(true);
+        turretDetailsPanel.SetActive(false);
+        SetTurretLinesVisibility(false);
         Ship selectedShipScript = selectedShipPrefab.Prefab.GetComponent<Ship>();
         Movement selectedShipMovementScript = selectedShipPrefab.Prefab.GetComponent<Movement>();
         shipNameText.text = selectedShipScript.GetShipType().ToString();
@@ -556,5 +578,63 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
             shipTurningSpeedText.text = "Turning Speed: N/A";
         }
         shipDescriptionText.text = selectedShipScript.shipDescriptionForUI;
+
+        //Clear out previous turret indicators
+        foreach (Transform turretRepeater in shipImage.transform)
+            Destroy(turretRepeater.gameObject);
+
+        //Setup new turret indicators
+        foreach (Transform turret in selectedShipPrefab.Prefab.transform.Find("Turrets"))
+        {
+            GameObject turretRepeater = Instantiate(turretRepeaterPrefab, shipImage.transform);
+            turretRepeater.GetComponent<TurretRepeater>().Setup(turret);
+        }
+    }
+
+    public void SelectedTurretChange(TurretRepeater selectedTurretRepeater)
+    {
+        //Show and update turret panel
+        turretDetailsPanel.SetActive(true);
+        Turret turretScript = selectedTurretRepeater.turretTransform.GetComponent<Turret>();
+
+        turretTypeText.text = "Turret Type: ";
+        turretDmgText.text = "Dmg / Shot: " + turretScript.GetDamage();
+        turretFireRateText.text = "Shots / Sec: " + turretScript.GetShotsPerSec();
+        turretProjectileSpeedText.text = "Projectile Speed: " + turretScript.GetProjectileSpeed();
+        turretRangeText.text = "Range: " + turretScript.GetRange();
+
+        switch (turretScript.GetTurretType())
+        {
+            case Turret.TurretType.LightTurret:
+                turretTypeText.text += "Light";
+                break;
+            case Turret.TurretType.MediumTurret:
+                turretTypeText.text += "Medium";
+                break;
+            case Turret.TurretType.HeavyTurret:
+                turretTypeText.text += "Heavy";
+                break;
+            case Turret.TurretType.HawkGun:
+                turretTypeText.text += "Heavy";
+                turretRangeText.text += " | " + (turretScript.GetRange() * 2);
+                break;
+            case Turret.TurretType.MissilePods:
+                turretTypeText.text += "Missile";
+                break;
+
+        }
+
+        //Put the turret lines to the right spot
+        SetTurretLinesVisibility(true);
+        turretLine_Left.position = new Vector3(selectedTurretRepeater.transform.position.x, selectedTurretRepeater.transform.position.y, selectedTurretRepeater.transform.position.z + 0.1f);
+        turretLine_Right.position = new Vector3(selectedTurretRepeater.transform.position.x, selectedTurretRepeater.transform.position.y, selectedTurretRepeater.transform.position.z + 0.1f);
+        turretLine_Left.rotation = Quaternion.Euler(0f, 0f, turretScript.GetAimDirection() - 90f + turretScript.GetFiringArc()/2f);
+        turretLine_Right.rotation = Quaternion.Euler(0f, 0f, turretScript.GetAimDirection() - 90f - turretScript.GetFiringArc()/2f);
+    }
+
+    private void SetTurretLinesVisibility(bool visible)
+    {
+        turretLine_Left.gameObject.SetActive(visible);
+        turretLine_Right.gameObject.SetActive(visible);
     }
 }

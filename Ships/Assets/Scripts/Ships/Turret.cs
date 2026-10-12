@@ -342,4 +342,42 @@ public class Turret : NetworkBehaviour
         }
         */
     }
+
+    public TurretType GetTurretType()
+    {
+        return turretType;
+    }
+
+    public string GetDamage()
+    {
+        if (projectiles > 1)
+            return damage + " x" + projectiles;
+        else
+            return damage + "";
+    }
+
+    public float GetShotsPerSec()
+    {
+        return fireRate;
+    }
+
+    public int GetProjectileSpeed()
+    {
+        return projectileSpeed;
+    }
+
+    public float GetRange()
+    {
+        return range;
+    }
+
+    public int GetAimDirection()
+    {
+        return aimDirection;
+    }
+
+    public int GetFiringArc()
+    {
+        return firingArc;
+    }
 }
