@@ -154,8 +154,8 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
         turretFireRateText = turretDetailsPanel.transform.Find("Fire Rate Text").GetComponent<TextMeshProUGUI>();
         turretProjectileSpeedText = turretDetailsPanel.transform.Find("Projectile Speed Text").GetComponent<TextMeshProUGUI>();
         turretRangeText = turretDetailsPanel.transform.Find("Range Text").GetComponent<TextMeshProUGUI>();
-        turretLine_Left = shipDetailsPanel.transform.Find("Turret Line - Left");
-        turretLine_Right = shipDetailsPanel.transform.Find("Turret Line - Right");
+        turretLine_Left = shipImage.transform.Find("Turret Line - Left");
+        turretLine_Right = shipImage.transform.Find("Turret Line - Right");
         SetTurretLinesVisibility(false);
 
         //Get player username from save file
@@ -581,7 +581,8 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
 
         //Clear out previous turret indicators
         foreach (Transform turretRepeater in shipImage.transform)
-            Destroy(turretRepeater.gameObject);
+            if(turretRepeater.GetComponent<TurretRepeater>() != null)
+                Destroy(turretRepeater.gameObject);
 
         //Setup new turret indicators
         foreach (Transform turret in selectedShipPrefab.Prefab.transform.Find("Turrets"))
@@ -626,8 +627,8 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
 
         //Put the turret lines to the right spot
         SetTurretLinesVisibility(true);
-        turretLine_Left.position = new Vector3(selectedTurretRepeater.transform.position.x, selectedTurretRepeater.transform.position.y, selectedTurretRepeater.transform.position.z + 0.1f);
-        turretLine_Right.position = new Vector3(selectedTurretRepeater.transform.position.x, selectedTurretRepeater.transform.position.y, selectedTurretRepeater.transform.position.z + 0.1f);
+        turretLine_Left.position = selectedTurretRepeater.transform.position;
+        turretLine_Right.position = selectedTurretRepeater.transform.position;
         turretLine_Left.rotation = Quaternion.Euler(0f, 0f, turretScript.GetAimDirection() - 90f + turretScript.GetFiringArc()/2f);
         turretLine_Right.rotation = Quaternion.Euler(0f, 0f, turretScript.GetAimDirection() - 90f - turretScript.GetFiringArc()/2f);
     }
