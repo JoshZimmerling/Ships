@@ -67,6 +67,7 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
     private TextMeshProUGUI turretRangeText;
     private Transform turretLine_Left;
     private Transform turretLine_Right;
+    private Transform turretCircle;
 
     // Runtime variables
     public enum ScreenNames { LobbyListScreen, LobbyScreen, ShipInfoScreen };
@@ -156,6 +157,7 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
         turretRangeText = turretDetailsPanel.transform.Find("Range Text").GetComponent<TextMeshProUGUI>();
         turretLine_Left = shipImage.transform.Find("Turret Line - Left");
         turretLine_Right = shipImage.transform.Find("Turret Line - Right");
+        turretCircle = shipImage.transform.Find("Turret Circle");
         SetTurretLinesVisibility(false);
 
         //Get player username from save file
@@ -629,13 +631,30 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
         SetTurretLinesVisibility(true);
         turretLine_Left.position = selectedTurretRepeater.transform.position;
         turretLine_Right.position = selectedTurretRepeater.transform.position;
-        turretLine_Left.rotation = Quaternion.Euler(0f, 0f, turretScript.GetAimDirection() - 90f + turretScript.GetFiringArc()/2f);
-        turretLine_Right.rotation = Quaternion.Euler(0f, 0f, turretScript.GetAimDirection() - 90f - turretScript.GetFiringArc()/2f);
+        turretLine_Left.rotation = Quaternion.Euler(0f, 0f, turretScript.GetAimDirection() - 90f + turretScript.GetFiringArc() / 2f);
+        turretLine_Right.rotation = Quaternion.Euler(0f, 0f, turretScript.GetAimDirection() - 90f - turretScript.GetFiringArc() / 2f);
+
+        //If it is a 360 turret show the circle, and rotate the lines to show direction of fire for missiles
+        if (turretScript.GetFiringArc() == 360)
+        {
+            if (turretScript.GetTurretType() == Turret.TurretType.MissilePods)
+            {
+                turretLine_Left.rotation = Quaternion.Euler(0f, 0f, turretScript.GetAimDirection() - 90f);
+                turretLine_Right.rotation = Quaternion.Euler(0f, 0f, turretScript.GetAimDirection() - 90f);
+            }
+            else
+            {
+                SetTurretLinesVisibility(false);
+            }
+            turretCircle.gameObject.SetActive(true);
+            turretCircle.position = selectedTurretRepeater.transform.position;
+        }
     }
 
     private void SetTurretLinesVisibility(bool visible)
     {
         turretLine_Left.gameObject.SetActive(visible);
         turretLine_Right.gameObject.SetActive(visible);
+        turretCircle.gameObject.SetActive(false);
     }
 }

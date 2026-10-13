@@ -9,6 +9,7 @@ public class ShipRepeater : MonoBehaviour
 
     private TextMeshProUGUI shipName;
     private TextMeshProUGUI shipCost;
+    private GameObject starIcon;
     private Image backgroundColor;
     private Button selectedButton;
 
@@ -19,6 +20,7 @@ public class ShipRepeater : MonoBehaviour
     {
         shipName = transform.Find("Ship Name Text").GetComponent<TextMeshProUGUI>();
         shipCost = transform.Find("Ship Cost Text").GetComponent<TextMeshProUGUI>();
+        starIcon = transform.Find("Ship Star Icon").gameObject;
         backgroundColor = transform.Find("Background Color").GetComponent<Image>();
         selectedButton = GetComponent<Button>();
         selectedButton.onClick.AddListener(() => Select());
@@ -31,9 +33,15 @@ public class ShipRepeater : MonoBehaviour
         shipName.text = shipPrefab.Prefab.GetComponent<Ship>().GetShipType().ToString();
         float shipCostAmount = shipPrefab.Prefab.GetComponent<Ship>().GetShipCost();
         if (shipCostAmount >= 0)
+        {
             shipCost.text = "$" + shipCostAmount.ToString();
-        else
+            starIcon.SetActive(false);
+        }
+        else //This is only running for mothership since mothership cost is -1
+        {
             shipCost.text = "";
+            starIcon.SetActive(true);
+        }
     }
 
     public void Select()
