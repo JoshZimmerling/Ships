@@ -207,22 +207,22 @@ public class Turret : NetworkBehaviour
 
         if (distanceToTarget > range * rangeMod) return false; // Is out of range
 
-        if (firingArc == 360) return true;
-
-        if (turretType == TurretType.HawkGun && !mv.moving) // Checks if in vision for hawk gun
+        if (this.gameObject.GetComponent<NeutralShip>() == null) // If not a neutral ship, check for vision from your allied ships
         {
-            bool inRange = false;
+            bool inVision = false;
             foreach (GameObject ship in GameSceneManager.Singleton.shipsInScene)
             {
                 Ship alliedShip = ship.GetComponent<Ship>();
-                if (alliedShip != null && alliedShip.OwnerClientId == OwnerClientId && (alliedShip.transform.position - target.transform.position).magnitude < alliedShip.visionRange)
+                if (alliedShip != null && alliedShip.OwnerClientId == OwnerClientId && ship.GetComponent<NeutralShip>() == null && (alliedShip.transform.position - target.transform.position).magnitude < alliedShip.visionRange)
                 {
-                    inRange = true;
+                    inVision = true;
                     break;
                 }
             }
-            if (!inRange) return false;
+            if (!inVision) return false;
         }
+
+        if (firingArc == 360) return true;
 
         float dot = Vector2.Dot(delta.normalized, fireVector);
         float halfAngleRad = (firingArc * 0.5f) * Mathf.Deg2Rad;
