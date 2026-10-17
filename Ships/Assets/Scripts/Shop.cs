@@ -28,11 +28,13 @@ public class Shop : Singleton<Shop>
 
         Color playerColor = playerData.playerColor;
 
+        int shipIndexInFaction = 0;
         thrusterParticlesSystemList = new List<ParticleSystem>();
-        foreach (NetworkPrefab prefab in GameSceneManager.Singleton.shipList.PrefabList)
+        foreach (NetworkPrefab prefab in Factions.Singleton.factionList[MenuScreenManager.Singleton.GetSelectedFactionIndex()].factionShipList.PrefabList)
         {
             Transform shipPrefab = prefab.Prefab.transform;
             float shipCost = shipPrefab.GetComponent<Ship>().GetShipCost();
+            int shipIndex = shipIndexInFaction; //Need to make a copy in the loop to avoid passing a reference that gets updated
             if (shipCost > 0)
             {
                 Transform button = Instantiate(shopButtonPrefab, transform.Find("Shop Buttons")).transform;
@@ -42,7 +44,7 @@ public class Shop : Singleton<Shop>
                 button.Find("Ship Color").GetComponent<Image>().color = playerColor;
                 button.Find("Ship Cost").GetComponent<TMP_Text>().text = "" + shipCost;
 
-                button.GetComponent<Button>().onClick.AddListener(() => BuyShip(shipPrefab.GetComponent<Ship>().GetShipType(), shipCost));
+                button.GetComponent<Button>().onClick.AddListener(() => BuyShip(shipIndex, shipCost));
 
                 foreach (Transform thruster in shipPrefab.transform.Find("Thrusters"))
                 {
@@ -91,6 +93,7 @@ public class Shop : Singleton<Shop>
                     thrusterParticlesSystemList.Add(dstThruster);
                 }
             }
+            shipIndexInFaction++;
         }
 
         UpdateGold();
@@ -101,12 +104,12 @@ public class Shop : Singleton<Shop>
         goldDisplay.text = "$" + playerGold;
     }
 
-    private void BuyShip(Ship.ShipTypes type, float cost)
+    private void BuyShip(int shipIndex, float cost)
     {
         if (playerGold >= cost && playerData.IsMothershipAlive())
         {
             playerGold -= cost;
-            playerData.SpawnShipServerRPC(type);
+            playerData.SpawnShipServerRPC(MenuScreenManager.Singleton.GetSelectedFactionIndex(), shipIndex);
         }
 
         UpdateGold();

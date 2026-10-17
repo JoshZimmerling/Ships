@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using TMPro;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
@@ -38,6 +36,17 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
     private GameObject playerViewerObject;
     [SerializeField] private GameObject playerRepeaterPrefab;
     private Button startGameButton;
+    // Map settings
+    private Button nextMapButton;
+    private Button lastMapButton;
+    private TextMeshProUGUI mapName;
+    private Image mapImage;
+    private GameSettingsManager gameSettingsManager;
+    // Player settings
+    private Button choosePrevFactionButton;
+    private Button chooseNextFactionButton;
+    private TextMeshProUGUI chooseFactionNameText;
+    private int currentChosenFactionIndex = 0;
     // Ship info screen
     private GameObject shipInfoScreen;
     private Button exitShipInfoScreenButton;
@@ -80,12 +89,6 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
     bool everyoneReady = false;
     public Color[] playerColors = new Color[12];
 
-    private GameSettingsManager gameSettingsManager;
-    private Button nextMapButton;
-    private Button lastMapButton;
-    private TextMeshProUGUI mapName;
-    private Image mapImage;
-
     void Start()
     {
         // Activate all ui elements (for if they are disabled for testing)
@@ -119,6 +122,12 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
         lastMapButton.onClick.AddListener(() => gameSettingsManager.LastMap());
         mapName = transform.Find("Lobby Screen/Map Settings Window/Minimap/Map Name").GetComponent<TextMeshProUGUI>();
         mapImage = transform.Find("Lobby Screen/Map Settings Window/Minimap").GetComponent<Image>();
+
+        choosePrevFactionButton = transform.Find("Lobby Screen/Player Settings Window/Faction/Choose Previous Faction Button").GetComponent<Button>();
+        choosePrevFactionButton.onClick.AddListener(() => ChooseFaction(-1));
+        chooseNextFactionButton = transform.Find("Lobby Screen/Player Settings Window/Faction/Choose Next Faction Button").GetComponent<Button>();
+        chooseNextFactionButton.onClick.AddListener(() => ChooseFaction(1));
+        chooseFactionNameText = transform.Find("Lobby Screen/Player Settings Window/Faction/Chosen Faction Name").GetComponent<TextMeshProUGUI>();
 
         lobbyScreen = transform.Find("Lobby Screen").gameObject;
         lobbyName = transform.Find("Lobby Screen/Header").GetComponentInChildren<TextMeshProUGUI>();
@@ -241,6 +250,8 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
                 usernameText.text = playerName;
                 return;
             case ScreenNames.LobbyScreen:
+                currentChosenFactionIndex = 0; //Resets chosen faction to default everytime you load this screen. This way when you hop in and out of lobbies will reset the same way in and out of game will reset.
+                ChooseFaction(0);
                 return;
             case ScreenNames.ShipInfoScreen:
                 //currentViewedFactionIndex = 0; Right now will reopen with the same faction it was last closed with, if we want it reset back to default faction everytime uncomment this
@@ -656,5 +667,22 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
         turretLine_Left.gameObject.SetActive(visible);
         turretLine_Right.gameObject.SetActive(visible);
         turretCircle.gameObject.SetActive(false);
+    }
+
+    private void ChooseFaction(int changeFaction)
+    {
+        //Change faction selection
+        currentChosenFactionIndex += changeFaction;
+        if (currentChosenFactionIndex < 0)
+            currentChosenFactionIndex = Factions.Singleton.factionList.Count - 1;
+        else if (currentChosenFactionIndex >= Factions.Singleton.factionList.Count)
+            currentChosenFactionIndex = 0;
+
+        chooseFactionNameText.text = Factions.Singleton.factionList[currentChosenFactionIndex].factionName;
+    }
+
+    public int GetSelectedFactionIndex()
+    {
+        return currentChosenFactionIndex;
     }
 }

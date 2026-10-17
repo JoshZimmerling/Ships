@@ -57,7 +57,7 @@ public class PlayerData : NetworkBehaviour
         GameSceneManager.Singleton.ChangeState(GameState.Gameplay);
 
         if (IsOwner){
-            SpawnShipServerRPC(Ship.ShipTypes.Mothership);
+            SpawnShipServerRPC(MenuScreenManager.Singleton.GetSelectedFactionIndex(), 0); //0 index is always mothership
 
             SetRevealMap(false);
 
@@ -69,17 +69,17 @@ public class PlayerData : NetworkBehaviour
     }
 
     [Rpc(SendTo.Server)]
-    public void SpawnShipServerRPC(Ship.ShipTypes shipType)
+    public void SpawnShipServerRPC(int factionIndex, int shipIndex)
     {
         Vector3 spawnPos;
         Vector2 offset = Random.onUnitCircle * 15;
-        if (shipType == Ship.ShipTypes.Mothership)
+        if (shipIndex == 0) //Mothership
         {
             spawnPos = gameManager.GetOneMothershipSpawnPosition().position;
         }
         else
             spawnPos = motherShip.transform.position + new Vector3(offset.x, offset.y);
-        GameObject ship = Instantiate(gameManager.GetShipPrefab((int)shipType), spawnPos, Quaternion.LookRotation(new Vector3(0, 0, 1), -spawnPos));
+        GameObject ship = Instantiate(Factions.Singleton.factionList[factionIndex].factionShipList.PrefabList[shipIndex].Prefab, spawnPos, Quaternion.LookRotation(new Vector3(0, 0, 1), -spawnPos));
 
         ship.GetComponent<NetworkObject>().SpawnWithOwnership(OwnerClientId);
         ship.transform.parent = transform;

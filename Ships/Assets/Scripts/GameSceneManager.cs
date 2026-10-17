@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using TMPro;
-using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
@@ -9,8 +8,6 @@ using Random = UnityEngine.Random;
 
 public class GameSceneManager : Singleton<GameSceneManager>
 {
-    public NetworkPrefabsList shipList;
-
     private List<Transform> prioPlayerSpawnZones = new List<Transform>();
     private List<Transform> playerSpawnZones = new List<Transform>();
     private int prioritySpawnGroup;
@@ -83,11 +80,6 @@ public class GameSceneManager : Singleton<GameSceneManager>
     {
         foreach (NetworkClient client in NetworkManager.Singleton.ConnectedClientsList)
             client.PlayerObject.GetComponent<PlayerData>().PlayerSetup();
-    }
-
-    public GameObject GetShipPrefab(int shipNum)
-    {
-        return shipList.PrefabList[shipNum].Prefab;
     }
 
     // GameState code

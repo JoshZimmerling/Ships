@@ -5,6 +5,7 @@ public class Ship : NetworkBehaviour
 {
     public enum ShipTypes
     {
+        Mothership,
         Destroyer,
         Hawk,
         Challenger,
@@ -13,7 +14,6 @@ public class Ship : NetworkBehaviour
         Lightning,
         Drone,
         Scout,
-        Mothership,
         Raptor,
         Stalker
     }
@@ -101,6 +101,9 @@ public class Ship : NetworkBehaviour
             // Select the ship
             if (IsOwner && shipType != ShipTypes.Legionnaire)
                 GameplayInputManager.Singleton.AddNewSelectedShip(this);
+
+            //Ship specific setup
+            SetupBasedOnShipType();
         }
 
         // Changes based on ship owner
@@ -109,9 +112,6 @@ public class Ship : NetworkBehaviour
             outlineSprite.gameObject.SetActive(false);
             scoutMarker.SetActive(true);
         }
-
-        //Ship specific setup
-        SetupBasedOnShipType();
     }
 
     public void FixedUpdate()

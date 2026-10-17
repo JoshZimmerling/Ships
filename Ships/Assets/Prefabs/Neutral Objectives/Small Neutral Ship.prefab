@@ -508,7 +508,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NeutralShip
   ShowTopMostFoldoutHeaderGroup: 1
-  shipType: 0
+  shipType: 1
   shipCost: 0
   maxShipHP: 50
   correctionFactor: 1
@@ -516,6 +516,8 @@ MonoBehaviour:
   popupTextPrefab: {fileID: 985385043950032243, guid: a6e0a522c1dcae445a22ddcda9f44396, type: 3}
   deathSound: {fileID: 8300000, guid: 0ea31790a1baca449a58d136452b34f2, type: 3}
   explosionPrefab: {fileID: 2655267347207458446, guid: 012aa9b41ffae0542b98ff29b26f3b1f, type: 3}
+  visionPrefab: {fileID: 0}
+  shipDescriptionForUI: 
   goldOnKill: 10
 --- !u!1001 &5627762304903619451
 PrefabInstance:
