@@ -207,7 +207,7 @@ public class Turret : NetworkBehaviour
 
         if (distanceToTarget > range * rangeMod) return false; // Is out of range
 
-        if (this.gameObject.GetComponent<NeutralShip>() == null) // If not a neutral ship, check for vision from your allied ships
+        if (!isNeutralShipTurret) // If not a neutral ship, check for vision from your allied ships
         {
             bool inVision = false;
             foreach (GameObject ship in GameSceneManager.Singleton.shipsInScene)
