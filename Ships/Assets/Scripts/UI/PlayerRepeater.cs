@@ -25,8 +25,6 @@ public class PlayerRepeater : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
-        MenuScreenManager.Singleton.ChangeScreen(ScreenNames.LobbyScreen);
-
         changeColorButton = transform.Find("Change Color Button").GetComponent<Button>();
         changeColorButton.onClick.AddListener(() => MenuScreenManager.Singleton.ChangePlayerColor(client.PlayerObject.GetComponent<PlayerData>()));
         playerName = transform.Find("Name Bar").Find("Player Name").GetComponent<TextMeshProUGUI>();

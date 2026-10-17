@@ -250,7 +250,7 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
                 usernameText.text = playerName;
                 return;
             case ScreenNames.LobbyScreen:
-                currentChosenFactionIndex = 0; //Resets chosen faction to default everytime you load this screen. This way when you hop in and out of lobbies will reset the same way in and out of game will reset.
+                //currentChosenFactionIndex = 0; //Resets chosen faction to default everytime you load this screen. This way when you hop in and out of lobbies will reset the same way in and out of game will reset.
                 ChooseFaction(0);
                 return;
             case ScreenNames.ShipInfoScreen:
