@@ -12,20 +12,20 @@ public class GameSceneManager : Singleton<GameSceneManager>
     private List<Transform> playerSpawnZones = new List<Transform>();
     private int prioritySpawnGroup;
 
-    public Transform bulletContainer;
+    [SerializeField] public Transform bulletContainer;
     public List<GameObject> shipsInScene = new List<GameObject>();
     public List<GameObject> missilesInScene = new List<GameObject>();
 
-    public NeutralObjectivesManager neutralObjectivesManager;
+    private NeutralObjectivesManager neutralObjectivesManager;
 
     // TODO: make this better
     [SerializeField] public GameObject map;
     [SerializeField] private GameObject gameUI;
     [SerializeField] private GameObject inputManager;
 
-    public GameObject minimap;
-    public GameObject controlsWindow;
-    public GameObject playersWindow;
+    private GameObject minimap;
+    private GameObject controlsWindow;
+    private GameObject playersWindow;
     [SerializeField] private GameObject playersInfoPrefab;
     private Dictionary<ulong, Transform> allPlayersInfoInTabMenu;
 
@@ -56,9 +56,9 @@ public class GameSceneManager : Singleton<GameSceneManager>
 
         minimap = GameObject.Find("Minimap");
         controlsWindow = GameObject.Find("Controls Window");
-        controlsWindow.gameObject.SetActive(false);
+        SetControlsWindowVisibility(false);
         playersWindow = GameObject.Find("Players Window");
-        playersWindow.gameObject.SetActive(true);
+        SetPlayersWindowVisibility(true);
         allPlayersInfoInTabMenu = new Dictionary<ulong, Transform>();
         //Initialize player window
         foreach (NetworkClient client in NetworkManager.Singleton.ConnectedClientsList)
@@ -74,7 +74,7 @@ public class GameSceneManager : Singleton<GameSceneManager>
             playersMenuItem.Find("Background Color/Players Faction Text").GetComponent<TMP_Text>().text = "Faction: " + Factions.Singleton.factionList[playerData.playerFactionIndex.Value].factionName;
             allPlayersInfoInTabMenu.Add(client.ClientId, playersMenuItem);
         }
-        playersWindow.gameObject.SetActive(false);
+        SetPlayersWindowVisibility(false);
     }
 
     public void Start()
@@ -145,6 +145,35 @@ public class GameSceneManager : Singleton<GameSceneManager>
         Transform playerWhoDiedItem = allPlayersInfoInTabMenu.GetValueOrDefault(playerAuthId);
         playerWhoDiedItem.Find("Players Name Text").GetComponent<TMP_Text>().text = "<s>" + playerWhoDiedItem.Find("Players Name Text").GetComponent<TMP_Text>().text + "</s>";
         playerWhoDiedItem.Find("Skull Icon").gameObject.SetActive(true);
+    }
+
+    public NeutralObjectivesManager GetNeutralObjectivesManager()
+    {
+        return neutralObjectivesManager;
+    }
+
+    public void SetControlsWindowVisibility(bool visible)
+    {
+        controlsWindow.gameObject.SetActive(visible);
+    }
+
+    public void SetPlayersWindowVisibility(bool visible)
+    {
+        playersWindow.gameObject.SetActive(visible);
+    }
+
+    public void ChangeMinimapSize(bool increaseSize)
+    {
+        if (increaseSize)
+        {
+            minimap.transform.localScale = new Vector3(3f, 3f, 1);
+            minimap.GetComponent<RectTransform>().anchoredPosition = new Vector3(300f, 75f, 0);
+        }
+        else
+        {
+            minimap.transform.localScale = new Vector3(1.3f, 1.3f, 1);
+            minimap.GetComponent<RectTransform>().anchoredPosition = new Vector3(0, 0, 0);
+        }
     }
 }
 

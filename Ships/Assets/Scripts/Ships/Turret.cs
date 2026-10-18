@@ -219,7 +219,7 @@ public class Turret : NetworkBehaviour
             }
 
             // Check if the supply drop vision enables our ship to shoot
-            if (GameSceneManager.Singleton.neutralObjectivesManager.IsShipVisibleOnSupplyDrop(target))
+            if (GameSceneManager.Singleton.GetNeutralObjectivesManager().IsShipVisibleOnSupplyDrop(target))
                 inVision = true;
 
             if (!inVision) return false;

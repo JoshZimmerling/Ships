@@ -61,7 +61,7 @@ public class NeutralShip : Ship
     {
         if (patrolGroup == null)
         {
-            GameSceneManager.Singleton.neutralObjectivesManager.NeutralShipDeath(spawn);
+            GameSceneManager.Singleton.GetNeutralObjectivesManager().NeutralShipDeath(spawn);
             ReceiveNeutralObjectivePayoutRPC(shipDamageCameFrom.GetComponent<Ship>().OwnerClientId, goldOnKill);
         }
         else

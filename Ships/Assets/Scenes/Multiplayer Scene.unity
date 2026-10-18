@@ -6466,7 +6466,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad1704bf51bdfe24f8de39d1daedaf6d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shipList: {fileID: 11400000, guid: 054080a0e4f99eb4ab6d563770ddbc1a, type: 2}
   bulletContainer: {fileID: 659025215}
   shipsInScene: []
   missilesInScene: []
@@ -10775,6 +10774,14 @@ PrefabInstance:
     - target: {fileID: 4320845295125756050, guid: f9a585a1066b8b643adb66b7e75f0698, type: 3}
       propertyPath: InScenePlacedSourceGlobalObjectIdHash
       value: 633087689
+      objectReference: {fileID: 0}
+    - target: {fileID: 7283445110646890041, guid: f9a585a1066b8b643adb66b7e75f0698, type: 3}
+      propertyPath: m_Size.x
+      value: 1000
+      objectReference: {fileID: 0}
+    - target: {fileID: 7283445110646890041, guid: f9a585a1066b8b643adb66b7e75f0698, type: 3}
+      propertyPath: m_Size.y
+      value: 1000
       objectReference: {fileID: 0}
     - target: {fileID: 8453350081420294240, guid: f9a585a1066b8b643adb66b7e75f0698, type: 3}
       propertyPath: m_InScenePlaced

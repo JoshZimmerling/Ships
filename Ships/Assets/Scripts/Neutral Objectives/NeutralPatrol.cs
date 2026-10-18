@@ -77,7 +77,7 @@ public class NeutralPatrol : NetworkBehaviour
 
     private IEnumerator CleanUpPatrolObject()
     {
-        GameSceneManager.Singleton.neutralObjectivesManager.NeutralPatrolDestroyed(spawn);
+        GameSceneManager.Singleton.GetNeutralObjectivesManager().NeutralPatrolDestroyed(spawn);
         yield return new WaitForSeconds(0.5f);
         Destroy(gameObject);
     }
