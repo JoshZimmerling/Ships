@@ -71,6 +71,7 @@ public class GameSceneManager : Singleton<GameSceneManager>
             playersMenuItem.Find("Background Color/Skull Icon").gameObject.SetActive(false);
             playersMenuItem.Find("Background Color").GetComponent<Image>().color = (client.PlayerObject.IsLocalPlayer ? new Color(.6f, .6f, .6f, .6f) : new Color(0, 0, 0, 0));
             playersMenuItem.Find("Background Color/Players Name Text").GetComponent<TMP_Text>().text = "- " + playerData.playerUsername.Value;
+            playersMenuItem.Find("Background Color/Players Faction Text").GetComponent<TMP_Text>().text = "Faction: " + Factions.Singleton.factionList[playerData.playerFactionIndex.Value].factionName;
             allPlayersInfoInTabMenu.Add(client.ClientId, playersMenuItem);
         }
         playersWindow.gameObject.SetActive(false);

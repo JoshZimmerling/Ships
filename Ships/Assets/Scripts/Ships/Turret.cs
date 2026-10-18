@@ -205,7 +205,7 @@ public class Turret : NetworkBehaviour
 
         if (distanceToTarget > range * rangeMod) return false; // Is out of range
 
-        if (!isNeutralShipTurret) // If not a neutral ship, check for being in vision (including from your allied ships)
+        if (!isNeutralShipTurret) // If not a neutral ship, check for being in vision (including from your allied ships and from supply drop vision)
         {
             bool inVision = false;
             foreach (GameObject ship in GameSceneManager.Singleton.shipsInScene)
@@ -219,7 +219,8 @@ public class Turret : NetworkBehaviour
             }
 
             // Check if the supply drop vision enables our ship to shoot
-            if (GameSceneManager.Singleton.neutralObjectivesManager.IsShipVisibleOnSupplyDrop(target)) inVision = true;
+            if (GameSceneManager.Singleton.neutralObjectivesManager.IsShipVisibleOnSupplyDrop(target))
+                inVision = true;
 
             if (!inVision) return false;
         }

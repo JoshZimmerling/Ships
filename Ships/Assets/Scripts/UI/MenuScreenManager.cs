@@ -679,6 +679,7 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
             currentChosenFactionIndex = 0;
 
         chooseFactionNameText.text = Factions.Singleton.factionList[currentChosenFactionIndex].factionName;
+        NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerData>().playerFactionIndex.Value = currentChosenFactionIndex;
     }
 
     public int GetSelectedFactionIndex()

@@ -1,10 +1,8 @@
 using TMPro;
 using Unity.Netcode;
 using Unity.Services.Lobbies;
-using Unity.Services.Lobbies.Models;
 using UnityEngine;
 using UnityEngine.UI;
-using static MenuScreenManager;
 
 public class PlayerRepeater : MonoBehaviour
 {

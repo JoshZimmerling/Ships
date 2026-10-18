@@ -16,6 +16,8 @@ public class PlayerData : NetworkBehaviour
     public NetworkVariable<FixedString32Bytes> playerUsername = new NetworkVariable<FixedString32Bytes>("Test", writePerm: NetworkVariableWritePermission.Owner);
     public NetworkVariable<bool> playerReady = new NetworkVariable<bool>(false, writePerm: NetworkVariableWritePermission.Owner);
 
+    public NetworkVariable<int> playerFactionIndex = new NetworkVariable<int>(0, writePerm: NetworkVariableWritePermission.Owner);
+
     public override void OnNetworkSpawn()
     {
         playerColorIndex.OnValueChanged += (int previousValue, int newValue) =>
