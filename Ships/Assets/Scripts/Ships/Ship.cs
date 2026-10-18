@@ -14,8 +14,11 @@ public class Ship : NetworkBehaviour
         Lightning,
         Drone,
         Scout,
+        Saber,
+        Stalker,
+        Ghost,
+        Dagger,
         Raptor,
-        Stalker
     }
 
     // Ship Variables

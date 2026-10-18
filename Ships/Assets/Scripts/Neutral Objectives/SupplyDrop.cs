@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class SupplyDrop : NetworkBehaviour
 {
+    private Transform spawn;
     private float remainingTime;
     private float initialLifetime;
     private int totalPayout;
@@ -14,8 +15,9 @@ public class SupplyDrop : NetworkBehaviour
 
     [SerializeField] GameObject popupTextPrefab;
 
-    public void Setup(float lifetime, int payout)
+    public void Setup(Transform spawnObject, float lifetime, int payout)
     {
+        spawn = spawnObject;
         initialLifetime = lifetime;
         remainingTime = lifetime;
         totalPayout = payout;
@@ -61,7 +63,7 @@ public class SupplyDrop : NetworkBehaviour
             }
         }
 
-        GameObject.Find("Neutral Objectives Manager").GetComponent<NeutralObjectivesManager>().SupplyDropCompleted();
+        GameObject.Find("Neutral Objectives Manager").GetComponent<NeutralObjectivesManager>().SupplyDropCompleted(spawn);
 
         GetComponent<NetworkObject>().Despawn();
         Destroy(gameObject);

@@ -1,7 +1,5 @@
 using Unity.Netcode;
-using Unity.VisualScripting;
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
 
 public class Turret : NetworkBehaviour
 {
@@ -207,7 +205,7 @@ public class Turret : NetworkBehaviour
 
         if (distanceToTarget > range * rangeMod) return false; // Is out of range
 
-        if (!isNeutralShipTurret) // If not a neutral ship, check for vision from your allied ships
+        if (!isNeutralShipTurret) // If not a neutral ship, check for being in vision (including from your allied ships)
         {
             bool inVision = false;
             foreach (GameObject ship in GameSceneManager.Singleton.shipsInScene)
@@ -219,6 +217,10 @@ public class Turret : NetworkBehaviour
                     break;
                 }
             }
+
+            // Check if the supply drop vision enables our ship to shoot
+            if (GameSceneManager.Singleton.neutralObjectivesManager.IsShipVisibleOnSupplyDrop(target)) inVision = true;
+
             if (!inVision) return false;
         }
 

@@ -21,8 +21,9 @@ public class NeutralObjectivesManager : NetworkBehaviour
     [SerializeField] float supplyDropLifetime = 60;
     [SerializeField] int supplyDropTotalPayout = 50;
     private float currentSupplyDropSpawningTimer;
-    private bool supplyDropCurrentlyOnMap;
-    private List<Transform> supplyDropPositions; //Dictionary for referencing if that spawn position currently has a supply drop in it
+    private Dictionary<Transform, bool> supplyDropPositions; //Dictionary for referencing if that spawn position currently has a supply drop in it
+    [SerializeField] int maxSupplyDrops = 1;
+    private int currentNumOfSupplyDrops = 0;
 
     [SerializeField] List<GameObject> neutralPatrolPrefabs;
     [SerializeField] List<int> neutralPatrolSpawnRates;
@@ -52,14 +53,16 @@ public class NeutralObjectivesManager : NetworkBehaviour
 
         //Setup stuff for supply drops
         currentSupplyDropSpawningTimer = secondsUntilFirstSupplyDropSpawns;
-        supplyDropCurrentlyOnMap = false;
 
-        supplyDropPositions = new List<Transform>();
+        supplyDropPositions = new Dictionary<Transform, bool>();
         foreach (Transform spawnLocation in GameObject.Find("Supply Drop Locations").transform)
         {
             spawnLocation.GetComponent<SpriteRenderer>().enabled = false;
-            supplyDropPositions.Add(spawnLocation);
+            supplyDropPositions.Add(spawnLocation, false);
         }
+
+        if (maxSupplyDrops > supplyDropPositions.Count)
+            maxSupplyDrops = supplyDropPositions.Count;
 
         //Setup stuff for neutral patrols
         currentPatrolSpawningTimer = secondsUntilFirstNeutralPatrolSpawns;
@@ -127,14 +130,31 @@ public class NeutralObjectivesManager : NetworkBehaviour
 
         //Supply Drop Spawn Check
         currentSupplyDropSpawningTimer -= Time.deltaTime;
-        if (currentSupplyDropSpawningTimer < 0 && !supplyDropCurrentlyOnMap)
+        if (currentSupplyDropSpawningTimer < 0)
         {
-            supplyDropCurrentlyOnMap = true;
+            // Checks if more supply drops are needed
+            if (currentNumOfSupplyDrops < maxSupplyDrops)
+            {
+                // Checks for unused spawn
+                Transform spawnPos = null;
+                int r = 0;
+                while (spawnPos == null)
+                {
+                    r = Random.Range(0, supplyDropPositions.Count);
+                    if (!supplyDropPositions.Values.ElementAt(r))
+                        spawnPos = supplyDropPositions.Keys.ElementAt(r);
+                }
 
-            Transform spawnLoc = supplyDropPositions[Random.Range(0, supplyDropPositions.Count)];
-            GameObject spawnedSupplyDrop = Instantiate(supplyDropPrefab, spawnLoc.position, Quaternion.identity);
-            spawnedSupplyDrop.GetComponent<NetworkObject>().SpawnWithOwnership(OwnerClientId);
-            spawnedSupplyDrop.GetComponent<SupplyDrop>().Setup(supplyDropLifetime, supplyDropTotalPayout);
+                GameObject spawnedSupplyDrop = Instantiate(supplyDropPrefab, spawnPos.position, Quaternion.identity);
+                spawnedSupplyDrop.GetComponent<NetworkObject>().SpawnWithOwnership(OwnerClientId);
+                spawnedSupplyDrop.transform.parent = transform;
+
+                supplyDropPositions[spawnPos] = true;
+                spawnedSupplyDrop.GetComponent<SupplyDrop>().Setup(spawnPos, supplyDropLifetime, supplyDropTotalPayout);
+
+                currentNumOfSupplyDrops++;
+                currentSupplyDropSpawningTimer = secondsBetweenSupplyDropSpawns;
+            }
         }
 
         //Neutral Patrol Spawn Check
@@ -187,21 +207,39 @@ public class NeutralObjectivesManager : NetworkBehaviour
     public void NeutralShipDeath(Transform spawn)
     {
         neutralShipSpawnPositions[spawn] = false;
-        if (currentNumOfNeutralShips == maxNeutralShips && currentShipSpawningTimer < 5f)
-            currentShipSpawningTimer = 5f; //Give a cooldown on respawning if we were previously at the max number of ships
+        if (currentNumOfNeutralShips == maxNeutralShips && currentShipSpawningTimer < (secondsBetweenNeutralShipSpawns / 3f))
+            currentShipSpawningTimer = secondsBetweenNeutralShipSpawns / 3f; //Give a cooldown on respawning if we were previously at the max number of ships
         currentNumOfNeutralShips--;
     }
 
-    public void SupplyDropCompleted()
+    public void SupplyDropCompleted(Transform spawn)
     {
-        currentSupplyDropSpawningTimer = secondsBetweenSupplyDropSpawns;
-        supplyDropCurrentlyOnMap = false;
+        supplyDropPositions[spawn] = false;
+        if (currentNumOfSupplyDrops == maxSupplyDrops && currentSupplyDropSpawningTimer < (secondsBetweenSupplyDropSpawns / 2f))
+            currentSupplyDropSpawningTimer = (secondsBetweenSupplyDropSpawns / 2f); //Give a cooldown on respawning if we were previously at the max number of ships
+        currentNumOfSupplyDrops--;
+    }
+
+    public bool IsShipVisibleOnSupplyDrop(GameObject ship)
+    {
+        if (currentNumOfSupplyDrops <= 0)
+            return false;
+
+        // Loop through each supply drop location, if it has an active supply drop and that supply drop has vision of the ship return true
+        for (int i = 0; i < supplyDropPositions.Count; i++)
+        {
+            if (supplyDropPositions.Values.ElementAt(i))
+                if ((ship.transform.position - supplyDropPositions.Keys.ElementAt(i).position).magnitude < supplyDropPrefab.GetComponent<VisionCone>().visionRange)
+                    return true;
+        }
+
+        return false;
     }
 
     public void NeutralPatrolDestroyed(Transform spawn)
     {
         neutralPatrolSpawnPositions[spawn] = false;
-        if (currentNumOfNeutralPatrols == maxNeutralPatrols && currentPatrolSpawningTimer < secondsBetweenNeutralPatrolSpawns/2f)
+        if (currentNumOfNeutralPatrols == maxNeutralPatrols && currentPatrolSpawningTimer < (secondsBetweenNeutralPatrolSpawns / 2f))
             currentPatrolSpawningTimer = secondsBetweenNeutralPatrolSpawns / 2f; //Give a cooldown on respawning if we were previously at the max number of patrols
         currentNumOfNeutralPatrols--;
     }
