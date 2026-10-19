@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class GameSettingsManager : NetworkBehaviour
 {
-    public NetworkVariable<int> mapIndex = new NetworkVariable<int>(0, writePerm: NetworkVariableWritePermission.Server);
+    private NetworkVariable<int> mapIndex = new NetworkVariable<int>(0, writePerm: NetworkVariableWritePermission.Server);
     public NetworkPrefabsList mapsList;
     public List<Sprite> mapSprites = new List<Sprite>();
 
@@ -21,13 +21,23 @@ public class GameSettingsManager : NetworkBehaviour
 
     public void NextMap()
     {
-        mapIndex.Value = mapIndex.Value + 1;
+        mapIndex.Value++;
         if (mapIndex.Value >= mapsList.PrefabList.Count) mapIndex.Value = 0;
     }
 
     public void LastMap()
     {
-        mapIndex.Value = mapIndex.Value - 1;
-        if (mapIndex.Value <= 0) mapIndex.Value = mapsList.PrefabList.Count;
+        mapIndex.Value--;
+        if (mapIndex.Value <= 0) mapIndex.Value = mapsList.PrefabList.Count - 1;
+    }
+
+    public GameObject GetSelectedMapPrefab()
+    {
+        return mapsList.PrefabList[mapIndex.Value].Prefab;
+    }
+
+    public Sprite GetSelectedMapImage()
+    {
+        return mapSprites[mapIndex.Value];
     }
 }

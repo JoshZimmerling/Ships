@@ -423,8 +423,8 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
 
         nextMapButton.gameObject.SetActive(NetworkManager.Singleton.IsHost);
         lastMapButton.gameObject.SetActive(NetworkManager.Singleton.IsHost);
-        mapName.text = gameSettingsManager.mapsList.PrefabList[gameSettingsManager.mapIndex.Value].Prefab.name.ToString();
-        mapImage.sprite = gameSettingsManager.mapSprites[gameSettingsManager.mapIndex.Value];
+        mapName.text = gameSettingsManager.GetSelectedMapPrefab().name.ToString();
+        mapImage.sprite = gameSettingsManager.GetSelectedMapImage();
     }
 
     private Player GetLocalPlayer()
