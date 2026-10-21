@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 5538771109099360486}
   - component: {fileID: 4270709683715836144}
   m_Layer: 0
-  m_Name: Scout Radar
+  m_Name: Radar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -417,7 +417,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1993422899511674839, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: shipType
-      value: 8
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 1993422899511674839, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: maxShipHP

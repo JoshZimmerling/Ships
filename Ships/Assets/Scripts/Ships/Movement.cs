@@ -210,14 +210,26 @@ public class Movement : NetworkBehaviour
     private IEnumerator ChangeSpeedCoroutine(float speedChange, float time)
     {
         shipMaxSpeed *= speedChange;
+        currentAllowedMaxSpeed *= speedChange;
         shipTurnRate *= speedChange;
+        currentAllowedMaxRotationSpeed *= speedChange;
+        if (currentAllowedMaxSpeed > shipMaxSpeed)
+            currentAllowedMaxSpeed = shipMaxSpeed;
+        if (currentAllowedMaxRotationSpeed > shipTurnRate)
+            currentAllowedMaxRotationSpeed = shipTurnRate;
         ShowPopupTextRPC(speedChange);
 
         yield return new WaitForSeconds(time);
 
         shipMaxSpeed *= 1f/speedChange;
+        currentAllowedMaxSpeed *= 1f/speedChange;
         shipTurnRate *= 1f/speedChange;
-        ShowPopupTextRPC(speedChange);
+        currentAllowedMaxRotationSpeed *= 1f/speedChange;
+        if (currentAllowedMaxSpeed > shipMaxSpeed)
+            currentAllowedMaxSpeed = shipMaxSpeed;
+        if (currentAllowedMaxRotationSpeed > shipTurnRate)
+            currentAllowedMaxRotationSpeed = shipTurnRate;
+        ShowPopupTextRPC(1f/speedChange);
     }
 
     [Rpc(SendTo.ClientsAndHost)]

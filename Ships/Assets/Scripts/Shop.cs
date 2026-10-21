@@ -38,7 +38,7 @@ public class Shop : Singleton<Shop>
             if (shipCost > 0)
             {
                 Transform button = Instantiate(shopButtonPrefab, transform.Find("Shop Buttons")).transform;
-                button.Find("Ship Name").GetComponent<TMP_Text>().text = shipPrefab.GetComponent<Ship>().GetShipType().ToString();
+                button.Find("Ship Name").GetComponent<TMP_Text>().text = shipPrefab.name;
                 button.Find("Ship Sprite").GetComponent<Image>().sprite = shipPrefab.GetComponent<SpriteRenderer>().sprite;
                 button.Find("Ship Color").GetComponent<Image>().sprite = shipPrefab.Find("Ship Accent").GetComponent<SpriteRenderer>().sprite;
                 button.Find("Ship Color").GetComponent<Image>().color = playerColor;

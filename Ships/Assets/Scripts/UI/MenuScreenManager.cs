@@ -575,7 +575,7 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
         SetTurretLinesVisibility(false);
         Ship selectedShipScript = selectedShipPrefab.Prefab.GetComponent<Ship>();
         Movement selectedShipMovementScript = selectedShipPrefab.Prefab.GetComponent<Movement>();
-        shipNameText.text = selectedShipScript.GetShipType().ToString();
+        shipNameText.text = selectedShipPrefab.Prefab.name;
         shipImage.sprite = selectedShipPrefab.Prefab.GetComponent<SpriteRenderer>().sprite;
         shipHealthText.text = "Health: " + selectedShipScript.maxShipHP;
         if (selectedShipMovementScript != null)

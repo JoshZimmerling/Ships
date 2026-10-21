@@ -7,18 +7,20 @@ public class Ship : NetworkBehaviour
     {
         Mothership,
         Destroyer,
-        Hawk,
         Challenger,
         Goliath,
         Legionnaire,
+        Hawk,
         Lightning,
-        Drone,
         Scout,
+        Drone,
+        Warp_Star,
         Saber,
-        Stalker,
-        Ghost,
         Dagger,
+        Stalker,
         Raptor,
+        Ghost,
+        Black_Star,
     }
 
     // Ship Variables
@@ -49,6 +51,8 @@ public class Ship : NetworkBehaviour
     [SerializeField] private GameObject visionPrefab;
 
     [SerializeField] public string shipDescriptionForUI;
+
+    GameObject radar = null;
 
     public override void OnNetworkSpawn()
     {
@@ -133,8 +137,12 @@ public class Ship : NetworkBehaviour
         switch (shipType)
         {
             case ShipTypes.Scout:
+            case ShipTypes.Ghost:
                 if (IsOwner)
-                    transform.Find("Scout Radar").gameObject.SetActive(true);
+                {
+                    radar = transform.Find("Radar").gameObject;
+                    radar.SetActive(true);
+                }
                 break;
             case ShipTypes.Mothership:
                 foreach (NetworkClient client in NetworkManager.Singleton.ConnectedClientsList)
@@ -146,20 +154,16 @@ public class Ship : NetworkBehaviour
 
     public void UpdateBasedOnShipType()
     {
-        /*
         switch (shipType)
         {
-            case ShipTypes.Mothership:
-
-            case ShipTypes.Goliath:
-                if (!IsHost) return;
-
-                if (currentShipHP.Value < maxShipHP)
-                    currentShipHP.Value += 1 * Time.deltaTime;
+            case ShipTypes.Ghost:
+                if (gameObject.GetComponent<Movement>().moving && !radar.activeSelf)
+                    radar.SetActive(true);
+                else if (!gameObject.GetComponent<Movement>().moving && radar.activeSelf)
+                    radar.SetActive(false);
                 break;
         
         }
-        */
     }
 
     public void DoDamage(float damage, GameObject shipDamageCameFrom)

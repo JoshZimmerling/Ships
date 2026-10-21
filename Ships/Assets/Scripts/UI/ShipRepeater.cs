@@ -30,7 +30,7 @@ public class ShipRepeater : MonoBehaviour
     {
         shipPrefab = ship;
 
-        shipName.text = shipPrefab.Prefab.GetComponent<Ship>().GetShipType().ToString();
+        shipName.text = shipPrefab.Prefab.name;
         float shipCostAmount = shipPrefab.Prefab.GetComponent<Ship>().GetShipCost();
         if (shipCostAmount >= 0)
         {

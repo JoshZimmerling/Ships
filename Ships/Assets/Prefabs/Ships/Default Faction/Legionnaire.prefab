@@ -862,7 +862,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Fighter
   ShowTopMostFoldoutHeaderGroup: 1
-  shipType: 5
+  shipType: 4
   shipCost: 0
   maxShipHP: 5
   correctionFactor: 0
