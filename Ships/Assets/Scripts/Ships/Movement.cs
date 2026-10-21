@@ -209,7 +209,6 @@ public class Movement : NetworkBehaviour
 
     private IEnumerator ChangeSpeedCoroutine(float speedChange, float time)
     {
-        
         shipMaxSpeed *= speedChange;
         shipTurnRate *= speedChange;
         ShowPopupTextRPC(speedChange);
