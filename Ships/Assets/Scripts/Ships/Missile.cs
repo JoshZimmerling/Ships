@@ -6,6 +6,8 @@ public class Missile : NetworkBehaviour
 {
     float dmg;
     float bulletSpeed;
+    float slowShipPercentage;
+    float slowShipDuration;
     float missileTurnRate;
     float missileLifetime = 1f; //Temporary to cause it to not despawn while getting setup
     float missileLifetimeMax = 1f; //Temporary to cause it to not despawn while getting setup
@@ -90,15 +92,19 @@ public class Missile : NetworkBehaviour
         {
             if (isFromNeutralShip)
                 return;
-            else
-                collision.GetComponent<NeutralShip>().DoDamage(dmg, parentShip);
+
+            collision.GetComponent<NeutralShip>().DoDamage(dmg, parentShip);
+            if (slowShipDuration > 0 && slowShipPercentage > 0)
+                collision.GetComponent<Movement>().ChangeSpeed(slowShipPercentage, slowShipDuration);
         }
         else if (collision.GetComponent<Ship>() != null)
         { 
             if (collision.GetComponent<Ship>().OwnerClientId == this.OwnerClientId && !isFromNeutralShip)
                 return;
-            else
-                collision.GetComponent<Ship>().DoDamage(dmg, parentShip);
+
+            collision.GetComponent<Ship>().DoDamage(dmg, parentShip);
+            if (slowShipDuration > 0 && slowShipPercentage > 0)
+                collision.GetComponent<Movement>().ChangeSpeed(slowShipPercentage, slowShipDuration);
         }
         else if (collision.GetComponent<Missile>() != null)
         {
@@ -122,13 +128,15 @@ public class Missile : NetworkBehaviour
     }
     */
 
-    public void SetupMissile(float damage, float speed, float turnRate, float lifetime, Transform target, GameObject shipWhoShot)
+    public void SetupMissile(float damage, float speed, float turnRate, float lifetime, float slowPercentage, float slowDuration, Transform target, GameObject shipWhoShot)
     {
         dmg = damage;
         bulletSpeed = speed;
         missileTurnRate = turnRate;
         missileLifetime = lifetime;
         missileLifetimeMax = lifetime;
+        slowShipPercentage = 1f - (slowPercentage / 100f);
+        slowShipDuration = slowDuration;
         missileTarget = target;
         parentShip = shipWhoShot;
         isFromNeutralShip = shipWhoShot.GetComponent<NeutralShip>() != null;

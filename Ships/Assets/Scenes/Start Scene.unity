@@ -447,8 +447,9 @@ MonoBehaviour:
     factionDescription: The Astral Federation is a generalist faction with a well
       rounded fleet.
     factionShipList: {fileID: 11400000, guid: 054080a0e4f99eb4ab6d563770ddbc1a, type: 2}
-  - factionName: Stealth
-    factionDescription: This is the stealth faction placeholder description text
+  - factionName: Galactic Syndicate
+    factionDescription: The Galactic Syndicate relies on stealth and swift operations,
+      out maneuvering their opponents to secure victory.
     factionShipList: {fileID: 11400000, guid: fc3ec19383f47cb468b3e28be2bcea97, type: 2}
 --- !u!1 &1280495969
 GameObject:

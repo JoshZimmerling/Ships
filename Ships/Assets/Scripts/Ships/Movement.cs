@@ -209,20 +209,23 @@ public class Movement : NetworkBehaviour
 
     private IEnumerator ChangeSpeedCoroutine(float speedChange, float time)
     {
+        
         shipMaxSpeed *= speedChange;
         shipTurnRate *= speedChange;
-        ShowPopupTextRPC(true);
+        ShowPopupTextRPC(speedChange);
 
         yield return new WaitForSeconds(time);
 
         shipMaxSpeed *= 1f/speedChange;
         shipTurnRate *= 1f/speedChange;
-        ShowPopupTextRPC(false);
+        ShowPopupTextRPC(speedChange);
     }
 
     [Rpc(SendTo.ClientsAndHost)]
-    public void ShowPopupTextRPC(bool speedUp)
+    public void ShowPopupTextRPC(float speedChange)
     {
+        bool speedUp = speedChange > 1f;
+
         string text = speedUp ? "^" : "-";
         Color textColor = speedUp ? Color.cornflowerBlue : Color.orangeRed;
         if (Camera_Control.Singleton.IsOnScreen(transform) && Camera_Control.Singleton.IsSeenByMyShips(transform))

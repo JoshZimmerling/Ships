@@ -5,6 +5,8 @@ public class Bullet : NetworkBehaviour
 {
     float dmg;
     float bulletSpeed;
+    float slowShipPercentage;
+    float slowShipDuration;
 
     Vector2 spawnPos;
     float sqrRange;
@@ -43,14 +45,19 @@ public class Bullet : NetworkBehaviour
         {
             if (isFromNeutralShip)
                 return;
+
             collision.GetComponent<NeutralShip>().DoDamage(dmg, parentShip);
+            if (slowShipDuration > 0 && slowShipPercentage > 0)
+                collision.GetComponent<Movement>().ChangeSpeed(slowShipPercentage, slowShipDuration);
         }
         else if (collision.GetComponent<Ship>() != null)
         {
             if (collision.GetComponent<Ship>().OwnerClientId == this.OwnerClientId && !isFromNeutralShip)
                 return;
-            else
-                collision.GetComponent<Ship>().DoDamage(dmg, parentShip);
+            
+            collision.GetComponent<Ship>().DoDamage(dmg, parentShip);
+            if (slowShipDuration > 0 && slowShipPercentage > 0)
+                collision.GetComponent<Movement>().ChangeSpeed(slowShipPercentage, slowShipDuration);
         }
         else if (collision.GetComponent<Missile>() != null)
         {
@@ -63,13 +70,15 @@ public class Bullet : NetworkBehaviour
         Destroy(this);
     }
 
-    public void SetupBullet(float range, float damage, float speed, Turret.TurretType type, GameObject shipWhoShot)
+    public void SetupBullet(float range, float damage, float speed, float slowPercentage, float slowDuration, Turret.TurretType type, GameObject shipWhoShot)
     {
         spawnPos = transform.position;
         dmg = damage;
         range = range + 5;
         sqrRange = range * range;
         bulletSpeed = speed;
+        slowShipPercentage = 1f - (slowPercentage / 100f);
+        slowShipDuration = slowDuration;
         turretType = type;
         parentShip = shipWhoShot;
         isFromNeutralShip = shipWhoShot.GetComponent<NeutralShip>() != null;
