@@ -74,13 +74,15 @@ public class PlayerData : NetworkBehaviour
     public void SpawnShipServerRPC(int factionIndex, int shipIndex)
     {
         Vector3 spawnPos;
-        Vector2 offset = Random.onUnitCircle * 15;
         if (shipIndex == 0) //Mothership
         {
             spawnPos = gameManager.GetOneMothershipSpawnPosition().position;
         }
         else
+        {
+            Vector2 offset = Random.onUnitCircle * GetMothership().correctionFactor * 1.5f;
             spawnPos = motherShip.transform.position + new Vector3(offset.x, offset.y);
+        }
         GameObject ship = Instantiate(Factions.Singleton.factionList[factionIndex].factionShipList.PrefabList[shipIndex].Prefab, spawnPos, Quaternion.LookRotation(new Vector3(0, 0, 1), -spawnPos));
 
         ship.GetComponent<NetworkObject>().SpawnWithOwnership(OwnerClientId);
@@ -111,7 +113,7 @@ public class PlayerData : NetworkBehaviour
     public void KillMothershipRPC()
     {
         foreach (Transform child in transform)
-            if (child.gameObject.GetComponent<Ship>() != null && child.gameObject.GetComponent<Ship>().GetShipType() != Ship.ShipTypes.Mothership)
+            if (child.gameObject.GetComponent<Ship>() != null && !child.gameObject.GetComponent<Ship>().isMothership)
                 child.gameObject.GetComponent<Ship>().SelfDestroyShipRPC();
 
         Shop.Singleton.gameObject.SetActive(false);
@@ -127,7 +129,7 @@ public class PlayerData : NetworkBehaviour
         int numMothershipsLeft = 0;
         foreach (Ship ship in FindObjectsByType(typeof(Ship), FindObjectsSortMode.None))
         {
-            if (ship.GetShipType() == Ship.ShipTypes.Mothership)
+            if (ship.isMothership)
             {
                 numMothershipsLeft++;
             }

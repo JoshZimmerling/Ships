@@ -1,6 +1,5 @@
 using Unity.Netcode;
 using UnityEngine;
-using static Ship;
 
 public class MothershipAbility : NetworkBehaviour
 {
@@ -32,7 +31,7 @@ public class MothershipAbility : NetworkBehaviour
                 Ship ship = go.GetComponent<Ship>();
                 if (ship != null &&
                     ship.OwnerClientId == OwnerClientId &&
-                    ship.shipType != ShipTypes.Mothership &&
+                    !ship.isMothership &&
                     (transform.position - go.transform.position).magnitude + ship.correctionFactor <= mothershipHealRadius &&
                     ship.currentShipHP.Value != ship.maxShipHP &&
                     ship.GetType() != typeof(NeutralShip))
