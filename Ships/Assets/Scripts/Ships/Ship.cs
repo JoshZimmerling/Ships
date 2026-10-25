@@ -162,7 +162,7 @@ public class Ship : NetworkBehaviour
         {
             case ShipTypes.Warp_Star:
                 if (IsHost)
-                    shipSprite.transform.rotation = Quaternion.Euler(0, 0, Time.time * 5);
+                    shipSprite.transform.rotation = Quaternion.Euler(0, 0, Time.time * 15);
                 break;
 
             case ShipTypes.Ghost:

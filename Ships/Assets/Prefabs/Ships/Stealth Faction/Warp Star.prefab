@@ -293,7 +293,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4637950062562444113, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: shipTurnRate
-      value: 150
+      value: 1000
       objectReference: {fileID: 0}
     - target: {fileID: 4637950062562444113, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: shipAcceleration
@@ -337,7 +337,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5248488840569974850, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: GlobalObjectIdHash
-      value: 517207663
+      value: 752262196
       objectReference: {fileID: 0}
     - target: {fileID: 5548237794063707659, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: m_Sprite
@@ -585,6 +585,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 3361080509754149035, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4645705044734313593}
+    - targetCorrespondingSourceObject: {fileID: 3361080509754149035, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3554490145556847130}
     - targetCorrespondingSourceObject: {fileID: 3499485431793801839, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4119604731162259860}
@@ -1094,8 +1097,8 @@ ParticleSystem:
         m_RotationOrder: 4
     startRotationX:
       serializedVersion: 2
-      minMaxState: 0
-      scalar: 0
+      minMaxState: 3
+      scalar: 3.1415927
       minScalar: 0
       maxCurve:
         serializedVersion: 2
@@ -1147,8 +1150,8 @@ ParticleSystem:
         m_RotationOrder: 4
     startRotationY:
       serializedVersion: 2
-      minMaxState: 0
-      scalar: 0
+      minMaxState: 3
+      scalar: 3.1415927
       minScalar: 0
       maxCurve:
         serializedVersion: 2
@@ -1200,30 +1203,30 @@ ParticleSystem:
         m_RotationOrder: 4
     startRotation:
       serializedVersion: 2
-      minMaxState: 0
-      scalar: 0
+      minMaxState: 3
+      scalar: 1.5707963
       minScalar: 0
       maxCurve:
         serializedVersion: 2
         m_Curve:
         - serializedVersion: 3
           time: 0
-          value: 0
-          inSlope: 0
-          outSlope: 0
-          tangentMode: 0
+          value: 1
+          inSlope: -1
+          outSlope: -1
+          tangentMode: 34
           weightedMode: 0
-          inWeight: 0.33333334
-          outWeight: 0.33333334
+          inWeight: 0
+          outWeight: 0
         - serializedVersion: 3
           time: 1
           value: 0
-          inSlope: 0
-          outSlope: 0
-          tangentMode: 0
+          inSlope: -1
+          outSlope: -1
+          tangentMode: 34
           weightedMode: 0
-          inWeight: 0.33333334
-          outWeight: 0.33333334
+          inWeight: 0
+          outWeight: 0
         m_PreInfinity: 2
         m_PostInfinity: 2
         m_RotationOrder: 4
@@ -5475,7 +5478,7 @@ PolygonCollider2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9180259629512187319}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Density: 1
   m_Material: {fileID: 0}
@@ -5539,6 +5542,42 @@ PolygonCollider2D:
       - {x: 0.093749434, y: 7.0161114}
       - {x: -0.105779886, y: 7.034349}
   m_UseDelaunayMesh: 1
+--- !u!58 &3554490145556847130
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9180259629512187319}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_Radius: 4.5
 --- !u!1001 &6365428102326184381
 PrefabInstance:
   m_ObjectHideFlags: 0

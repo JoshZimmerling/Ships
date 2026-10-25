@@ -15,8 +15,6 @@ public class Movement : NetworkBehaviour
     float angle;
     float totalVelocity;
     float distToTarget;
-    //float timeToStop;
-    //float brakeTimer;
 
     Vector2 targetPos;
     Vector2 track;
@@ -28,6 +26,12 @@ public class Movement : NetworkBehaviour
 
     /*    LineRenderer lineRenderer;*/
 
+    private void Start()
+    {
+        if (shipTurnRate >= 1000)
+            transform.rotation = Quaternion.identity;
+    }
+
     private void FixedUpdate()
     {
         if (!IsHost) return;
@@ -35,10 +39,7 @@ public class Movement : NetworkBehaviour
         track = targetPos - (Vector2)transform.position;
         angle = Vector2.SignedAngle(track, transform.up);
 
-        //path = (Vector2)transform.position - targetPos;
         distToTarget = Vector2.Distance(transform.position, targetPos);
-
-        //up = transform.up;
 
         if (noTarget) { return; }
 
@@ -52,14 +53,38 @@ public class Movement : NetworkBehaviour
             return;
         }
 
+        // Handling movement for no turn ships
+        if (shipTurnRate >= 1000) // Insta turn if you have really high turn rate
+        {
+            if (rotateOnly)
+                return;
+
+            moving = true;
+
+            Vector2 direction = (targetPos - (Vector2)transform.position).normalized;
+
+            if (distToTarget < distToStop)
+            {
+                transform.Translate(distToTarget * Time.deltaTime * direction);
+            }
+            else
+            {
+                totalVelocity += shipAcceleration;
+                if (totalVelocity > currentAllowedMaxSpeed)
+                {
+                    totalVelocity = currentAllowedMaxSpeed;
+                }
+                transform.Translate(totalVelocity * Time.deltaTime * direction);
+            }
+
+            return;
+        }
+
+        // Handling movement for notmal ships
         if (!backingUp)
         {
             // Turning
-            if (currentAllowedMaxRotationSpeed >= 1000) // Insta turn if you have really high turn rate
-            {
-                transform.rotation = Quaternion.LookRotation(Vector3.forward, targetPos - (Vector2)transform.position);
-            }
-            else if (MathF.Abs(angle) > 10)
+            if (MathF.Abs(angle) > 10)
             {
                 if (angle > 0)
                 {
@@ -98,7 +123,7 @@ public class Movement : NetworkBehaviour
 
             if (distToTarget < distToStop)
             {
-                transform.Translate(Vector2.up * distToTarget * Time.deltaTime);
+                transform.Translate(distToTarget * Time.deltaTime * Vector2.up);
             }
             else
             {
@@ -107,14 +132,14 @@ public class Movement : NetworkBehaviour
                 {
                     totalVelocity = currentAllowedMaxSpeed;
                 }
-                transform.Translate(Vector2.up * totalVelocity * Time.deltaTime);
+                transform.Translate(totalVelocity * Time.deltaTime * Vector2.up);
             }
         }
         else // backing up
         {
             if (distToTarget < distToStop)
             {
-                transform.Translate(-Vector2.up * distToTarget * Time.deltaTime);
+                transform.Translate(distToTarget * Time.deltaTime * -Vector2.up);
             }
             else
             {
@@ -123,14 +148,17 @@ public class Movement : NetworkBehaviour
                 {
                     totalVelocity = currentAllowedMaxSpeed;
                 }
-                transform.Translate(-Vector2.up * totalVelocity * Time.deltaTime);
+                transform.Translate(totalVelocity * Time.deltaTime * -Vector2.up);
             }
         }
     }
 
     public Vector2 GetFuturePosition(float seconds)
     {
-        return transform.position + transform.rotation * Vector2.up * totalVelocity * seconds;
+        if (currentAllowedMaxRotationSpeed >= 1000)
+            return (Vector2)transform.position + seconds * totalVelocity * (targetPos - (Vector2)transform.position).normalized;
+        else
+            return transform.position + transform.rotation * Vector2.up * totalVelocity * seconds;
     }
 
     public float GetMaxSpeed()
