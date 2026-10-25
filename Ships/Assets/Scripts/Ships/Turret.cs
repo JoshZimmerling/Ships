@@ -51,7 +51,7 @@ public class Turret : NetworkBehaviour
     {
         mv = GetComponentInParent<Movement>();
 
-        isNeutralShipTurret = transform.parent.parent.GetComponent<NeutralShip>();
+        isNeutralShipTurret = transform.parent.parent.parent.GetComponent<NeutralShip>();
 
         shotAudio = GetComponent<AudioSource>();
         if (shotAudio != null)
@@ -121,7 +121,7 @@ public class Turret : NetworkBehaviour
                 GameObject missile = Instantiate(missilePrefab, transform.position, Quaternion.Euler(0, 0, aimDirection - 90 + transform.rotation.eulerAngles.z));
                 GameSceneManager.Singleton.missilesInScene.Add(missile);
                 missile.GetComponent<NetworkObject>().SpawnWithOwnership(OwnerClientId);
-                missile.GetComponent<Missile>().SetupMissile(damage, projectileSpeed, missileTurningSpeed, missileLifetimeMax, slowEnemyShipsPercent, slowEnemyShipsSeconds, bestTarget, transform.parent.parent.gameObject);
+                missile.GetComponent<Missile>().SetupMissile(damage, projectileSpeed, missileTurningSpeed, missileLifetimeMax, slowEnemyShipsPercent, slowEnemyShipsSeconds, bestTarget, transform.parent.parent.parent.gameObject);
                 missile.transform.parent = GameSceneManager.Singleton.bulletContainer;
             }
             else
@@ -172,7 +172,7 @@ public class Turret : NetworkBehaviour
                         slowEnemyShipsPercent,
                         slowEnemyShipsSeconds,
                         turretType,
-                        transform.parent.parent.gameObject
+                        transform.parent.parent.parent.gameObject
                     );
                     bullet.transform.parent = GameSceneManager.Singleton.bulletContainer;
                 }

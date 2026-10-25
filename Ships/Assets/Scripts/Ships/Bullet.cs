@@ -36,28 +36,29 @@ public class Bullet : NetworkBehaviour
     {
         if (!IsHost || destroyInProgress) return;
 
-        if (collision.gameObject.name == "Challenger Shield")
+        if (collision.gameObject.name == "Challenger Shield" ||
+            collision.gameObject.name == "Raptor Ability")
         {
             if(collision.transform.parent.GetComponent<Ship>().OwnerClientId == this.OwnerClientId && !isFromNeutralShip)
                 return;
         }
-        else if (collision.transform.parent.GetComponent<NeutralShip>() != null)
+        else if (collision.attachedRigidbody.GetComponent<NeutralShip>() != null)
         {
             if (isFromNeutralShip)
                 return;
 
-            collision.transform.parent.GetComponent<NeutralShip>().DoDamage(dmg, parentShip);
+            collision.attachedRigidbody.GetComponent<NeutralShip>().DoDamage(dmg, parentShip);
             if (slowShipDuration > 0 && slowShipPercentage > 0)
-                collision.transform.parent.GetComponent<Movement>().ChangeSpeed(slowShipPercentage, slowShipDuration);
+                collision.attachedRigidbody.GetComponent<Movement>().ChangeSpeed(slowShipPercentage, slowShipDuration);
         }
-        else if (collision.transform.parent.GetComponent<Ship>() != null)
+        else if (collision.attachedRigidbody.GetComponent<Ship>() != null)
         {
-            if (collision.transform.parent.GetComponent<Ship>().OwnerClientId == this.OwnerClientId && !isFromNeutralShip)
+            if (collision.attachedRigidbody.GetComponent<Ship>().OwnerClientId == this.OwnerClientId && !isFromNeutralShip)
                 return;
 
-            collision.transform.parent.GetComponent<Ship>().DoDamage(dmg, parentShip);
+            collision.attachedRigidbody.GetComponent<Ship>().DoDamage(dmg, parentShip);
             if (slowShipDuration > 0 && slowShipPercentage > 0)
-                collision.transform.parent.GetComponent<Movement>().ChangeSpeed(slowShipPercentage, slowShipDuration);
+                collision.attachedRigidbody.GetComponent<Movement>().ChangeSpeed(slowShipPercentage, slowShipDuration);
         }
         else if (collision.GetComponent<Missile>() != null)
         {
