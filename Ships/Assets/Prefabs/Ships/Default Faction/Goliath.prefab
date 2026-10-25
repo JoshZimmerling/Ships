@@ -2235,6 +2235,10 @@ PrefabInstance:
       value: The Goliath spawns in Legionnaires that swarm onto it's targets, causing
         chaos in the enemy ranks.
       objectReference: {fileID: 0}
+    - target: {fileID: 2351284334504759342, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: e64be87e70e0b0f4387d02851f507ede, type: 3}
     - target: {fileID: 3985505458702315912, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: m_Size.x
       value: 3
@@ -2363,6 +2367,18 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: -4.5
       objectReference: {fileID: 0}
+    - target: {fileID: 7771308037372397693, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
+      propertyPath: m_Size.x
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7771308037372397693, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
+      propertyPath: m_Size.y
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 7771308037372397693, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
+      propertyPath: m_Offset.x
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8754977973035085754, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: m_Size.x
       value: 8
@@ -2430,7 +2446,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GoliathAbility
   ShowTopMostFoldoutHeaderGroup: 1
-  fighterPrefab: {fileID: 3621168198735548399, guid: 7a9dd617878f83d45aa30e9c9a19832b, type: 3}
+  fighterPrefab: {fileID: 4472712856276870429, guid: 9c1482b2ddf02d846a36dfcc3f0b6d74, type: 3}
   fightersOnSpawn: 2
   maxFighters: 6
   spawnCooldown: 10

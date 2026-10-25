@@ -39,14 +39,14 @@ public class Shop : Singleton<Shop>
             {
                 Transform button = Instantiate(shopButtonPrefab, transform.Find("Shop Buttons")).transform;
                 button.Find("Ship Name").GetComponent<TMP_Text>().text = shipPrefab.name;
-                button.Find("Ship Sprite").GetComponent<Image>().sprite = shipPrefab.GetComponent<SpriteRenderer>().sprite;
-                button.Find("Ship Color").GetComponent<Image>().sprite = shipPrefab.Find("Ship Accent").GetComponent<SpriteRenderer>().sprite;
+                button.Find("Ship Sprite").GetComponent<Image>().sprite = shipPrefab.Find("Ship Sprite").GetComponent<SpriteRenderer>().sprite;
+                button.Find("Ship Color").GetComponent<Image>().sprite = shipPrefab.Find("Ship Sprite/Ship Accent").GetComponent<SpriteRenderer>().sprite;
                 button.Find("Ship Color").GetComponent<Image>().color = playerColor;
                 button.Find("Ship Cost").GetComponent<TMP_Text>().text = "" + shipCost;
 
                 button.GetComponent<Button>().onClick.AddListener(() => BuyShip(shipIndex, shipCost));
 
-                foreach (Transform thruster in shipPrefab.transform.Find("Thrusters"))
+                foreach (Transform thruster in shipPrefab.transform.Find("Ship Sprite/Thrusters"))
                 {
                     ParticleSystem srcThruster = thruster.GetComponent<ParticleSystem>();
                     ParticleSystem dstThruster = Instantiate(shopThrusterPrefab, button.Find("Ship Thrusters")).GetComponent<ParticleSystem>();
