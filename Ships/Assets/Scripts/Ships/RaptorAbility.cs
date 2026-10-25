@@ -4,18 +4,11 @@ using UnityEngine;
 
 public class RaptorAbility : NetworkBehaviour
 {
-    [SerializeField] private float secondsUntilDestroyAfterHit = 2.5f;
+    [SerializeField] private float secondsUntilDestroyAfterHit = 2f;
 
     private bool hasBeenHit = false;
-    private SpriteRenderer sprite;
     private float counter = 0;
-    private bool decrementColor = true;
-
-    private void Start()
-    {
-        sprite = GetComponent<SpriteRenderer>();
-        sprite.color = new Color(1, 1, 1, 100f / 255f);
-    }
+    private bool flashSprites = true;
 
     private void FixedUpdate()
     {
@@ -24,14 +17,21 @@ public class RaptorAbility : NetworkBehaviour
             counter += Time.deltaTime;
             if (counter > 0.25f)
             {
-                if (decrementColor)
-                    sprite.color = new Color(1, 1, 1, 50f / 255f);
-                else
-                    sprite.color = new Color(1, 1, 1, 100f / 255f);
-
+                SetShieldOpacity(flashSprites);
+                flashSprites = !flashSprites;
                 counter = 0;
-                decrementColor = !decrementColor;
             }
+        }
+    }
+
+    private void SetShieldOpacity(bool flash)
+    {
+        foreach (SpriteRenderer shieldSprite in GetComponentsInChildren<SpriteRenderer>())
+        {
+            if (flash)
+                shieldSprite.color = new Color(1, 1, 1, 100f / 255f);
+            else
+                shieldSprite.color = new Color(1, 1, 1, 255f / 255f);
         }
     }
 
