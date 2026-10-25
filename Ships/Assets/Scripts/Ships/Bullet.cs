@@ -65,11 +65,6 @@ public class Bullet : NetworkBehaviour
             if ((collision.GetComponent<Missile>().OwnerClientId == this.OwnerClientId && !collision.GetComponent<Missile>().isFromNeutralShip && !isFromNeutralShip) || (isFromNeutralShip && collision.GetComponent<Missile>().isFromNeutralShip))
                 return;
         }
-        else if (collision.GetComponentInChildren<RaptorAbility>() != null)
-        {
-            if (collision.GetComponentInChildren<RaptorAbility>().OwnerClientId == this.OwnerClientId && !isFromNeutralShip)
-                return;
-        }
 
         destroyInProgress = true;
         GetComponent<NetworkObject>().Despawn();
