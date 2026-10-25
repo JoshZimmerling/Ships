@@ -1629,6 +1629,10 @@ PrefabInstance:
       value: The Destroyer is a generalist ship with no special abilities, but high
         damage, especially when fighting a target head on.
       objectReference: {fileID: 0}
+    - target: {fileID: 2351284334504759342, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 0ac095a717434ea47a03edf9ee73c37e, type: 3}
     - target: {fileID: 3499485431793801839, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: m_IsActive
       value: 1

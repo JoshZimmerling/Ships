@@ -41,6 +41,8 @@ public class Ship : NetworkBehaviour
 
     private PlayerData playerData;
 
+    private Transform shipSprite;
+
     private GameObject scoutMarker; // Marker in fog of war (Enemy)
     private GameObject minimapMarker; // Market on minimap (Both)
     private GameObject minimapScoutMarker; // Marker in minimap fog of war (Enemy)
@@ -65,7 +67,8 @@ public class Ship : NetworkBehaviour
         minimapMarker = transform.Find("Minimap Marker").gameObject;
         minimapScoutMarker = transform.Find("Minimap Scout Marker").gameObject;
 
-        fireEmitter = transform.GetComponent<ParticleSystemRenderer>();
+        shipSprite = transform.Find("Ship Sprite");
+        fireEmitter = shipSprite.GetComponent<ParticleSystemRenderer>();
         fireEmitter.enabled = false;
 
         // Setting up healthbar
@@ -99,7 +102,7 @@ public class Ship : NetworkBehaviour
 
             // Set the team color
             Color teamColor = playerData.playerColor;
-            transform.Find("Ship Accent").GetComponent<SpriteRenderer>().color = teamColor;
+            transform.Find("Ship Sprite/Ship Accent").GetComponent<SpriteRenderer>().color = teamColor;
             scoutMarker.GetComponent<SpriteRenderer>().color = teamColor;
             minimapMarker.GetComponent<SpriteRenderer>().color = teamColor;
             minimapScoutMarker.GetComponent<SpriteRenderer>().color = teamColor;
@@ -157,8 +160,13 @@ public class Ship : NetworkBehaviour
     {
         switch (shipType)
         {
+            case ShipTypes.Warp_Star:
+                if (IsHost)
+                    shipSprite.transform.rotation = Quaternion.Euler(0, 0, Time.time * 5);
+                break;
+
             case ShipTypes.Ghost:
-                if (gameObject.GetComponent<Movement>().moving )
+                if (gameObject.GetComponent<Movement>().moving)
                     radar.SetActive(true);
                 else if (!gameObject.GetComponent<Movement>().moving)
                     radar.SetActive(false);

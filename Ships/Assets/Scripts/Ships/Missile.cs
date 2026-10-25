@@ -88,23 +88,23 @@ public class Missile : NetworkBehaviour
             if (collision.transform.parent.GetComponent<Ship>().OwnerClientId == this.OwnerClientId && !isFromNeutralShip)
                 return;
         }
-        else if (collision.GetComponent<NeutralShip>() != null)
+        else if (collision.transform.parent.GetComponent<NeutralShip>() != null)
         {
             if (isFromNeutralShip)
                 return;
 
-            collision.GetComponent<NeutralShip>().DoDamage(dmg, parentShip);
+            collision.transform.parent.GetComponent<NeutralShip>().DoDamage(dmg, parentShip);
             if (slowShipDuration > 0 && slowShipPercentage > 0)
-                collision.GetComponent<Movement>().ChangeSpeed(slowShipPercentage, slowShipDuration);
+                collision.transform.parent.GetComponent<Movement>().ChangeSpeed(slowShipPercentage, slowShipDuration);
         }
-        else if (collision.GetComponent<Ship>() != null)
+        else if (collision.transform.parent.GetComponent<Ship>() != null)
         { 
-            if (collision.GetComponent<Ship>().OwnerClientId == this.OwnerClientId && !isFromNeutralShip)
+            if (collision.transform.parent.GetComponent<Ship>().OwnerClientId == this.OwnerClientId && !isFromNeutralShip)
                 return;
 
-            collision.GetComponent<Ship>().DoDamage(dmg, parentShip);
+            collision.transform.parent.GetComponent<Ship>().DoDamage(dmg, parentShip);
             if (slowShipDuration > 0 && slowShipPercentage > 0)
-                collision.GetComponent<Movement>().ChangeSpeed(slowShipPercentage, slowShipDuration);
+                collision.transform.parent.GetComponent<Movement>().ChangeSpeed(slowShipPercentage, slowShipDuration);
         }
         else if (collision.GetComponent<Missile>() != null)
         {

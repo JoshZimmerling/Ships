@@ -474,6 +474,10 @@ PrefabInstance:
       propertyPath: shipDescriptionForUI
       value: TODO
       objectReference: {fileID: 0}
+    - target: {fileID: 2351284334504759342, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 9792481fc338427418469686655f38cd, type: 3}
     - target: {fileID: 3985505458702315912, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: m_Size.y
       value: 4
@@ -502,6 +506,18 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: 620ff95abcf53624aa4bcc8fc9259274, type: 3}
+    - target: {fileID: 5778543680000445491, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.b
+      value: 0.3160377
+      objectReference: {fileID: 0}
+    - target: {fileID: 5778543680000445491, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.g
+      value: 0.3512935
+      objectReference: {fileID: 0}
+    - target: {fileID: 5778543680000445491, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.r
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6010934806082289777, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -553,6 +569,14 @@ PrefabInstance:
     - target: {fileID: 7597090460994900236, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: -2.45
+      objectReference: {fileID: 0}
+    - target: {fileID: 7771308037372397693, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
+      propertyPath: m_Size.x
+      value: 2.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7771308037372397693, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
+      propertyPath: m_Size.y
+      value: 4.2
       objectReference: {fileID: 0}
     - target: {fileID: 8602625493558536375, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: InitialModule.startColor.maxColor.b
