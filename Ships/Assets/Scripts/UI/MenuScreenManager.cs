@@ -576,7 +576,7 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
         Ship selectedShipScript = selectedShipPrefab.Prefab.GetComponent<Ship>();
         Movement selectedShipMovementScript = selectedShipPrefab.Prefab.GetComponent<Movement>();
         shipNameText.text = selectedShipPrefab.Prefab.name;
-        shipImage.sprite = selectedShipPrefab.Prefab.GetComponent<SpriteRenderer>().sprite;
+        shipImage.sprite = selectedShipPrefab.Prefab.transform.Find("Ship Sprite").GetComponent<SpriteRenderer>().sprite;
         shipHealthText.text = "Health: " + selectedShipScript.maxShipHP;
         if (selectedShipMovementScript != null)
         {
@@ -598,7 +598,7 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
                 Destroy(turretRepeater.gameObject);
 
         //Setup new turret indicators
-        foreach (Transform turret in selectedShipPrefab.Prefab.transform.Find("Turrets"))
+        foreach (Transform turret in selectedShipPrefab.Prefab.transform.Find("Ship Sprite/Turrets"))
         {
             GameObject turretRepeater = Instantiate(turretRepeaterPrefab, shipImage.transform);
             turretRepeater.GetComponent<TurretRepeater>().Setup(turret);
