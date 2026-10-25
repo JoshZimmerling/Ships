@@ -36,6 +36,8 @@ public class Ship : NetworkBehaviour
     public bool isInvis = false;
     public int invisDetectionRange = 15;
 
+    public readonly NetworkVariable<bool> hiddenFromRadar = new NetworkVariable<bool>(false);
+
     // Ship Components
     private Transform hpBar;
     [SerializeField] public GameObject popupTextPrefab;
@@ -130,13 +132,18 @@ public class Ship : NetworkBehaviour
 
     public void FixedUpdate()
     {
-        //Ship specific updates
+        // Ship specific updates
         UpdateBasedOnShipType();
 
-        //Don't rotate minimap icons
+        // Update hidden state
+        scoutMarker.SetActive(!hiddenFromRadar.Value);
+        minimapScoutMarker.SetActive(!hiddenFromRadar.Value);
+
+        // Don't rotate minimap icons
         scoutMarker.transform.rotation = Quaternion.identity;
         minimapMarker.transform.rotation = Quaternion.identity;
         minimapScoutMarker.transform.rotation = Quaternion.identity;
+
     }
 
     public void SetupBasedOnShipType()

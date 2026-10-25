@@ -45,7 +45,7 @@ public class SupplyDrop : NetworkBehaviour
         myCollider.Overlap(ContactFilter2D.noFilter, collidersInSupplyDropArea);
         foreach (Collider2D collider in collidersInSupplyDropArea)
         {
-            Ship shipScript = collider.gameObject.GetComponent<Ship>();
+            Ship shipScript = collider.attachedRigidbody.GetComponent<Ship>();
             if (shipScript != null && shipScript.shipType != Ship.ShipTypes.Legionnaire && collider.gameObject.GetComponent<NeutralShip>() == null)
             {
                 if (!playersToPay.Contains(shipScript.OwnerClientId))
