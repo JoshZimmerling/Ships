@@ -8,6 +8,7 @@ public class RaptorAbility : NetworkBehaviour
 
     private bool hasBeenHit = false;
     private float counter = 0;
+    private const float timeBetweenFlashes = 0.25f;
     private bool flashSprites = true;
 
     private void FixedUpdate()
@@ -15,7 +16,7 @@ public class RaptorAbility : NetworkBehaviour
         if (hasBeenHit)
         {
             counter += Time.deltaTime;
-            if (counter > 0.25f)
+            if (counter > timeBetweenFlashes)
             {
                 SetShieldOpacity(flashSprites);
                 flashSprites = !flashSprites;
@@ -44,6 +45,7 @@ public class RaptorAbility : NetworkBehaviour
             || collision.GetComponent<Bullet>() != null && (collision.GetComponent<Bullet>().OwnerClientId != this.OwnerClientId || collision.GetComponent<Bullet>().isFromNeutralShip))
         {
             hasBeenHit = true;
+            counter = timeBetweenFlashes;
             StartCoroutine(TurnOffShield());
         }
     }
