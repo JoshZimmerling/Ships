@@ -116,6 +116,11 @@ public class Missile : NetworkBehaviour
             if ((collision.GetComponent<Bullet>().OwnerClientId == this.OwnerClientId && !collision.GetComponent<Bullet>().isFromNeutralShip && !isFromNeutralShip) || (isFromNeutralShip && collision.GetComponent<Bullet>().isFromNeutralShip))
                 return;
         }
+        else if (collision.GetComponentInChildren<RaptorAbility>() != null)
+        {
+            if (collision.GetComponentInChildren<RaptorAbility>().OwnerClientId == this.OwnerClientId && !isFromNeutralShip)
+                return;
+        }
 
         DestroyMissile();
     }
