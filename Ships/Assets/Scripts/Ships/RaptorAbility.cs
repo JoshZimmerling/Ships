@@ -44,10 +44,16 @@ public class RaptorAbility : NetworkBehaviour
         if ((collision.GetComponent<Missile>() != null && (collision.GetComponent<Missile>().OwnerClientId != this.OwnerClientId || collision.GetComponent<Missile>().isFromNeutralShip)) 
             || collision.GetComponent<Bullet>() != null && (collision.GetComponent<Bullet>().OwnerClientId != this.OwnerClientId || collision.GetComponent<Bullet>().isFromNeutralShip))
         {
-            hasBeenHit = true;
-            counter = timeBetweenFlashes;
-            StartCoroutine(TurnOffShield());
+            UpdateShieldVisualsRPC();
         }
+    }
+
+    [Rpc(SendTo.ClientsAndHost)]
+    public void UpdateShieldVisualsRPC()
+    {
+        hasBeenHit = true;
+        counter = timeBetweenFlashes;
+        StartCoroutine(TurnOffShield());
     }
 
     private IEnumerator TurnOffShield()

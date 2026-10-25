@@ -33,6 +33,9 @@ public class Ship : NetworkBehaviour
     public int visionRange;
     private bool shipAlreadyBelowZeroHealth = false;
 
+    public bool isInvis = false;
+    public int invisDetectionRange = 15;
+
     // Ship Components
     private Transform hpBar;
     [SerializeField] public GameObject popupTextPrefab;
@@ -145,7 +148,7 @@ public class Ship : NetworkBehaviour
                 if (IsOwner)
                 {
                     radar = transform.Find("Radar").gameObject;
-                    radar.SetActive(true);
+                    SetRadarActive(true);
                 }
                 break;
         }
@@ -164,14 +167,6 @@ public class Ship : NetworkBehaviour
                 if (IsHost)
                     shipSprite.transform.rotation = Quaternion.Euler(0, 0, Time.time * 15);
                 break;
-
-            case ShipTypes.Ghost:
-                if (gameObject.GetComponent<Movement>().moving)
-                    radar.SetActive(true);
-                else if (!gameObject.GetComponent<Movement>().moving)
-                    radar.SetActive(false);
-                break;
-        
         }
     }
 
@@ -287,6 +282,11 @@ public class Ship : NetworkBehaviour
     public float GetShipCost()
     {
         return shipCost;
+    }
+
+    public void SetRadarActive (bool active)
+    {
+        radar.SetActive(active);
     }
 
     public override void OnNetworkDespawn()
