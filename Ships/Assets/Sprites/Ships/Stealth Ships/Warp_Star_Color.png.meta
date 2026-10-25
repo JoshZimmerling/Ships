@@ -1,43 +1,10 @@
 fileFormatVersion: 2
-guid: f93335eb79cde3e4e974fbec48747322
+guid: 8a7b87a6957987247877964f72c4e0b5
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 4691079005858867609
-    second: Warp_Star_Color_0
-  - first:
-      213: 4247325951864412486
-    second: Warp_Star_Color_1
-  - first:
-      213: -3639427543553342750
-    second: Warp_Star_Color_2
-  - first:
-      213: -5300901948090890302
-    second: Warp_Star_Color_3
-  - first:
-      213: -316905412017340452
-    second: Warp_Star_Color_4
-  - first:
-      213: 3113973909788398720
-    second: Warp_Star_Color_5
-  - first:
-      213: 5310975980080465387
-    second: Warp_Star_Color_6
-  - first:
-      213: -7362606828875802679
-    second: Warp_Star_Color_7
-  - first:
-      213: 897595806957934686
-    second: Warp_Star_Color_8
-  - first:
-      213: 3045619923907357125
-    second: Warp_Star_Color_9
-  - first:
-      213: -4179843607189326010
-    second: Warp_Star_Color_10
-  - first:
-      213: -952171810556059723
-    second: Warp_Star_Color_11
+      213: 225117206579045529
+    second: Black_Star_Color_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -146,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Warp_Star_Color_0
+      name: Black_Star_Color_0
       rect:
         serializedVersion: 2
-        x: 225
-        y: 270
-        width: 17
-        height: 17
+        x: 0
+        y: 0
+        width: 128
+        height: 128
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -161,250 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 999a28d508f0a1140800000000000000
-      internalID: 4691079005858867609
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Warp_Star_Color_1
-      rect:
-        serializedVersion: 2
-        x: 242
-        y: 284
-        width: 14
-        height: 68
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 6491d2e237881fa30800000000000000
-      internalID: 4247325951864412486
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Warp_Star_Color_2
-      rect:
-        serializedVersion: 2
-        x: 256
-        y: 284
-        width: 14
-        height: 68
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 2e20bb08ee72e7dc0800000000000000
-      internalID: -3639427543553342750
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Warp_Star_Color_3
-      rect:
-        serializedVersion: 2
-        x: 270
-        y: 270
-        width: 17
-        height: 17
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 2c7cdda73c96f66b0800000000000000
-      internalID: -5300901948090890302
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Warp_Star_Color_4
-      rect:
-        serializedVersion: 2
-        x: 160
-        y: 256
-        width: 68
-        height: 14
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: cdfbe41f4302a9bf0800000000000000
-      internalID: -316905412017340452
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Warp_Star_Color_5
-      rect:
-        serializedVersion: 2
-        x: 160
-        y: 242
-        width: 68
-        height: 14
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 08495ccb5ce073b20800000000000000
-      internalID: 3113973909788398720
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Warp_Star_Color_6
-      rect:
-        serializedVersion: 2
-        x: 284
-        y: 256
-        width: 68
-        height: 14
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: be5045fd38064b940800000000000000
-      internalID: 5310975980080465387
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Warp_Star_Color_7
-      rect:
-        serializedVersion: 2
-        x: 284
-        y: 242
-        width: 68
-        height: 14
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 9c71eff0914c2d990800000000000000
-      internalID: -7362606828875802679
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Warp_Star_Color_8
-      rect:
-        serializedVersion: 2
-        x: 225
-        y: 225
-        width: 17
-        height: 17
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: e589b9971a6e47c00800000000000000
-      internalID: 897595806957934686
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Warp_Star_Color_9
-      rect:
-        serializedVersion: 2
-        x: 242
-        y: 160
-        width: 14
-        height: 68
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 5c9a9553f27344a20800000000000000
-      internalID: 3045619923907357125
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Warp_Star_Color_10
-      rect:
-        serializedVersion: 2
-        x: 256
-        y: 160
-        width: 14
-        height: 68
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 647fac092663ef5c0800000000000000
-      internalID: -4179843607189326010
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Warp_Star_Color_11
-      rect:
-        serializedVersion: 2
-        x: 270
-        y: 225
-        width: 17
-        height: 17
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 5bf5aaa78c439c2f0800000000000000
-      internalID: -952171810556059723
+      spriteID: 994e8fa18e6cf1300800000000000000
+      internalID: 225117206579045529
       vertices: []
       indices: 
       edges: []
@@ -423,18 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Warp_Star_Color_0: 4691079005858867609
-      Warp_Star_Color_1: 4247325951864412486
-      Warp_Star_Color_10: -4179843607189326010
-      Warp_Star_Color_11: -952171810556059723
-      Warp_Star_Color_2: -3639427543553342750
-      Warp_Star_Color_3: -5300901948090890302
-      Warp_Star_Color_4: -316905412017340452
-      Warp_Star_Color_5: 3113973909788398720
-      Warp_Star_Color_6: 5310975980080465387
-      Warp_Star_Color_7: -7362606828875802679
-      Warp_Star_Color_8: 897595806957934686
-      Warp_Star_Color_9: 3045619923907357125
+      Black_Star_Color_0: 225117206579045529
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

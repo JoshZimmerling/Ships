@@ -14,13 +14,13 @@ public class Ship : NetworkBehaviour
         Lightning,
         Scout,
         Drone,
-        Warp_Star,
+        Dark_Star,
         Saber,
         Dagger,
         Stalker,
         Raptor,
         Ghost,
-        Black_Star,
+        Warp_Star,
     }
 
     // Ship Variables
@@ -160,7 +160,7 @@ public class Ship : NetworkBehaviour
     {
         switch (shipType)
         {
-            case ShipTypes.Warp_Star:
+            case ShipTypes.Dark_Star:
                 if (IsHost)
                     shipSprite.transform.rotation = Quaternion.Euler(0, 0, Time.time * 15);
                 break;

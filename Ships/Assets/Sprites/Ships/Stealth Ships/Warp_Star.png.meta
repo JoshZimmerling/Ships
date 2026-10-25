@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 8cbb252f99e065d4b8fd4f3f16a5ff2f
+guid: 5f8700cd8805d4648b0d7cc8524d5775
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -4483436281223376453
-    second: Warp_Star_0
+      213: -294592785505982575
+    second: Black_Star_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Warp_Star_0
+      name: Black_Star_0
       rect:
         serializedVersion: 2
-        x: 143
-        y: 143
-        width: 226
-        height: 226
+        x: 49
+        y: 48
+        width: 30
+        height: 31
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: bb1159cd472a7c1c0800000000000000
-      internalID: -4483436281223376453
+      spriteID: 197e5822c6569ebf0800000000000000
+      internalID: -294592785505982575
       vertices: []
       indices: 
       edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Warp_Star_0: -4483436281223376453
+      Black_Star_0: -294592785505982575
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
