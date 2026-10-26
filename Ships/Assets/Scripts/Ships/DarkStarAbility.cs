@@ -4,15 +4,14 @@ using UnityEngine;
 
 public class DarkStarAbility : NetworkBehaviour
 {
-    // Mothership ability settings
-    [SerializeField] private float abilityTimer;
-    [SerializeField] private float abilityCooldown = 1;
+    // Dark Star ability settings
+    [SerializeField] private float abilityCooldown = 0.5f;
+    private float abilityTimer;
 
     [SerializeField] private int abilityRadius;
 
     private List<Ship> affectedShips = new List<Ship>();
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     public override void OnNetworkSpawn()
     {
         if (IsOwner)
@@ -21,7 +20,6 @@ public class DarkStarAbility : NetworkBehaviour
             transform.Find("Ability Aura").gameObject.SetActive(false);
     }
 
-    // Update is called once per frame
     void FixedUpdate()
     {
         if (!IsHost) return;
@@ -42,22 +40,24 @@ public class DarkStarAbility : NetworkBehaviour
                     ship.GetType() != typeof(NeutralShip))
                 {
                     newShipsInRange.Add(ship);
-
+                    Debug.Log("Adding ship to newShipsInRange: " + ship.gameObject.name);
                     ship.hiddenFromRadar.Value = true;
                 }
             }
 
             // Remove ships not in range anymore
-            for (int i = affectedShips.Count; i > 0; i--)
+            for (int i = affectedShips.Count - 1; i > 0; i--)
             {
                 Ship ship = affectedShips[i];
                 if (!newShipsInRange.Contains(ship))
                 {
                     affectedShips.Remove(ship);
+                    Debug.Log("Removing ship from affectedShips: " + ship.gameObject.name);
                     ship.hiddenFromRadar.Value = false;
                 }
                 else
                 {
+                    Debug.Log("Removing ship from newShipsInRange: " + ship.gameObject.name);
                     newShipsInRange.Remove(ship);
                 }
             }
@@ -65,6 +65,7 @@ public class DarkStarAbility : NetworkBehaviour
             // Add new ships to running list
             foreach (Ship ship in newShipsInRange)
             {
+                Debug.Log("Adding ship to affectedShips: " + ship.gameObject.name);
                 affectedShips.Add(ship);
             }
             abilityTimer = abilityCooldown;
