@@ -40,7 +40,6 @@ public class DarkStarAbility : NetworkBehaviour
                     ship.GetType() != typeof(NeutralShip))
                 {
                     newShipsInRange.Add(ship);
-                    Debug.Log("Adding ship to newShipsInRange: " + ship.gameObject.name);
                     ship.hiddenFromRadar.Value = true;
                 }
             }
@@ -52,12 +51,10 @@ public class DarkStarAbility : NetworkBehaviour
                 if (!newShipsInRange.Contains(ship))
                 {
                     affectedShips.Remove(ship);
-                    Debug.Log("Removing ship from affectedShips: " + ship.gameObject.name);
                     ship.hiddenFromRadar.Value = false;
                 }
                 else
                 {
-                    Debug.Log("Removing ship from newShipsInRange: " + ship.gameObject.name);
                     newShipsInRange.Remove(ship);
                 }
             }
@@ -65,7 +62,6 @@ public class DarkStarAbility : NetworkBehaviour
             // Add new ships to running list
             foreach (Ship ship in newShipsInRange)
             {
-                Debug.Log("Adding ship to affectedShips: " + ship.gameObject.name);
                 affectedShips.Add(ship);
             }
             abilityTimer = abilityCooldown;
