@@ -233,6 +233,11 @@ public class Turret : NetworkBehaviour
 
             if (!inVision) return false;
         }
+        else //If it is a neutral ship, do the invis check
+        {
+            if (target.GetComponent<Ship>() != null && target.GetComponent<Ship>().isInvis && target.GetComponent<Ship>().invisDetectionRange < distanceToTarget)
+                return false;
+        }
 
         if (firingArc == 360) return true;
 
