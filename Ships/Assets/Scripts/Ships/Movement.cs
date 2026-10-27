@@ -7,27 +7,28 @@ public class Movement : NetworkBehaviour
 {
     [SerializeField] private float shipAcceleration;
     [SerializeField] private float shipMaxSpeed;
-    [SerializeField] private float currentAllowedMaxSpeed;
+    private float currentAllowedMaxSpeed;
     private float currentAllowedMaxRotationSpeed;
+    private bool movingWithSpeedCap = false;
     [SerializeField] private float shipTurnRate;
     [SerializeField] float distToStop = 2;
 
-    float angle;
-    [SerializeField] private float totalVelocity;
-    float distToTarget;
+    private float angle;
+    private float totalVelocity;
+    private float distToTarget;
 
-    Vector2 targetPos;
-    Vector2 track;
+    private Vector2 targetPos;
+    private Vector2 track;
 
-    bool noTarget = true;
+    private bool noTarget = true;
     public bool moving;
-    bool backingUp;
-    bool rotateOnly;
+    private bool backingUp;
+    private bool rotateOnly;
 
-    [SerializeField] private bool hasTurboMode = false;
+    [SerializeField] private bool hasTurboMode = false; // Turbo mode allows the ship to accelerate beyoned it's normal max speed when continuing in a straight line
     [SerializeField] private float turboBonus = 0.1f;
-
-    /*    LineRenderer lineRenderer;*/
+    private float turboModeAllowedAngle = 5f;
+    private float turboModeMaxSpeedMultiplier = 3f;
 
     private void FixedUpdate()
     {
@@ -44,9 +45,9 @@ public class Movement : NetworkBehaviour
         distToTarget = Vector2.Distance(transform.position, targetPos);
 
         // Turbo Mode
-        if (hasTurboMode && currentAllowedMaxSpeed >= shipMaxSpeed)
+        if (hasTurboMode && currentAllowedMaxSpeed >= shipMaxSpeed && !movingWithSpeedCap)
         {
-            if (MathF.Abs(angle) < 5 && moving)
+            if (MathF.Abs(angle) < turboModeAllowedAngle && moving && currentAllowedMaxSpeed < (shipMaxSpeed * turboModeMaxSpeedMultiplier))
                 currentAllowedMaxSpeed += turboBonus * Time.deltaTime;
             else
                 currentAllowedMaxSpeed = shipMaxSpeed;
@@ -197,6 +198,10 @@ public class Movement : NetworkBehaviour
         targetPos = transform.position + (-transform.up * distToStop);
         backingUp = true;
         noTarget = false;
+        rotateOnly = false;
+        movingWithSpeedCap = false;
+        currentAllowedMaxSpeed = shipMaxSpeed;
+        currentAllowedMaxRotationSpeed = shipTurnRate;
     }
 
     [Rpc(SendTo.Server)]
@@ -217,6 +222,7 @@ public class Movement : NetworkBehaviour
         backingUp = false;
         targetPos = target;
         rotateOnly = false;
+        movingWithSpeedCap = false;
         currentAllowedMaxSpeed = shipMaxSpeed;
         currentAllowedMaxRotationSpeed = shipTurnRate;
     }
@@ -228,6 +234,7 @@ public class Movement : NetworkBehaviour
         backingUp = false;
         targetPos = target;
         rotateOnly = true;
+        movingWithSpeedCap = false;
         currentAllowedMaxSpeed = shipMaxSpeed;
         currentAllowedMaxRotationSpeed = shipTurnRate;
 
@@ -243,6 +250,7 @@ public class Movement : NetworkBehaviour
         backingUp = false;
         targetPos = target;
         rotateOnly = false;
+        movingWithSpeedCap = true;
         currentAllowedMaxSpeed = maxSpeedAllowed;
         currentAllowedMaxRotationSpeed = maxRotationSpeedAllowed;
     }

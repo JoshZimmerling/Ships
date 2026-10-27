@@ -143,8 +143,8 @@ public class GameSceneManager : Singleton<GameSceneManager>
     public void ShowPlayerAsDeadInPlayersMenu(ulong playerAuthId)
     {
         Transform playerWhoDiedItem = allPlayersInfoInTabMenu.GetValueOrDefault(playerAuthId);
-        playerWhoDiedItem.Find("Players Name Text").GetComponent<TMP_Text>().text = "<s>" + playerWhoDiedItem.Find("Players Name Text").GetComponent<TMP_Text>().text + "</s>";
-        playerWhoDiedItem.Find("Skull Icon").gameObject.SetActive(true);
+        playerWhoDiedItem.Find("Background Color/Players Name Text").GetComponent<TMP_Text>().text = "<s>" + playerWhoDiedItem.Find("Background Color/Players Name Text").GetComponent<TMP_Text>().text + "</s>";
+        playerWhoDiedItem.Find("Background Color/Skull Icon").gameObject.SetActive(true);
     }
 
     public NeutralObjectivesManager GetNeutralObjectivesManager()

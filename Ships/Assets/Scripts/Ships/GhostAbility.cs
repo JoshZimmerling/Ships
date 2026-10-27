@@ -1,6 +1,5 @@
 using Unity.Netcode;
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
 
 public class GhostAbility : NetworkBehaviour
 {
@@ -8,6 +7,7 @@ public class GhostAbility : NetworkBehaviour
     private float counter = 0f;
     private Ship shipScript;
     private Movement movementScript;
+    private PlayerData playerData;
     private GameObject invisRangeIndicator;
     private bool lastRevealed;
 
@@ -18,6 +18,7 @@ public class GhostAbility : NetworkBehaviour
     {
         shipScript = gameObject.GetComponent<Ship>();
         movementScript = gameObject.GetComponent<Movement>();
+        playerData = NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerData>();
 
         invisRangeIndicator = transform.Find("InvisRangeIndicator").gameObject;
         invisRangeIndicator.SetActive(false);
@@ -37,12 +38,14 @@ public class GhostAbility : NetworkBehaviour
                 foreach (Transform t in NetworkManager.Singleton.LocalClient.PlayerObject.transform)
                 {
                     Ship ship = t.GetComponent<Ship>();
-                    if (shipScript.invisDetectionRange > (transform.position - t.position).magnitude - ship.correctionFactor)
+                    if (shipScript.invisDetectionRange > ((transform.position - t.position).magnitude - ship.correctionFactor))
                     {
                         revealed = true;
                         break;
                     }
                 }
+                if (!playerData.IsMothershipAlive())
+                    revealed = true;
             }
             else
             {
@@ -77,22 +80,21 @@ public class GhostAbility : NetworkBehaviour
             }
         }
 
-        if (!IsHost) return;
-
-        //While we are moving, keep the counter at 0 seconds and if we are invis become visible
-        if (movementScript.moving)
+        if (IsHost)
         {
-            counter = 0;
-            if (shipScript.isInvis.Value)
-                GoVisible();
-        }
-        //If we are not moving and not yet invis, count up until we are invis
-        else if (!movementScript.moving && !shipScript.isInvis.Value)
-        {
-            counter += Time.deltaTime;
-            if (counter > timeToInvis)
+            //While we are moving, keep the counter at 0 seconds and if we are invis become visible
+            if (movementScript.moving)
             {
-                GoInvisibile();
+                counter = 0;
+                if (shipScript.isInvis.Value)
+                    GoVisible();
+            }
+            //If we are not moving and not yet invis, count up until we are invis
+            else if (!movementScript.moving && !shipScript.isInvis.Value)
+            {
+                counter += Time.deltaTime;
+                if (counter > timeToInvis)
+                    GoInvisibile();
             }
         }
     }
