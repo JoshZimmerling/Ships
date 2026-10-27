@@ -246,8 +246,8 @@ ParticleSystem:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-  moveWithTransform: 0
-  moveWithCustomTransform: {fileID: 0}
+  moveWithTransform: 2
+  moveWithCustomTransform: {fileID: 5285274924322235468}
   scalingMode: 1
   randomSeed: 0
   InitialModule:
@@ -5233,7 +5233,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5248488840569974850, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: GlobalObjectIdHash
-      value: 752262196
+      value: 517207663
       objectReference: {fileID: 0}
     - target: {fileID: 5548237794063707659, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: m_Sprite
@@ -5525,6 +5525,11 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   abilityCooldown: 0.5
   abilityRadius: 40
+--- !u!4 &5285274924322235468 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1773063785906303312, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
+  m_PrefabInstance: {fileID: 5891308182219543836}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &6415005837525943904 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 631784080924922748, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}

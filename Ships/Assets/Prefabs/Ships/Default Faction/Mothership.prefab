@@ -246,8 +246,8 @@ ParticleSystem:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-  moveWithTransform: 0
-  moveWithCustomTransform: {fileID: 0}
+  moveWithTransform: 2
+  moveWithCustomTransform: {fileID: 5285274924322235468}
   scalingMode: 1
   randomSeed: 0
   InitialModule:
@@ -5119,7 +5119,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5248488840569974850, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: GlobalObjectIdHash
-      value: 3146862736
+      value: 2347292881
       objectReference: {fileID: 0}
     - target: {fileID: 5548237794063707659, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: m_Sprite
@@ -5379,6 +5379,11 @@ MonoBehaviour:
   mothershipHealTimer: 2
   mothershipHealAmountFlat: 1
   mothershipHealAmountPercent: 0.01
+--- !u!4 &5285274924322235468 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1773063785906303312, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
+  m_PrefabInstance: {fileID: 5891308182219543836}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &7012820271110623091 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3499485431793801839, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
