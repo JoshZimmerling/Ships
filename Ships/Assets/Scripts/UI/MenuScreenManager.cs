@@ -60,6 +60,7 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
 
     private GameObject shipDetailsPanel;
     private TextMeshProUGUI shipNameText;
+    private TextMeshProUGUI shipClassText;
     private Image shipImage;
     private TextMeshProUGUI shipHealthText;
     private TextMeshProUGUI shipTopSpeedText;
@@ -150,6 +151,7 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
 
         shipDetailsPanel = transform.Find("Ship Info Screen/Ship Details Panel").gameObject;
         shipNameText = shipDetailsPanel.transform.Find("Ship Name").GetComponent<TextMeshProUGUI>();
+        shipClassText = shipDetailsPanel.transform.Find("Ship Class").GetComponent<TextMeshProUGUI>();
         shipImage = shipDetailsPanel.transform.Find("Ship Image").GetComponent<Image>();
         shipHealthText = shipDetailsPanel.transform.Find("Ship Stats Panel/Health Text").GetComponent<TextMeshProUGUI>();
         shipTopSpeedText = shipDetailsPanel.transform.Find("Ship Stats Panel/Top Speed Text").GetComponent<TextMeshProUGUI>();
@@ -576,6 +578,7 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
         Ship selectedShipScript = selectedShipPrefab.Prefab.GetComponent<Ship>();
         Movement selectedShipMovementScript = selectedShipPrefab.Prefab.GetComponent<Movement>();
         shipNameText.text = selectedShipPrefab.Prefab.name;
+        shipClassText.text = selectedShipScript.shipClass.ToString();
         shipImage.sprite = selectedShipPrefab.Prefab.transform.Find("Ship Sprite").GetComponent<SpriteRenderer>().sprite;
         shipHealthText.text = "Health: " + selectedShipScript.maxShipHP;
         if (selectedShipMovementScript != null)

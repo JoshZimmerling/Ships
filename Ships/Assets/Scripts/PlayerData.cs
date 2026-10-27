@@ -2,6 +2,7 @@ using Unity.Collections;
 using Unity.Netcode;
 using Unity.Services.Authentication;
 using UnityEngine;
+using static Ship;
 
 public class PlayerData : NetworkBehaviour
 {
@@ -88,6 +89,9 @@ public class PlayerData : NetworkBehaviour
         ship.GetComponent<NetworkObject>().SpawnWithOwnership(OwnerClientId);
         ship.transform.parent = transform;
 
+        if (Factions.Singleton.factionList[factionIndex].factionName != "Galactic Syndicate" || ship.GetComponent<Ship>().shipClass == Ship.ShipClasses.Mothership)
+            ship.GetComponent<Ship>().hiddenFromRadar.Value = false;
+
         GameSceneManager.Singleton.shipsInScene.Add(ship);
     }
 
@@ -113,7 +117,7 @@ public class PlayerData : NetworkBehaviour
     public void KillMothershipRPC()
     {
         foreach (Transform child in transform)
-            if (child.gameObject.GetComponent<Ship>() != null && !child.gameObject.GetComponent<Ship>().isMothership)
+            if (child.gameObject.GetComponent<Ship>() != null && child.gameObject.GetComponent<Ship>().shipClass != Ship.ShipClasses.Mothership)
                 child.gameObject.GetComponent<Ship>().SelfDestroyShipRPC();
 
         Shop.Singleton.gameObject.SetActive(false);
@@ -129,7 +133,7 @@ public class PlayerData : NetworkBehaviour
         int numMothershipsLeft = 0;
         foreach (Ship ship in FindObjectsByType(typeof(Ship), FindObjectsSortMode.None))
         {
-            if (ship.isMothership)
+            if (ship.shipClass == ShipClasses.Mothership)
             {
                 numMothershipsLeft++;
             }

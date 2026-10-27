@@ -23,9 +23,21 @@ public class Ship : NetworkBehaviour
         Warp_Star,
     }
 
+    public enum ShipClasses
+    {
+        Mothership,
+        Generalist,
+        Bruiser,
+        Tank,
+        Sniper,
+        Assassin,
+        Scout,
+        Decoy,
+    }
+
     // Ship Variables
     public ShipTypes shipType;
-    public bool isMothership = false;
+    public ShipClasses shipClass;
     [SerializeField] private float shipCost;
     public float maxShipHP;
     public readonly NetworkVariable<float> currentShipHP = new NetworkVariable<float>();
@@ -36,7 +48,7 @@ public class Ship : NetworkBehaviour
     public bool isInvis = false;
     public int invisDetectionRange = 15;
 
-    public readonly NetworkVariable<bool> hiddenFromRadar = new NetworkVariable<bool>(false);
+    public readonly NetworkVariable<bool> hiddenFromRadar = new NetworkVariable<bool>(true);
 
     // Ship Components
     private Transform hpBar;
@@ -92,7 +104,7 @@ public class Ship : NetworkBehaviour
                 popupText = Instantiate(popupTextPrefab, transform.position + new Vector3(1, -1f) * correctionFactor * 0.5f, Quaternion.identity).GetComponent<PopupText>();
                 popupText.SetupText("+", Color.greenYellow, 1f);
             }
-            if (IsOwner && isMothership && newValue < previousValue && !Camera_Control.Singleton.IsOnScreen(transform))
+            if (IsOwner && shipClass == ShipClasses.Mothership && newValue < previousValue && !Camera_Control.Singleton.IsOnScreen(transform))
             {   // Notify players there mothership is under attack
                 MothershipDamageEffect.Singleton.TakeDamage();
             }
@@ -123,10 +135,18 @@ public class Ship : NetworkBehaviour
         }
 
         // Changes based on ship owner
-        if (!IsOwner || this.GetType() == typeof(NeutralShip))
+        if (!IsOwner)
         {
             outlineSprite.gameObject.SetActive(false);
+            scoutMarker.SetActive(!hiddenFromRadar.Value);
+            minimapScoutMarker.SetActive(!hiddenFromRadar.Value);
+        }
+        else if (this.GetType() == typeof(NeutralShip))
+        {
+            outlineSprite.gameObject.SetActive(false);
+            hiddenFromRadar.Value = false;
             scoutMarker.SetActive(true);
+            minimapScoutMarker.SetActive(true);
         }
     }
 
@@ -160,7 +180,7 @@ public class Ship : NetworkBehaviour
                 break;
         }
 
-        if (isMothership)
+        if (shipClass == ShipClasses.Mothership)
             foreach (NetworkClient client in NetworkManager.Singleton.ConnectedClientsList)
                 if (client.PlayerObject.OwnerClientId == OwnerClientId)
                     client.PlayerObject.GetComponent<PlayerData>().SetMothership(this);
@@ -202,7 +222,7 @@ public class Ship : NetworkBehaviour
 
     public void DestroyShip(GameObject shipDamageCameFrom)
     {
-        if (isMothership)
+        if (shipClass == ShipClasses.Mothership)
         {
             playerData.KillMothershipRPC();
         }
@@ -252,7 +272,7 @@ public class Ship : NetworkBehaviour
             { // If I have no money, loop through my remaining alive ships and if they are all not my mothership, this ship, or Goliath Fighters, we can consider ourselves still alive. Otherwise, kill my mothership
                 foreach (Transform myShip in NetworkManager.Singleton.LocalClient.PlayerObject.transform)
                 {
-                    if (!myShip.GetComponent<Ship>().isMothership && myShip.GetComponent<Ship>().shipType != ShipTypes.Legionnaire && myShip != transform)
+                    if (myShip.GetComponent<Ship>().shipClass != ShipClasses.Mothership && myShip.GetComponent<Ship>().shipType != ShipTypes.Legionnaire && myShip != transform)
                         return;
                 }
                 playerData.KillMothershipRPC();
@@ -299,9 +319,9 @@ public class Ship : NetworkBehaviour
     public override void OnNetworkDespawn()
     {
         // Play sound
-        if (((Camera_Control.Singleton.IsOnScreen(transform) && Camera_Control.Singleton.IsSeenByMyShips(transform)) || isMothership) && deathSound != null)
+        if (((Camera_Control.Singleton.IsOnScreen(transform) && Camera_Control.Singleton.IsSeenByMyShips(transform)) || shipClass == ShipClasses.Mothership) && deathSound != null)
         {
-            if (isMothership)
+            if (shipClass == ShipClasses.Mothership)
                 AudioSource.PlayClipAtPoint(deathSound, Camera.main.transform.position, 0.6f);
             else if (shipType == ShipTypes.Legionnaire)
                 AudioSource.PlayClipAtPoint(deathSound, Camera.main.transform.position, 0.2f);
@@ -310,7 +330,7 @@ public class Ship : NetworkBehaviour
         }
         // Play effect
         GameObject explosion = Instantiate(explosionPrefab, transform.position, Quaternion.identity);
-        if (isMothership)
+        if (shipClass == ShipClasses.Mothership)
             Destroy(explosion, 10f);
         else
             Destroy(explosion, 3f);

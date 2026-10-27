@@ -35,7 +35,7 @@ public class DarkStarAbility : NetworkBehaviour
                 Ship ship = go.GetComponent<Ship>();
                 if (ship != null &&
                     ship.OwnerClientId == OwnerClientId &&
-                    !ship.isMothership &&
+                    ship.shipClass != Ship.ShipClasses.Mothership &&
                     (transform.position - go.transform.position).magnitude + ship.correctionFactor <= abilityRadius &&
                     ship.GetType() != typeof(NeutralShip))
                 {
