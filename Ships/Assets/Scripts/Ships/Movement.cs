@@ -7,13 +7,13 @@ public class Movement : NetworkBehaviour
 {
     [SerializeField] private float shipAcceleration;
     [SerializeField] private float shipMaxSpeed;
-    private float currentAllowedMaxSpeed;
+    [SerializeField] private float currentAllowedMaxSpeed;
     private float currentAllowedMaxRotationSpeed;
     [SerializeField] private float shipTurnRate;
     [SerializeField] float distToStop = 2;
 
     float angle;
-    float totalVelocity;
+    [SerializeField] private float totalVelocity;
     float distToTarget;
 
     Vector2 targetPos;
@@ -24,6 +24,9 @@ public class Movement : NetworkBehaviour
     bool backingUp;
     bool rotateOnly;
 
+    [SerializeField] private bool hasTurboMode = false;
+    [SerializeField] private float turboBonus = 0.1f;
+
     /*    LineRenderer lineRenderer;*/
 
     private void FixedUpdate()
@@ -33,12 +36,21 @@ public class Movement : NetworkBehaviour
         if (shipTurnRate >= 1000)
             transform.rotation = Quaternion.identity;
 
+        if (noTarget) { return; }
+
         track = targetPos - (Vector2)transform.position;
         angle = Vector2.SignedAngle(track, transform.up);
 
         distToTarget = Vector2.Distance(transform.position, targetPos);
 
-        if (noTarget) { return; }
+        // Turbo Mode
+        if (hasTurboMode && currentAllowedMaxSpeed >= shipMaxSpeed)
+        {
+            if (MathF.Abs(angle) < 5 && moving)
+                currentAllowedMaxSpeed += turboBonus * Time.deltaTime;
+            else
+                currentAllowedMaxSpeed = shipMaxSpeed;
+        }
 
         // Stopping
         if (distToTarget < 1)

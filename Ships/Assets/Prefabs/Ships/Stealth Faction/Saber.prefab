@@ -487,8 +487,16 @@ PrefabInstance:
       value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 4637950062562444113, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
+      propertyPath: turboBonus
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4637950062562444113, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
+      propertyPath: hasTurboMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4637950062562444113, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: shipMaxSpeed
-      value: 4
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 4637950062562444113, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: shipTurnRate
