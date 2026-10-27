@@ -45,7 +45,7 @@ public class Ship : NetworkBehaviour
     public int visionRange;
     private bool shipAlreadyBelowZeroHealth = false;
 
-    public bool isInvis = false;
+    public readonly NetworkVariable<bool> isInvis = new NetworkVariable<bool>();
     public int invisDetectionRange = 15;
 
     public readonly NetworkVariable<bool> hiddenFromRadar = new NetworkVariable<bool>(true);

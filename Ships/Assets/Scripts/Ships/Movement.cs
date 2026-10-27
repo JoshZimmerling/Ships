@@ -26,15 +26,12 @@ public class Movement : NetworkBehaviour
 
     /*    LineRenderer lineRenderer;*/
 
-    private void Start()
-    {
-        if (shipTurnRate >= 1000)
-            transform.rotation = Quaternion.identity;
-    }
-
     private void FixedUpdate()
     {
         if (!IsHost) return;
+
+        if (shipTurnRate >= 1000)
+            transform.rotation = Quaternion.identity;
 
         track = targetPos - (Vector2)transform.position;
         angle = Vector2.SignedAngle(track, transform.up);

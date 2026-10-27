@@ -219,7 +219,7 @@ public class Turret : NetworkBehaviour
                 if (alliedShip != null && alliedShip.OwnerClientId == OwnerClientId && ship.GetComponent<NeutralShip>() == null && (alliedShip.transform.position - target.transform.position).magnitude < alliedShip.visionRange)
                 {
                     //If the target is not a ship, not invis, or is invis but is close enough that we can see it, condisder it in vision
-                    if (target.GetComponent<Ship>() == null || !target.GetComponent<Ship>().isInvis || target.GetComponent<Ship>().invisDetectionRange > (alliedShip.transform.position - target.transform.position).magnitude)
+                    if (target.GetComponent<Ship>() == null || !target.GetComponent<Ship>().isInvis.Value || target.GetComponent<Ship>().invisDetectionRange > (alliedShip.transform.position - target.transform.position).magnitude)
                     {
                         inVision = true;
                         break;
@@ -235,7 +235,7 @@ public class Turret : NetworkBehaviour
         }
         else //If it is a neutral ship, do the invis check
         {
-            if (target.GetComponent<Ship>() != null && target.GetComponent<Ship>().isInvis && target.GetComponent<Ship>().invisDetectionRange < distanceToTarget)
+            if (target.GetComponent<Ship>() != null && target.GetComponent<Ship>().isInvis.Value && target.GetComponent<Ship>().invisDetectionRange < distanceToTarget)
                 return false;
         }
 

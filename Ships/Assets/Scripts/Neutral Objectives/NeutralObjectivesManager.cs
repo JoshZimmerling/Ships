@@ -226,7 +226,7 @@ public class NeutralObjectivesManager : NetworkBehaviour
             return false;
 
         //Supply drop does not give vision of invis ship
-        if (ship.GetComponent<Ship>() != null && ship.GetComponent<Ship>().isInvis)
+        if (ship.GetComponent<Ship>() != null && ship.GetComponent<Ship>().isInvis.Value)
             return false;
 
         // Loop through each supply drop location, if it has an active supply drop and that supply drop has vision of the ship return true

@@ -139,7 +139,7 @@ Shader "Custom/TrueVision"
 				float4 orgColor = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, input.uv) * input.color;
 				float combinedAlpha = 0;
 
-				// completely skip all vision logic and render the asset entirely as normal.
+				// Completely skip all vision logic and render the asset entirely as normal.
 				if (_GlobalPointsBufferCount <= 0)
 				{
 					if (_VisibleWhenShipNearby == 1.0)
