@@ -33,6 +33,7 @@ public class Ship : NetworkBehaviour
         Assassin,
         Scout,
         Decoy,
+        Minion,
         NeutralShip
     }
 

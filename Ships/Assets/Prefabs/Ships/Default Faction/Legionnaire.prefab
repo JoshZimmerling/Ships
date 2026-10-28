@@ -176,7 +176,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4296535277916598889, guid: 4e149267b042dd548b2550df60747ac4, type: 3}
       propertyPath: shipClass
-      value: 7
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 4405372529883042285, guid: 4e149267b042dd548b2550df60747ac4, type: 3}
       propertyPath: GlobalObjectIdHash
