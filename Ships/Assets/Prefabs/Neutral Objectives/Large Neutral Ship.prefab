@@ -519,7 +519,7 @@ PrefabInstance:
       addedObject: {fileID: 6432485976816532596}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 5167211490098671168, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
-      insertIndex: -1
+      insertIndex: 3
       addedObject: {fileID: 655427787431732023}
   m_SourcePrefab: {fileID: 100100000, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
 --- !u!4 &1184768009073878240 stripped
@@ -551,7 +551,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::NeutralShip
   ShowTopMostFoldoutHeaderGroup: 1
   shipType: 1
-  shipClass: 8
+  shipClass: 9
   shipCost: 0
   maxShipHP: 100
   correctionFactor: 2

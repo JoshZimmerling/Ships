@@ -168,17 +168,23 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
                 {
                     SetShips(null);
                     Collider2D click = Physics2D.OverlapPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition));
-                    Transform clickedOnShip = click.transform.parent;
-
-                    if (clickedOnShip != null && clickedOnShip.GetComponent<Fighter>() == null && clickedOnShip.GetComponent<Ship>() != null && clickedOnShip.GetComponent<NeutralShip>() == null && clickedOnShip.GetComponent<Ship>().IsOwner)
+                    if (click != null)
                     {
-                        foreach (Transform ship in NetworkManager.Singleton.LocalClient.PlayerObject.transform)
+                        Transform clickedOnTransform = click.transform.parent;
+                        if (clickedOnTransform != null)
                         {
-                            Ship shipScript = ship.GetComponent<Ship>();
-                            if (Camera_Control.Singleton.IsOnScreen(ship) && shipScript != null && shipScript.IsOwner && shipScript.GetShipType() == clickedOnShip.GetComponent<Ship>().GetShipType())
+                            Ship clickedOnShip = clickedOnTransform.GetComponent<Ship>();
+                            if (clickedOnShip != null && clickedOnShip.IsOwner && clickedOnShip.shipClass != Ship.ShipClasses.Minion && clickedOnShip.shipClass != Ship.ShipClasses.NeutralShip)
                             {
-                                shipScript.SelectShip();
-                                selectedShips.Add(shipScript);
+                                foreach (Transform ship in NetworkManager.Singleton.LocalClient.PlayerObject.transform)
+                                {
+                                    Ship shipScript = ship.GetComponent<Ship>();
+                                    if (Camera_Control.Singleton.IsOnScreen(ship) && shipScript != null && shipScript.IsOwner && shipScript.GetShipType() == clickedOnShip.GetShipType())
+                                    {
+                                        shipScript.SelectShip();
+                                        selectedShips.Add(shipScript);
+                                    }
+                                }
                             }
                         }
                     }
@@ -188,15 +194,17 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
                 if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
                 {
                     Collider2D click = Physics2D.OverlapPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition));
-                    Transform clickedOnTransform = click.transform.parent;
-
-                    if (clickedOnTransform != null)
+                    if (click != null)
                     {
-                        Ship clickedOnShip = clickedOnTransform.GetComponent<Ship>();
-                        if (clickedOnShip != null && clickedOnShip.IsOwner && clickedOnShip.shipClass != Ship.ShipClasses.Decoy && clickedOnShip.shipClass != Ship.ShipClasses.NeutralShip)
+                        Transform clickedOnTransform = click.transform.parent;
+                        if (clickedOnTransform != null)
                         {
-                            clickedOnShip.SelectShip();
-                            selectedShips.Add(clickedOnShip);
+                            Ship clickedOnShip = clickedOnTransform.GetComponent<Ship>();
+                            if (clickedOnShip != null && clickedOnShip.IsOwner && clickedOnShip.shipClass != Ship.ShipClasses.Minion && clickedOnShip.shipClass != Ship.ShipClasses.NeutralShip)
+                            {
+                                clickedOnShip.SelectShip();
+                                selectedShips.Add(clickedOnShip);
+                            }
                         }
                     }
                     return;
@@ -367,7 +375,7 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
             Transform clickedOnShip = col.transform.parent;
 
             Ship ship = clickedOnShip.GetComponent<Ship>();
-            if (ship != null && ship.shipClass != Ship.ShipClasses.Decoy && ship.shipClass != Ship.ShipClasses.NeutralShip)
+            if (ship != null && ship.shipClass != Ship.ShipClasses.Minion && ship.shipClass != Ship.ShipClasses.NeutralShip)
                 if (NetworkManager.Singleton.LocalClientId == ship.OwnerClientId)
                     shipsFromHit.Add(ship);
         }

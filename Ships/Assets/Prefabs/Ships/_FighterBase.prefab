@@ -118,7 +118,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5248488840569974850, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: GlobalObjectIdHash
-      value: 254933885
+      value: 1555590791
       objectReference: {fileID: 0}
     - target: {fileID: 5248488840569974850, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: SceneMigrationSynchronization
@@ -282,11 +282,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Fighter
   ShowTopMostFoldoutHeaderGroup: 1
   shipType: 4
-  isMothership: 0
+  shipClass: 8
   shipCost: 0
   maxShipHP: 5
   correctionFactor: 0
   visionRange: 10
+  invisDetectionRange: 15
   popupTextPrefab: {fileID: 985385043950032243, guid: a6e0a522c1dcae445a22ddcda9f44396, type: 3}
   deathSound: {fileID: 8300000, guid: 0ea31790a1baca449a58d136452b34f2, type: 3}
   explosionPrefab: {fileID: 2655267347207458446, guid: f5bf9d633df584e48a57e5574cc3d534, type: 3}
