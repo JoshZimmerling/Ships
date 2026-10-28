@@ -47,6 +47,10 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
     private Button chooseNextFactionButton;
     private TextMeshProUGUI chooseFactionNameText;
     private int currentChosenFactionIndex = 0;
+    private Button choosePrevColor;
+    private Button chooseNextColor;
+    private Image chosenColorBox;
+    private int currentChosenColor = 0;
     // Ship info screen
     private GameObject shipInfoScreen;
     private Button exitShipInfoScreenButton;
@@ -129,6 +133,12 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
         chooseNextFactionButton = transform.Find("Lobby Screen/Player Settings Window/Faction/Choose Next Faction Button").GetComponent<Button>();
         chooseNextFactionButton.onClick.AddListener(() => ChooseFaction(1));
         chooseFactionNameText = transform.Find("Lobby Screen/Player Settings Window/Faction/Chosen Faction Name").GetComponent<TextMeshProUGUI>();
+
+        choosePrevColor = transform.Find("Lobby Screen/Player Settings Window/Color/Choose Previous Color Button").GetComponent<Button>();
+        choosePrevColor.onClick.AddListener(() => ChangePlayerColor(-1));
+        chooseNextColor = transform.Find("Lobby Screen/Player Settings Window/Color/Choose Next Color Button").GetComponent<Button>();
+        chooseNextColor.onClick.AddListener(() => ChangePlayerColor(1));
+        chosenColorBox = transform.Find("Lobby Screen/Player Settings Window/Color/Chosen Color").GetComponent<Image>();
 
         lobbyScreen = transform.Find("Lobby Screen").gameObject;
         lobbyName = transform.Find("Lobby Screen/Header").GetComponentInChildren<TextMeshProUGUI>();
@@ -439,8 +449,9 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
         };
     }
     
-    public void ChangePlayerColor(PlayerData player)
+    public void ChangePlayerColor(int colorChangeAmount)
     {
+        PlayerData player = NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerData>();
         int colorValue = player.playerColorIndex.Value;
 
         List<int> colors = new List<int>();
@@ -452,16 +463,21 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
         while (true)
         {
             if (colors.Contains(colorValue))
-                if (colorValue == playerColors.Length - 1)
+            {
+                colorValue += colorChangeAmount;
+                if (colorValue >= playerColors.Length)
                     colorValue = 0;
-                else
-                    colorValue++;
+                if (colorValue < 0)
+                    colorValue = playerColors.Length - 1;
+            }
             else
-                break;
+                 break;
         }
 
         player.playerColorIndex.Value = colorValue;
         player.playerReady.Value = false;
+
+        chosenColorBox.color = playerColors[colorValue];
     }
 
     private void ReadyOrStartGame() //TODO: and ready

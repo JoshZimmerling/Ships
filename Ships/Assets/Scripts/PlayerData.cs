@@ -49,7 +49,7 @@ public class PlayerData : NetworkBehaviour
     {
         if (playerColorIndex.Value == -1 && IsSpawned && IsLocalPlayer)
         {
-            MenuScreenManager.Singleton.ChangePlayerColor(this);
+            MenuScreenManager.Singleton.ChangePlayerColor(1);
         }
     }
 

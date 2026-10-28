@@ -6,7 +6,6 @@ using UnityEngine.UI;
 
 public class PlayerRepeater : MonoBehaviour
 {
-    private Button changeColorButton;
     private TextMeshProUGUI playerName;
     private GameObject hostIcon;
     private GameObject readyIcon;
@@ -23,8 +22,6 @@ public class PlayerRepeater : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
-        changeColorButton = transform.Find("Change Color Button").GetComponent<Button>();
-        changeColorButton.onClick.AddListener(() => MenuScreenManager.Singleton.ChangePlayerColor(client.PlayerObject.GetComponent<PlayerData>()));
         playerName = transform.Find("Name Bar").Find("Player Name").GetComponent<TextMeshProUGUI>();
         hostIcon = transform.Find("Name Bar").Find("Host Icon").gameObject;
         readyIcon = transform.Find("Name Bar").Find("Ready Icon").gameObject;
@@ -77,7 +74,6 @@ public class PlayerRepeater : MonoBehaviour
 
             if (playerData.IsLocalPlayer)
             {
-                changeColorButton.gameObject.SetActive(true);
                 playerName.color = new Color(215 / 255f, 215 / 255f, 100 / 255f);
 
                 leaveKickLobbyImage.gameObject.SetActive(true);
@@ -85,7 +81,6 @@ public class PlayerRepeater : MonoBehaviour
             }
             else // looking at other people
             {
-                changeColorButton.gameObject.SetActive(false);
                 playerName.color = new Color(1f, 1f, 1f);
 
                 if (NetworkManager.Singleton.IsHost) // If I am host
