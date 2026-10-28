@@ -216,7 +216,7 @@ public class Turret : NetworkBehaviour
             foreach (GameObject ship in GameSceneManager.Singleton.shipsInScene)
             {
                 Ship alliedShip = ship.GetComponent<Ship>();
-                if (alliedShip != null && alliedShip.OwnerClientId == OwnerClientId && ship.GetComponent<NeutralShip>() == null && (alliedShip.transform.position - target.transform.position).magnitude < alliedShip.visionRange)
+                if (alliedShip != null && alliedShip.OwnerClientId == OwnerClientId && alliedShip.shipClass != Ship.ShipClasses.NeutralShip && (alliedShip.transform.position - target.transform.position).magnitude < alliedShip.visionRange)
                 {
                     //If the target is not a ship, not invis, or is invis but is close enough that we can see it, condisder it in vision
                     if (target.GetComponent<Ship>() == null || !target.GetComponent<Ship>().isInvis.Value || target.GetComponent<Ship>().invisDetectionRange > ((alliedShip.transform.position - target.transform.position).magnitude) - alliedShip.correctionFactor)

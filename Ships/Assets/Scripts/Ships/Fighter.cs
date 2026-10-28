@@ -76,8 +76,6 @@ public class Fighter : Ship
 
         if (ship.GetComponent<Ship>() != null)
             targetedOrbitRadius = orbitRadius + ship.GetComponent<Ship>().correctionFactor;
-        if (ship.GetComponent<NeutralShip>() != null)
-            targetedOrbitRadius = orbitRadius + ship.GetComponent<NeutralShip>().correctionFactor;
     }
     public Vector2 GetFuturePosition(float seconds)
     {

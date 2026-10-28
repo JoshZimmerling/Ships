@@ -32,10 +32,10 @@ public class MothershipAbility : NetworkBehaviour
                 Ship ship = go.GetComponent<Ship>();
                 if (ship != null &&
                     ship.OwnerClientId == OwnerClientId &&
-                    ship.shipClass != Ship.ShipClasses.Mothership &&
-                    (transform.position - go.transform.position).magnitude + ship.correctionFactor <= mothershipHealRadius &&
                     ship.currentShipHP.Value != ship.maxShipHP &&
-                    ship.GetType() != typeof(NeutralShip))
+                    ship.shipClass != ShipClasses.Mothership &&
+                    ship.shipClass != ShipClasses.NeutralShip &&
+                    (transform.position - go.transform.position).magnitude + ship.correctionFactor <= mothershipHealRadius)
                 {
                     ship.currentShipHP.Value = Mathf.Min(ship.currentShipHP.Value + mothershipHealAmountFlat + mothershipHealAmountPercent * ship.maxShipHP, ship.maxShipHP);
                 }

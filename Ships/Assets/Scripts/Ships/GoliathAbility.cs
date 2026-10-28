@@ -56,23 +56,13 @@ public class GoliathAbility : NetworkBehaviour
                         currentTarget = shipInScene;
                     }
                 }
-                else if (shipInScene.GetComponent<NeutralShip>() != null)
-                {
-                    float dist2Ship = (shipInScene.transform.position - transform.position).magnitude - shipInScene.GetComponent<NeutralShip>().correctionFactor;
-                    if (dist2Ship < detectionRange && dist2Ship < closestRange)
-                    {
-                        closestRange = dist2Ship;
-                        currentTarget = shipInScene;
-                    }
-                }
             }
             // Send drones after target
             if (currentTarget != null)
                 foreach (GameObject fighter in fighters)
                     fighter.GetComponent<Fighter>().SetTarget(currentTarget);
         }
-        else if ((currentTarget.GetComponent<Ship>() != null && (currentTarget.transform.position - transform.position).magnitude - currentTarget.GetComponent<Ship>().correctionFactor > maxChaseRange)
-            || (currentTarget.GetComponent<NeutralShip>() != null && (currentTarget.transform.position - transform.position).magnitude - currentTarget.GetComponent<NeutralShip>().correctionFactor > maxChaseRange))
+        else if (currentTarget.GetComponent<Ship>() != null && (currentTarget.transform.position - transform.position).magnitude - currentTarget.GetComponent<Ship>().correctionFactor > maxChaseRange)
         {
             // Tell ships to return
             currentTarget = null;

@@ -170,7 +170,6 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
                     Collider2D click = Physics2D.OverlapPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition));
                     Transform clickedOnShip = click.transform.parent;
 
-
                     if (clickedOnShip != null && clickedOnShip.GetComponent<Fighter>() == null && clickedOnShip.GetComponent<Ship>() != null && clickedOnShip.GetComponent<NeutralShip>() == null && clickedOnShip.GetComponent<Ship>().IsOwner)
                     {
                         foreach (Transform ship in NetworkManager.Singleton.LocalClient.PlayerObject.transform)
@@ -189,12 +188,16 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
                 if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
                 {
                     Collider2D click = Physics2D.OverlapPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition));
-                    Transform clickedOnShip = click.transform.parent;
+                    Transform clickedOnTransform = click.transform.parent;
 
-                    if (clickedOnShip != null && clickedOnShip.GetComponent<Fighter>() == null && clickedOnShip.GetComponent<Ship>() != null && clickedOnShip.GetComponent<NeutralShip>() == null && clickedOnShip.GetComponent<Ship>().IsOwner)
+                    if (clickedOnTransform != null)
                     {
-                        clickedOnShip.GetComponent<Ship>().SelectShip();
-                        selectedShips.Add(clickedOnShip.GetComponent<Ship>());
+                        Ship clickedOnShip = clickedOnTransform.GetComponent<Ship>();
+                        if (clickedOnShip != null && clickedOnShip.IsOwner && clickedOnShip.shipClass != Ship.ShipClasses.Decoy && clickedOnShip.shipClass != Ship.ShipClasses.NeutralShip)
+                        {
+                            clickedOnShip.SelectShip();
+                            selectedShips.Add(clickedOnShip);
+                        }
                     }
                     return;
                 }
@@ -364,7 +367,7 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
             Transform clickedOnShip = col.transform.parent;
 
             Ship ship = clickedOnShip.GetComponent<Ship>();
-            if (ship != null && clickedOnShip.GetComponent<Fighter>() == null && clickedOnShip.GetComponent<NeutralShip>() == null)
+            if (ship != null && ship.shipClass != Ship.ShipClasses.Decoy && ship.shipClass != Ship.ShipClasses.NeutralShip)
                 if (NetworkManager.Singleton.LocalClientId == ship.OwnerClientId)
                     shipsFromHit.Add(ship);
         }

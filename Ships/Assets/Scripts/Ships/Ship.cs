@@ -33,6 +33,7 @@ public class Ship : NetworkBehaviour
         Assassin,
         Scout,
         Decoy,
+        NeutralShip
     }
 
     // Ship Variables
@@ -111,7 +112,7 @@ public class Ship : NetworkBehaviour
         };
 
         // If player owned ship
-        if (this.GetType() != typeof(NeutralShip))
+        if (shipClass != ShipClasses.NeutralShip)
         {
             foreach (NetworkClient client in NetworkManager.Singleton.ConnectedClientsList)
                 if (client.ClientId == OwnerClientId)
@@ -141,7 +142,7 @@ public class Ship : NetworkBehaviour
             scoutMarker.SetActive(!hiddenFromRadar.Value);
             minimapScoutMarker.SetActive(!hiddenFromRadar.Value);
         }
-        else if (this.GetType() == typeof(NeutralShip))
+        else if (shipClass == ShipClasses.NeutralShip)
         {
             outlineSprite.gameObject.SetActive(false);
             hiddenFromRadar.Value = false;
@@ -203,7 +204,7 @@ public class Ship : NetworkBehaviour
         if (currentShipHP.Value <= 0 && !shipAlreadyBelowZeroHealth)
         {
             shipAlreadyBelowZeroHealth = true;
-            if (gameObject.GetComponent<NeutralShip>() != null)
+            if (shipClass == ShipClasses.NeutralShip)
                 gameObject.GetComponent<NeutralShip>().DestroyShip(shipDamageCameFrom);
             else
                 DestroyShip(shipDamageCameFrom);
@@ -335,7 +336,7 @@ public class Ship : NetworkBehaviour
         else
             Destroy(explosion, 3f);
 
-        if (IsOwner && GetComponent<NeutralShip>() == null)
+        if (IsOwner && shipClass != ShipClasses.NeutralShip)
         {
             GameObject vision = Instantiate(visionPrefab, transform.position, Quaternion.identity);
             vision.GetComponent<VisionCone>().visionRange = visionRange;

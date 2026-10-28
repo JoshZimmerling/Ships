@@ -36,8 +36,8 @@ public class DarkStarAbility : NetworkBehaviour
                 if (ship != null &&
                     ship.OwnerClientId == OwnerClientId &&
                     ship.shipClass != Ship.ShipClasses.Mothership &&
-                    (transform.position - go.transform.position).magnitude + ship.correctionFactor <= abilityRadius &&
-                    ship.GetType() != typeof(NeutralShip))
+                    ship.shipClass != Ship.ShipClasses.NeutralShip &&
+                    (transform.position - go.transform.position).magnitude + ship.correctionFactor <= abilityRadius)
                 {
                     newShipsInRange.Add(ship);
                     ship.hiddenFromRadar.Value = true;
