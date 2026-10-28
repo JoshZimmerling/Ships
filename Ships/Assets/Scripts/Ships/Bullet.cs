@@ -39,8 +39,12 @@ public class Bullet : NetworkBehaviour
         if (collision.gameObject.name == "Challenger Shield" ||
             collision.gameObject.name == "Raptor Ability")
         {
-            if(collision.transform.parent.GetComponent<Ship>().OwnerClientId == this.OwnerClientId && !isFromNeutralShip)
+            if (collision.transform.parent.GetComponent<Ship>().OwnerClientId == this.OwnerClientId && !isFromNeutralShip)
                 return;
+        }
+        else if (collision.attachedRigidbody == null)
+        {
+            //Weird collision stuff?!?
         }
         else if (collision.attachedRigidbody.GetComponent<NeutralShip>() != null)
         {
