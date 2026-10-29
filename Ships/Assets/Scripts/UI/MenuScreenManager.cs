@@ -50,7 +50,6 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
     private Button choosePrevColor;
     private Button chooseNextColor;
     private Image chosenColorBox;
-    private int currentChosenColor = 0;
     // Ship info screen
     private GameObject shipInfoScreen;
     private Button exitShipInfoScreenButton;

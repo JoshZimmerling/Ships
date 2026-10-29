@@ -36,33 +36,31 @@ public class Bullet : NetworkBehaviour
     {
         if (!IsHost || destroyInProgress) return;
 
-        if (collision.gameObject.name == "Challenger Shield" ||
-            collision.gameObject.name == "Raptor Ability")
+        if (collision.gameObject.name == "Challenger Shield" || collision.gameObject.name == "Raptor Ability")
         {
             if (collision.transform.parent.GetComponent<Ship>().OwnerClientId == this.OwnerClientId && !isFromNeutralShip)
                 return;
         }
-        else if (collision.attachedRigidbody == null)
+        else if (collision.attachedRigidbody != null)
         {
-            // If it collides with an object without a rigidbody, proceed to destroy this object
-        }
-        else if (collision.attachedRigidbody.GetComponent<NeutralShip>() != null)
-        {
-            if (isFromNeutralShip)
-                return;
+            if (collision.attachedRigidbody.GetComponent<NeutralShip>() != null)
+            {
+                if (isFromNeutralShip)
+                    return;
 
-            collision.attachedRigidbody.GetComponent<NeutralShip>().DoDamage(dmg, parentShip);
-            if (slowShipDuration > 0 && slowShipPercentage > 0)
-                collision.attachedRigidbody.GetComponent<Movement>().ChangeSpeed(slowShipPercentage, slowShipDuration);
-        }
-        else if (collision.attachedRigidbody.GetComponent<Ship>() != null)
-        {
-            if (collision.attachedRigidbody.GetComponent<Ship>().OwnerClientId == this.OwnerClientId && !isFromNeutralShip)
-                return;
+                collision.attachedRigidbody.GetComponent<NeutralShip>().DoDamage(dmg, parentShip);
+                if (slowShipDuration > 0 && slowShipPercentage > 0)
+                    collision.attachedRigidbody.GetComponent<Movement>().ChangeSpeed(slowShipPercentage, slowShipDuration);
+            }
+            else if (collision.attachedRigidbody.GetComponent<Ship>() != null)
+            {
+                if (collision.attachedRigidbody.GetComponent<Ship>().OwnerClientId == this.OwnerClientId && !isFromNeutralShip)
+                    return;
 
-            collision.attachedRigidbody.GetComponent<Ship>().DoDamage(dmg, parentShip);
-            if (slowShipDuration > 0 && slowShipPercentage > 0)
-                collision.attachedRigidbody.GetComponent<Movement>().ChangeSpeed(slowShipPercentage, slowShipDuration);
+                collision.attachedRigidbody.GetComponent<Ship>().DoDamage(dmg, parentShip);
+                if (slowShipDuration > 0 && slowShipPercentage > 0)
+                    collision.attachedRigidbody.GetComponent<Movement>().ChangeSpeed(slowShipPercentage, slowShipDuration);
+            }
         }
         else if (collision.GetComponent<Missile>() != null)
         {
