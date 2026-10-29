@@ -44,7 +44,7 @@ public class Bullet : NetworkBehaviour
         }
         else if (collision.attachedRigidbody == null)
         {
-            //Weird collision stuff?!?
+            // If it collides with an object without a rigidbody, proceed to destroy this object
         }
         else if (collision.attachedRigidbody.GetComponent<NeutralShip>() != null)
         {

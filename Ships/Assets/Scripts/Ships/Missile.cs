@@ -88,6 +88,10 @@ public class Missile : NetworkBehaviour
             if (collision.attachedRigidbody.GetComponent<Ship>().OwnerClientId == this.OwnerClientId && !isFromNeutralShip)
                 return;
         }
+        else if (collision.attachedRigidbody == null)
+        {
+            // If it collides with an object without a rigidbody, proceed to destroy this object
+        }
         else if (collision.attachedRigidbody.GetComponent<NeutralShip>() != null)
         {
             if (isFromNeutralShip)
