@@ -261,6 +261,46 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 6187171232837692917, guid: 4281569ef17592749bb0d43e46a97844, type: 3}
   m_PrefabInstance: {fileID: 65366757806899117}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &18363555
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 18363556}
+  - component: {fileID: 18363557}
+  m_Layer: 5
+  m_Name: Ship Thrusters
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &18363556
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 18363555}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -135, y: 0, z: 0}
+  m_LocalScale: {x: 3.2, y: 3.2, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 483351197}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!222 &18363557
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 18363555}
+  m_CullTransparentMesh: 1
 --- !u!1 &27392319
 GameObject:
   m_ObjectHideFlags: 0
@@ -3416,6 +3456,7 @@ RectTransform:
   - {fileID: 1723700799}
   - {fileID: 474130049}
   - {fileID: 1014059165}
+  - {fileID: 18363556}
   - {fileID: 1057527951}
   m_Father: {fileID: 773725147}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -5583,6 +5624,7 @@ MonoBehaviour:
   lobbyRepeaterPrefab: {fileID: 5862539692977956443, guid: ed318bcd7268d1840bc7fa23dbdeae4d, type: 3}
   playerRepeaterPrefab: {fileID: 1643282718538799694, guid: b234946f12d5a7d48a7339f4c714b5a8, type: 3}
   shipRepeaterPrefab: {fileID: 6694802649765771938, guid: 4281569ef17592749bb0d43e46a97844, type: 3}
+  shipThrusterPrefab: {fileID: 7742776250069294109, guid: a5d679c6af14fb24c931ca3b354ddedf, type: 3}
   turretRepeaterPrefab: {fileID: 6392731063394341379, guid: 8b81bb88421445443adfa62576791cab, type: 3}
   playerColors:
   - {r: 1, g: 0, b: 0, a: 1}
