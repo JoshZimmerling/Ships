@@ -433,8 +433,8 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1993422899511674839, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: shipDescriptionForUI
-      value: The Scout has a radar that can detect enemy ships even further out than
-        normal vision range.
+      value: The Voyager has a radar that can detect enemy ships even further out
+        than normal vision range.
       objectReference: {fileID: 0}
     - target: {fileID: 2351284334504759342, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: m_Sprite
@@ -470,7 +470,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5167211490098671168, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: m_Name
-      value: Scout
+      value: Voyager
       objectReference: {fileID: 0}
     - target: {fileID: 5167211490098671168, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: m_IsActive

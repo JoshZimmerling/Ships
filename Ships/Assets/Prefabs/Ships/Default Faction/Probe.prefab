@@ -192,7 +192,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1993422899511674839, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: shipDescriptionForUI
-      value: The Drone is able to rotate instantly in any direction, making it the
+      value: The Probe is able to rotate instantly in any direction, making it the
         most maneuverable ship by far.
       objectReference: {fileID: 0}
     - target: {fileID: 2211049490574980914, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
@@ -237,7 +237,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5167211490098671168, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: m_Name
-      value: Drone
+      value: Probe
       objectReference: {fileID: 0}
     - target: {fileID: 5248488840569974850, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: GlobalObjectIdHash
