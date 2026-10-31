@@ -72,7 +72,8 @@ public class NeutralShip : Ship
             }
         }
         GameSceneManager.Singleton.shipsInScene.Remove(gameObject);
-        InformShipWhoKilled(shipDamageCameFrom);
+        if (shipDamageCameFrom != null)
+            InformShipWhoKilled(shipDamageCameFrom);
 
         GetComponent<NetworkObject>().Despawn();
         Destroy(gameObject);
