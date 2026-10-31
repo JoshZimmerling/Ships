@@ -247,6 +247,8 @@ public class Ship : NetworkBehaviour
 
     public void InformShipWhoKilled(GameObject shipDamageCameFrom)
     {
+        if (shipDamageCameFrom == null)
+            return;
         Ship shipScript = shipDamageCameFrom.GetComponent<Ship>();
         if (shipScript != null)
         {
