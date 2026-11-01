@@ -194,8 +194,17 @@ public class Movement : NetworkBehaviour
     [Rpc(SendTo.Server)]
     public void BackupShipRPC()
     {
-        if (shipTurnRate >= 1000) return;
-        targetPos = transform.position + (-transform.up * distToStop);
+        if (shipTurnRate >= 1000)
+        {
+            if (!moving)
+                return;
+            else if (!backingUp)
+                targetPos = (Vector2)transform.position - ((targetPos - (Vector2)transform.position).normalized * distToStop);
+            else
+                targetPos = (Vector2)transform.position + ((targetPos - (Vector2)transform.position).normalized * distToStop);
+        }
+        else
+            targetPos = transform.position + (-transform.up * distToStop);
         backingUp = true;
         noTarget = false;
         rotateOnly = false;
@@ -207,8 +216,8 @@ public class Movement : NetworkBehaviour
     [Rpc(SendTo.Server)]
     public void StopShipRPC()
     {
-        if (shipTurnRate >= 1000) 
-            targetPos = (Vector2)transform.position + targetPos.normalized * distToStop;
+        if (shipTurnRate >= 1000)
+            targetPos = (Vector2)transform.position + ((targetPos - (Vector2)transform.position).normalized * distToStop);
         else if (backingUp && distToTarget > 1.5f) 
             targetPos = transform.position + -transform.up * distToStop/1.5f;
         else if (!backingUp)

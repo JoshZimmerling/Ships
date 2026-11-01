@@ -12,8 +12,8 @@ public class Ship : NetworkBehaviour
         Legionnaire,
         Hawk,
         Lightning,
-        Scout,
-        Drone,
+        Voyager,
+        Probe,
         Dark_Star,
         Saber,
         Dagger,
@@ -33,7 +33,7 @@ public class Ship : NetworkBehaviour
         Assassin,
         Scout,
         Decoy,
-        Minion,
+        Drone,
         NeutralShip
     }
 
@@ -172,7 +172,7 @@ public class Ship : NetworkBehaviour
     {
         switch (shipType)
         {
-            case ShipTypes.Scout:
+            case ShipTypes.Voyager:
             case ShipTypes.Ghost:
                 if (IsOwner)
                 {

@@ -50,7 +50,6 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
     private Button choosePrevColor;
     private Button chooseNextColor;
     private Image chosenColorBox;
-    private int currentChosenColor = 0;
     // Ship info screen
     private GameObject shipInfoScreen;
     private Button exitShipInfoScreenButton;
@@ -60,12 +59,16 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
     private Button prevFactionButton;
     private Button nextFactionButton;
     [SerializeField] private GameObject shipRepeaterPrefab;
+    [SerializeField] private GameObject shipThrusterPrefab;
     private GameObject shipList;
 
     private GameObject shipDetailsPanel;
     private TextMeshProUGUI shipNameText;
+    private RectTransform shipClassTransform;
     private TextMeshProUGUI shipClassText;
+    private Image shipClassIconImage;
     private Image shipImage;
+    private Transform shipThrustersContainer;
     private TextMeshProUGUI shipHealthText;
     private TextMeshProUGUI shipTopSpeedText;
     private TextMeshProUGUI shipAccelerationText;
@@ -161,8 +164,11 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
 
         shipDetailsPanel = transform.Find("Ship Info Screen/Ship Details Panel").gameObject;
         shipNameText = shipDetailsPanel.transform.Find("Ship Name").GetComponent<TextMeshProUGUI>();
-        shipClassText = shipDetailsPanel.transform.Find("Ship Class").GetComponent<TextMeshProUGUI>();
+        shipClassTransform = shipDetailsPanel.transform.Find("Ship Class").GetComponent<RectTransform>();
+        shipClassText = shipDetailsPanel.transform.Find("Ship Class/Ship Class Text").GetComponent<TextMeshProUGUI>();
+        shipClassIconImage = shipDetailsPanel.transform.Find("Ship Class/Ship Class Icon").GetComponent<Image>();
         shipImage = shipDetailsPanel.transform.Find("Ship Image").GetComponent<Image>();
+        shipThrustersContainer = shipDetailsPanel.transform.Find("Ship Thrusters");
         shipHealthText = shipDetailsPanel.transform.Find("Ship Stats Panel/Health Text").GetComponent<TextMeshProUGUI>();
         shipTopSpeedText = shipDetailsPanel.transform.Find("Ship Stats Panel/Top Speed Text").GetComponent<TextMeshProUGUI>();
         shipAccelerationText = shipDetailsPanel.transform.Find("Ship Stats Panel/Acceleration Text").GetComponent<TextMeshProUGUI>();
@@ -595,6 +601,7 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
         Movement selectedShipMovementScript = selectedShipPrefab.Prefab.GetComponent<Movement>();
         shipNameText.text = selectedShipPrefab.Prefab.name;
         shipClassText.text = selectedShipScript.shipClass.ToString();
+        shipClassIconImage.sprite = Resources.Load<Sprite>("Sprites/Ship Class Icons/Icon_" + selectedShipScript.shipClass.ToString());
         shipImage.sprite = selectedShipPrefab.Prefab.transform.Find("Ship Sprite").GetComponent<SpriteRenderer>().sprite;
         shipHealthText.text = "Health: " + selectedShipScript.maxShipHP;
         if (selectedShipMovementScript != null)
@@ -622,6 +629,62 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
             GameObject turretRepeater = Instantiate(turretRepeaterPrefab, shipImage.transform);
             turretRepeater.GetComponent<TurretRepeater>().Setup(turret);
         }
+
+        //Clear out previous ships thrusters
+        foreach (Transform thruster in shipThrustersContainer)
+            Destroy(thruster.gameObject);
+
+        //Setup new ships thrusters
+        if (selectedShipPrefab.Prefab.name != "Dark Star") //Dark stars thrusters do not look good on this screen
+        {
+            foreach (Transform thruster in selectedShipPrefab.Prefab.transform.Find("Ship Sprite/Thrusters"))
+            {
+                ParticleSystem srcThruster = thruster.GetComponent<ParticleSystem>();
+                ParticleSystem dstThruster = Instantiate(shipThrusterPrefab, shipThrustersContainer).GetComponent<ParticleSystem>();
+
+                // 1. Main Module Settings
+                ParticleSystem.MainModule srcMain = srcThruster.main;
+                ParticleSystem.MainModule dstMain = dstThruster.main;
+
+                dstMain.duration = srcMain.duration;
+                dstMain.startLifetime = srcMain.startLifetime;
+                dstMain.startSpeed = srcMain.startSpeed;
+                dstMain.startSize = srcMain.startSize;
+                dstMain.simulationSpace = srcMain.simulationSpace;
+
+                // 2. Emission Module Settings
+                ParticleSystem.EmissionModule srcEmission = srcThruster.emission;
+                ParticleSystem.EmissionModule dstEmission = dstThruster.emission;
+
+                dstEmission.rateOverTime = srcEmission.rateOverTime;
+
+                // 3. Shape Module Settings
+                ParticleSystem.ShapeModule srcShape = srcThruster.shape;
+                ParticleSystem.ShapeModule dstShape = dstThruster.shape;
+
+                dstShape.shapeType = srcShape.shapeType;
+                dstShape.radius = srcShape.radius;
+                dstShape.position = srcShape.position;
+                dstShape.rotation = srcShape.rotation;
+
+                // 4. Color Over Lifetime Module Settings
+                ParticleSystem.ColorOverLifetimeModule srcCLT = srcThruster.colorOverLifetime;
+                ParticleSystem.ColorOverLifetimeModule dstCLT = dstThruster.colorOverLifetime;
+
+                dstCLT.color = srcCLT.color;
+
+                // 5. Size Over Lifetime Module Settings
+                ParticleSystem.SizeOverLifetimeModule srcSLT = srcThruster.sizeOverLifetime;
+                ParticleSystem.SizeOverLifetimeModule dstSLT = dstThruster.sizeOverLifetime;
+
+                dstSLT.size = srcSLT.size;
+
+                // 6. Start
+                dstThruster.Play();
+            }
+        }
+
+        LayoutRebuilder.ForceRebuildLayoutImmediate(shipClassTransform); //This realigns the icon and text to fit correctly for ship class
     }
 
     public void SelectedTurretChange(TurretRepeater selectedTurretRepeater)
