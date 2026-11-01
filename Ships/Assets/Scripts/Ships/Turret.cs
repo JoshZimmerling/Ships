@@ -46,6 +46,8 @@ public class Turret : NetworkBehaviour
 
     private bool isNeutralShipTurret;
 
+    private ParticleSystem ps;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public override void OnNetworkSpawn()
     {
@@ -60,6 +62,7 @@ public class Turret : NetworkBehaviour
             baselineVolume = shotAudio.volume;
         }
 
+        ps = GetComponent<ParticleSystem>();
     }
 
     // Find closest
@@ -115,10 +118,12 @@ public class Turret : NetworkBehaviour
 
         if (bestTarget != null)
         {
+            float targetAngle;
             if (turretType == TurretType.MissilePods)
             {
+                targetAngle = aimDirection - 90 + transform.rotation.eulerAngles.z;
                 // Fire the missile
-                GameObject missile = Instantiate(missilePrefab, transform.position, Quaternion.Euler(0, 0, aimDirection - 90 + transform.rotation.eulerAngles.z));
+                GameObject missile = Instantiate(missilePrefab, transform.position, Quaternion.Euler(0, 0, targetAngle));
                 GameSceneManager.Singleton.missilesInScene.Add(missile);
                 missile.GetComponent<NetworkObject>().SpawnWithOwnership(OwnerClientId);
                 missile.GetComponent<Missile>().SetupMissile(damage, projectileSpeed, missileTurningSpeed, missileLifetimeMax, slowEnemyShipsPercent, slowEnemyShipsSeconds, bestTarget, transform.parent.parent.parent.gameObject);
@@ -146,23 +151,23 @@ public class Turret : NetworkBehaviour
                 Vector2 shootDirection = (targetedPos - new Vector2(transform.position.x, transform.position.y));
                 float angleDiff = Vector2.SignedAngle(shootDirection, fireVector);
 
-                // Clamping shot angle to inside the bounds of our spread
+                // Clamping shot shootDirection to inside the bounds of our spread
                 if (firingArc != 360 && Mathf.Abs(angleDiff) > firingArc / 2)
                     angleDiff = firingArc / 2 * Mathf.Sign(angleDiff);
-                
+
+                targetAngle = aimDirection + transform.rotation.eulerAngles.z - angleDiff;
+                float fireAngle;
                 // Fire bullets
                 for (int i = 0; i < projectiles; i++)
                 {
-                    // Calculate final fire angle
-
-                    float fireAngle = 0;
+                    // Calculate final fire shootDirection
                     if (TurretType.HawkGun == turretType && !mv.moving)
-                        fireAngle = (aimDirection + transform.rotation.eulerAngles.z - angleDiff) * Mathf.Deg2Rad;
+                        fireAngle = targetAngle * Mathf.Deg2Rad;
                     else
-                        fireAngle = (aimDirection + transform.rotation.eulerAngles.z - angleDiff + Random.Range(-firingSpread / 2, firingSpread / 2)) * Mathf.Deg2Rad;
+                        fireAngle = (targetAngle + Random.Range(-firingSpread / 2, firingSpread / 2)) * Mathf.Deg2Rad;
                     fireVector = new Vector2(Mathf.Cos(fireAngle), Mathf.Sin(fireAngle));
 
-                    // Fire the bullet at the angle calculated
+                    // Fire the bullet at the shootDirection calculated
                     GameObject bullet = Instantiate(bulletPrefab, transform.position, Quaternion.LookRotation(new Vector3(0, 0, 1), fireVector));
                     bullet.GetComponent<NetworkObject>().SpawnWithOwnership(OwnerClientId);
                     bullet.GetComponent<Bullet>().SetupBullet(
@@ -179,7 +184,7 @@ public class Turret : NetworkBehaviour
             }
 
             // Play sound for firing bullet
-            PlayShootingAudioRPC();
+            PlayShootingEffectsRPC(targetAngle);
 
             //Reset shot counter with a slight variation
             counter = Random.Range(0.95f, 1.05f) / fireRate;
@@ -249,8 +254,8 @@ public class Turret : NetworkBehaviour
         Vector2 leftEdgeDir = RotateVector(fireVector, firingArc * 0.5f).normalized;
         Vector2 rightEdgeDir = RotateVector(fireVector, -firingArc * 0.5f).normalized;
 
-        if (LineSegmentIntersectsCircle(transform.position, (Vector2)transform.position + leftEdgeDir * range * rangeMod, target.transform.position, corrVal)) return true;
-        if (LineSegmentIntersectsCircle(transform.position, (Vector2)transform.position + rightEdgeDir * range * rangeMod, target.transform.position, corrVal)) return true;
+        if (LineSegmentIntersectsCircle(transform.position, (Vector2)transform.position + range * rangeMod * leftEdgeDir, target.transform.position, corrVal)) return true;
+        if (LineSegmentIntersectsCircle(transform.position, (Vector2)transform.position + range * rangeMod * rightEdgeDir, target.transform.position, corrVal)) return true;
 
         return false;
     }
@@ -285,7 +290,7 @@ public class Turret : NetworkBehaviour
     }
 
     [Rpc(SendTo.ClientsAndHost)]
-    public void PlayShootingAudioRPC()
+    public void PlayShootingEffectsRPC(float shootDirection)
     {
         Transform thisTurretsShip = transform.parent.parent;
         if (Camera_Control.Singleton.IsOnScreen(thisTurretsShip) && Camera_Control.Singleton.IsSeenByMyShips(thisTurretsShip))
@@ -299,11 +304,17 @@ public class Turret : NetworkBehaviour
                 shotAudio.Play();
             }
         }
+        if (ps != null)
+        {
+            ParticleSystem.ShapeModule shape = ps.shape;
+            shape.rotation = new Vector3(0, 0, shootDirection - transform.rotation.eulerAngles.z);
+            ps.Play();
+        }
     }
 
     private void OnDrawGizmos()
     {
-        float shipRotationZ = gameObject.transform.rotation.eulerAngles.z;
+        float shipRotationZ = transform.rotation.eulerAngles.z;
 
         switch (turretType)
         {
