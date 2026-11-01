@@ -1,8 +1,5 @@
 using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.UIElements;
-using static Turret;
 
 public class Fighter : Ship
 {
@@ -84,7 +81,7 @@ public class Fighter : Ship
 
     public override void OnNetworkDespawn()
     {
-        if (IsHost)
+        if (IsHost && goliath != null)
             goliath.GetComponent<GoliathAbility>().fighters.Remove(gameObject);
         
         base.OnNetworkDespawn();
