@@ -18,8 +18,6 @@ public class GameSceneManager : Singleton<GameSceneManager>
 
     private NeutralObjectivesManager neutralObjectivesManager;
 
-    // TODO: make this better
-    [SerializeField] public GameObject map;
     [SerializeField] private GameObject gameUI;
     [SerializeField] private GameObject inputManager;
 
@@ -29,9 +27,16 @@ public class GameSceneManager : Singleton<GameSceneManager>
     [SerializeField] private GameObject playersInfoPrefab;
     private Dictionary<ulong, Transform> allPlayersInfoInTabMenu;
 
+    private GameSettingsManager gameSettingsManager;
+    private GameObject map;
+
     protected override void Awake()
     {
         base.Awake();
+
+        gameSettingsManager = GameObject.Find("Game Settings Manager").GetComponent<GameSettingsManager>();
+        map = Instantiate(gameSettingsManager.GetSelectedMapPrefab());
+        GameObject.Find("MiniMap Camera").GetComponent<Camera>().orthographicSize = map.GetComponent<RectTransform>().rect.width / 2f;
 
         neutralObjectivesManager = GameObject.Find("Neutral Objectives Manager").GetComponent<NeutralObjectivesManager>();
 
@@ -174,6 +179,11 @@ public class GameSceneManager : Singleton<GameSceneManager>
             minimap.transform.localScale = new Vector3(1.3f, 1.3f, 1);
             minimap.GetComponent<RectTransform>().anchoredPosition = new Vector3(0, 0, 0);
         }
+    }
+
+    public GameObject GetMap()
+    {
+        return map;
     }
 }
 

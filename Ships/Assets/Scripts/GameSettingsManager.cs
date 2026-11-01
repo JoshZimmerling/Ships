@@ -27,7 +27,7 @@ public class GameSettingsManager : NetworkBehaviour
     public void LastMap()
     {
         mapIndex.Value--;
-        if (mapIndex.Value <= 0) mapIndex.Value = mapsList.PrefabList.Count - 1;
+        if (mapIndex.Value < 0) mapIndex.Value = mapsList.PrefabList.Count - 1;
     }
 
     public GameObject GetSelectedMapPrefab()
