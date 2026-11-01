@@ -108,6 +108,13 @@ public class Missile : NetworkBehaviour
                     collision.attachedRigidbody.GetComponent<Movement>().ChangeSpeed(slowShipPercentage, slowShipDuration);
             }
         }
+        else if (collision.transform.parent.GetComponent<Ship>() != null && collision.transform.parent.GetComponent<Ship>().shipClass == Ship.ShipClasses.Drone)
+        {
+            if (collision.transform.parent.GetComponent<Ship>().OwnerClientId == this.OwnerClientId && !isFromNeutralShip)
+                return;
+
+            collision.transform.parent.GetComponent<Ship>().DoDamage(dmg, parentShip);
+        }
         else if (collision.GetComponent<Missile>() != null)
         {
             if ((collision.GetComponent<Missile>().OwnerClientId == this.OwnerClientId && !collision.GetComponent<Missile>().isFromNeutralShip && !isFromNeutralShip) || (isFromNeutralShip && collision.GetComponent<Missile>().isFromNeutralShip))
