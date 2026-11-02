@@ -370,8 +370,8 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1993422899511674839, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: shipDescriptionForUI
-      value: The Ghost never shows on radar and turns invisible when stationary when
-        nothing is nearby. It has a radar while moving.
+      value: The Ghost never shows on enemy radar and turns invisible when stationary
+        and nothing is nearby. It has a radar while moving.
       objectReference: {fileID: 0}
     - target: {fileID: 2351284334504759342, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: m_Sprite
