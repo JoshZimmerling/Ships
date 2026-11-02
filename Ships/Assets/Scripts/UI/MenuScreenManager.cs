@@ -600,8 +600,8 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
         Ship selectedShipScript = selectedShipPrefab.Prefab.GetComponent<Ship>();
         Movement selectedShipMovementScript = selectedShipPrefab.Prefab.GetComponent<Movement>();
         shipNameText.text = selectedShipPrefab.Prefab.name;
-        shipClassText.text = selectedShipScript.shipClass.ToString();
-        shipClassIconImage.sprite = Resources.Load<Sprite>("Sprites/Ship Class Icons/Icon_" + selectedShipScript.shipClass.ToString());
+        shipClassText.text = selectedShipScript.GetShipClass().ToString();
+        shipClassIconImage.sprite = Resources.Load<Sprite>("Sprites/Ship Class Icons/Icon_" + selectedShipScript.GetShipClass().ToString());
         shipImage.sprite = selectedShipPrefab.Prefab.transform.Find("Ship Sprite").GetComponent<SpriteRenderer>().sprite;
         shipHealthText.text = "Health: " + selectedShipScript.maxShipHP;
         if (selectedShipMovementScript != null)
@@ -694,7 +694,7 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
         Turret turretScript = selectedTurretRepeater.turretTransform.GetComponent<Turret>();
 
         turretTypeText.text = "Turret Type: ";
-        turretDmgText.text = "Dmg / Shot: " + turretScript.GetDamage();
+        turretDmgText.text = "Dmg / Shot: " + turretScript.GetDamageText();
         turretFireRateText.text = "Shots / Sec: " + turretScript.GetShotsPerSec();
         turretProjectileSpeedText.text = "Projectile Speed: " + turretScript.GetProjectileSpeed();
         turretRangeText.text = "Range: " + turretScript.GetRange();

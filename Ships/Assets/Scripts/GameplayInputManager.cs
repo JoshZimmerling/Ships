@@ -171,7 +171,7 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
                         if (clickedOnTransform != null)
                         {
                             Ship clickedOnShip = clickedOnTransform.GetComponent<Ship>();
-                            if (clickedOnShip != null && clickedOnShip.IsOwner && clickedOnShip.shipClass != Ship.ShipClasses.Drone && clickedOnShip.shipClass != Ship.ShipClasses.NeutralShip)
+                            if (clickedOnShip != null && clickedOnShip.IsOwner && clickedOnShip.GetShipClass() != Ship.ShipClasses.Drone && clickedOnShip.GetShipClass() != Ship.ShipClasses.NeutralShip)
                             {
                                 foreach (Transform ship in NetworkManager.Singleton.LocalClient.PlayerObject.transform)
                                 {
@@ -197,7 +197,7 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
                         if (clickedOnTransform != null)
                         {
                             Ship clickedOnShip = clickedOnTransform.GetComponent<Ship>();
-                            if (clickedOnShip != null && clickedOnShip.IsOwner && clickedOnShip.shipClass != Ship.ShipClasses.Drone && clickedOnShip.shipClass != Ship.ShipClasses.NeutralShip)
+                            if (clickedOnShip != null && clickedOnShip.IsOwner && clickedOnShip.GetShipClass() != Ship.ShipClasses.Drone && clickedOnShip.GetShipClass() != Ship.ShipClasses.NeutralShip)
                             {
                                 clickedOnShip.SelectShip();
                                 selectedShips.Add(clickedOnShip);
@@ -372,7 +372,7 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
             Transform clickedOnShip = col.transform.parent;
 
             Ship ship = clickedOnShip.GetComponent<Ship>();
-            if (ship != null && ship.shipClass != Ship.ShipClasses.Drone && ship.shipClass != Ship.ShipClasses.NeutralShip)
+            if (ship != null && ship.GetShipClass() != Ship.ShipClasses.Drone && ship.GetShipClass() != Ship.ShipClasses.NeutralShip)
                 if (NetworkManager.Singleton.LocalClientId == ship.OwnerClientId)
                     shipsFromHit.Add(ship);
         }

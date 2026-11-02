@@ -37,6 +37,7 @@ public class Turret : NetworkBehaviour
 
     private float counter = 0;
     private int rangeMod = 1;
+    private float dmgMod = 1;
 
     private Movement mv;
 
@@ -44,6 +45,7 @@ public class Turret : NetworkBehaviour
     private float baselinePitch;
     private float baselineVolume;
 
+    private Ship shipThisTurretBelongsTo;
     private bool isNeutralShipTurret;
 
     private ParticleSystem ps;
@@ -53,6 +55,7 @@ public class Turret : NetworkBehaviour
     {
         mv = GetComponentInParent<Movement>();
 
+        shipThisTurretBelongsTo = transform.parent.parent.parent.GetComponent<Ship>();
         isNeutralShipTurret = transform.parent.parent.parent.GetComponent<NeutralShip>();
 
         shotAudio = GetComponent<AudioSource>();
@@ -118,6 +121,15 @@ public class Turret : NetworkBehaviour
 
         if (bestTarget != null)
         {
+            //Check for if stalker has no enemy ships nearby when it shoots
+            if (shipThisTurretBelongsTo.GetShipType() == Ship.ShipTypes.Stalker)
+            {
+                if (!shipThisTurretBelongsTo.AnyEnemyShipsInVisionCone())
+                    dmgMod = 1.5f;
+                else
+                    dmgMod = 1f;
+            }
+
             float targetAngle;
             if (turretType == TurretType.MissilePods)
             {
@@ -126,7 +138,15 @@ public class Turret : NetworkBehaviour
                 GameObject missile = Instantiate(missilePrefab, transform.position, Quaternion.Euler(0, 0, targetAngle));
                 GameSceneManager.Singleton.missilesInScene.Add(missile);
                 missile.GetComponent<NetworkObject>().SpawnWithOwnership(OwnerClientId);
-                missile.GetComponent<Missile>().SetupMissile(damage, projectileSpeed, missileTurningSpeed, missileLifetimeMax, slowEnemyShipsPercent, slowEnemyShipsSeconds, bestTarget, transform.parent.parent.parent.gameObject);
+                missile.GetComponent<Missile>().SetupMissile(
+                    damage * dmgMod,
+                    projectileSpeed,
+                    missileTurningSpeed,
+                    missileLifetimeMax,
+                    slowEnemyShipsPercent,
+                    slowEnemyShipsSeconds,
+                    bestTarget,
+                    transform.parent.parent.parent.gameObject);
                 missile.transform.parent = GameSceneManager.Singleton.bulletContainer;
             }
             else
@@ -172,7 +192,7 @@ public class Turret : NetworkBehaviour
                     bullet.GetComponent<NetworkObject>().SpawnWithOwnership(OwnerClientId);
                     bullet.GetComponent<Bullet>().SetupBullet(
                         range * rangeMod + Random.Range(-rangeSpread / 2, rangeSpread / 2), 
-                        damage, 
+                        damage * dmgMod, 
                         projectileSpeed * rangeMod + Random.Range(-projectileSpeedSpread / 2, projectileSpeedSpread / 2),
                         slowEnemyShipsPercent,
                         slowEnemyShipsSeconds,
@@ -221,7 +241,7 @@ public class Turret : NetworkBehaviour
             foreach (GameObject ship in GameSceneManager.Singleton.shipsInScene)
             {
                 Ship alliedShip = ship.GetComponent<Ship>();
-                if (alliedShip != null && alliedShip.OwnerClientId == OwnerClientId && alliedShip.shipClass != Ship.ShipClasses.NeutralShip && (alliedShip.transform.position - target.transform.position).magnitude < alliedShip.visionRange)
+                if (alliedShip != null && alliedShip.OwnerClientId == OwnerClientId && alliedShip.GetShipClass() != Ship.ShipClasses.NeutralShip && (alliedShip.transform.position - target.transform.position).magnitude < alliedShip.visionRange)
                 {
                     //If the target is not a ship, not invis, or is invis but is close enough that we can see it, condisder it in vision
                     if (target.GetComponent<Ship>() == null || !target.GetComponent<Ship>().isInvis.Value || target.GetComponent<Ship>().invisDetectionRange > ((alliedShip.transform.position - target.transform.position).magnitude) - alliedShip.correctionFactor)
@@ -292,8 +312,7 @@ public class Turret : NetworkBehaviour
     [Rpc(SendTo.ClientsAndHost)]
     public void PlayShootingEffectsRPC(float shootDirection)
     {
-        Transform thisTurretsShip = transform.parent.parent;
-        if (Camera_Control.Singleton.IsOnScreen(thisTurretsShip) && Camera_Control.Singleton.IsSeenByMyShips(thisTurretsShip))
+        if (Camera_Control.Singleton.IsOnScreen(shipThisTurretBelongsTo.transform) && Camera_Control.Singleton.IsSeenByMyShips(shipThisTurretBelongsTo.transform))
         {
             if (shotAudio != null)
             {
@@ -376,7 +395,7 @@ public class Turret : NetworkBehaviour
         return turretType;
     }
 
-    public string GetDamage()
+    public string GetDamageText()
     {
         if (projectiles > 1)
             return damage + " x" + projectiles;

@@ -480,7 +480,8 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1993422899511674839, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: shipDescriptionForUI
-      value: TODO
+      value: The Stalker deals bonus damage with it's turret if there are no enemy
+        ships within it's own vision range.
       objectReference: {fileID: 0}
     - target: {fileID: 2351284334504759342, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: m_Sprite

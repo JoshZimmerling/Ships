@@ -89,7 +89,7 @@ public class PlayerData : NetworkBehaviour
         ship.GetComponent<NetworkObject>().SpawnWithOwnership(OwnerClientId);
         ship.transform.parent = transform;
 
-        if (Factions.Singleton.factionList[factionIndex].factionName != "Galactic Syndicate" || ship.GetComponent<Ship>().shipClass == Ship.ShipClasses.Mothership)
+        if (Factions.Singleton.factionList[factionIndex].factionName != "Galactic Syndicate" || ship.GetComponent<Ship>().GetShipClass() == Ship.ShipClasses.Mothership)
             ship.GetComponent<Ship>().hiddenFromRadar.Value = false;
 
         GameSceneManager.Singleton.shipsInScene.Add(ship);
@@ -117,7 +117,7 @@ public class PlayerData : NetworkBehaviour
     public void KillMothershipRPC()
     {
         foreach (Transform child in transform)
-            if (child.gameObject.GetComponent<Ship>() != null && child.gameObject.GetComponent<Ship>().shipClass != Ship.ShipClasses.Mothership)
+            if (child.gameObject.GetComponent<Ship>() != null && child.gameObject.GetComponent<Ship>().GetShipClass() != Ship.ShipClasses.Mothership)
                 child.gameObject.GetComponent<Ship>().SelfDestroyShipRPC();
 
         Shop.Singleton.gameObject.SetActive(false);
@@ -133,7 +133,7 @@ public class PlayerData : NetworkBehaviour
         int numMothershipsLeft = 0;
         foreach (Ship ship in FindObjectsByType(typeof(Ship), FindObjectsSortMode.None))
         {
-            if (ship.shipClass == ShipClasses.Mothership)
+            if (ship.GetShipClass() == ShipClasses.Mothership)
             {
                 numMothershipsLeft++;
             }

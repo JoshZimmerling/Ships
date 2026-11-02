@@ -1,5 +1,6 @@
 using Unity.Netcode;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 public class Ship : NetworkBehaviour
 {
@@ -38,8 +39,8 @@ public class Ship : NetworkBehaviour
     }
 
     // Ship Variables
-    public ShipTypes shipType;
-    public ShipClasses shipClass;
+    [SerializeField] private ShipTypes shipType;
+    [SerializeField] private ShipClasses shipClass;
     [SerializeField] private float shipCost;
     public float maxShipHP;
     public readonly NetworkVariable<float> currentShipHP = new NetworkVariable<float>();
@@ -199,6 +200,18 @@ public class Ship : NetworkBehaviour
         }
     }
 
+    public bool AnyEnemyShipsInVisionCone()
+    {
+        foreach (GameObject enemyShip in GameSceneManager.Singleton.shipsInScene)
+        {
+            Ship enemyShipScript = enemyShip.GetComponent<Ship>();
+            float distanceToEnemyShip = (enemyShip.transform.position - transform.position).magnitude - enemyShipScript.correctionFactor;
+            if ((enemyShipScript.OwnerClientId != OwnerClientId || enemyShipScript.GetShipClass() == Ship.ShipClasses.NeutralShip) && distanceToEnemyShip < visionRange)
+                return true;
+        }
+        return false;
+    }
+
     public void DoDamage(float damage, GameObject shipDamageCameFrom)
     {
         currentShipHP.Value -= damage;
@@ -308,6 +321,11 @@ public class Ship : NetworkBehaviour
     public ShipTypes GetShipType()
     {
         return shipType;
+    }
+
+    public ShipClasses GetShipClass()
+    {
+        return shipClass;
     }
 
     public float GetShipCost()

@@ -62,7 +62,7 @@ public class Bullet : NetworkBehaviour
                     collision.attachedRigidbody.GetComponent<Movement>().ChangeSpeed(slowShipPercentage, slowShipDuration);
             }
         }
-        else if (collision.transform.parent.GetComponent<Ship>() != null && collision.transform.parent.GetComponent<Ship>().shipClass == Ship.ShipClasses.Drone)
+        else if (collision.transform.parent.GetComponent<Ship>() != null && collision.transform.parent.GetComponent<Ship>().GetShipClass() == Ship.ShipClasses.Drone)
         {
             if (collision.transform.parent.GetComponent<Ship>().OwnerClientId == this.OwnerClientId && !isFromNeutralShip)
                 return;
