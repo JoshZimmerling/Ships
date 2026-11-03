@@ -50,7 +50,7 @@ public class GoliathAbility : NetworkBehaviour
                 if (shipInScene.GetComponent<Ship>() != null && (shipInScene.GetComponent<Ship>().OwnerClientId != OwnerClientId || shipInScene.GetComponent<Ship>().GetShipClass() == Ship.ShipClasses.NeutralShip))
                 {
                     float dist2Ship = (shipInScene.transform.position - transform.position).magnitude - shipInScene.GetComponent<Ship>().correctionFactor;
-                    if (dist2Ship < detectionRange && dist2Ship < closestRange)
+                    if (((!shipInScene.GetComponent<Ship>().isInvis.Value && dist2Ship < detectionRange) || (shipInScene.GetComponent<Ship>().isInvis.Value && dist2Ship < shipInScene.GetComponent<Ship>().invisDetectionRange)) && dist2Ship < closestRange)
                     {
                         closestRange = dist2Ship;
                         currentTarget = shipInScene;
