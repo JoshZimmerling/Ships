@@ -363,12 +363,14 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
     {
         Transform box = selectionBox.transform;
         ContactFilter2D contactFilter = new ContactFilter2D();
+        contactFilter.SetLayerMask(LayerMask.GetMask("Ship"));
 
         Physics2D.OverlapBox(box.position, new Vector2(Mathf.Abs(box.localScale.x), Mathf.Abs(box.localScale.y)), 0, contactFilter, hitColliders);
 
         shipsFromHit.Clear();
         foreach (Collider2D col in hitColliders)
         {
+            Debug.Log("Collided with " + col.gameObject.name);
             Transform clickedOnShip = col.transform.parent;
 
             Ship ship = clickedOnShip.GetComponent<Ship>();
