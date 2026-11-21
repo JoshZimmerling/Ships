@@ -4978,8 +4978,8 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1993422899511674839, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: shipDescriptionForUI
-      value: The Mothership is your base. If it dies, you lose. All of your ships
-        spawn here, and can slowly heal by staying nearby.
+      value: The Monarch is your base. If it dies, you lose. All of your ships spawn
+        here, and can slowly heal by staying nearby.
       objectReference: {fileID: 0}
     - target: {fileID: 2351284334504759342, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: m_Sprite
@@ -5115,7 +5115,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5167211490098671168, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: m_Name
-      value: Mothership
+      value: Monarch
       objectReference: {fileID: 0}
     - target: {fileID: 5248488840569974850, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: GlobalObjectIdHash

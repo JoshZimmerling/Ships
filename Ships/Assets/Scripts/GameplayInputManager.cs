@@ -363,6 +363,7 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
     {
         Transform box = selectionBox.transform;
         ContactFilter2D contactFilter = new ContactFilter2D();
+        contactFilter.SetLayerMask(LayerMask.GetMask("Ship"));
 
         Physics2D.OverlapBox(box.position, new Vector2(Mathf.Abs(box.localScale.x), Mathf.Abs(box.localScale.y)), 0, contactFilter, hitColliders);
 

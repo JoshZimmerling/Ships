@@ -6,7 +6,7 @@ public class Ship : NetworkBehaviour
 {
     public enum ShipTypes
     {
-        Mothership,
+        Monarch,
         Destroyer,
         Challenger,
         Goliath,
