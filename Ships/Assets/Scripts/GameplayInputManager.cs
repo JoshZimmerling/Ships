@@ -370,7 +370,6 @@ public class GameplayInputManager : Singleton<GameplayInputManager>
         shipsFromHit.Clear();
         foreach (Collider2D col in hitColliders)
         {
-            Debug.Log("Collided with " + col.gameObject.name);
             Transform clickedOnShip = col.transform.parent;
 
             Ship ship = clickedOnShip.GetComponent<Ship>();
