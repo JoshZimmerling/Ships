@@ -74,23 +74,32 @@ public class PlayerData : NetworkBehaviour
     [Rpc(SendTo.Server)]
     public void SpawnShipServerRPC(int factionIndex, int shipIndex)
     {
-        Vector3 spawnPos;
-        if (shipIndex == 0) //Mothership
+        GameObject ship = Instantiate(Factions.Singleton.factionList[factionIndex].factionShipList.PrefabList[shipIndex].Prefab);
+        Vector2 spawnPosition = Vector2.zero;
+        if (ship.GetComponent<Ship>().GetShipClass() == Ship.ShipClasses.Mothership)
         {
-            spawnPos = gameManager.GetOneMothershipSpawnPosition().position;
+            spawnPosition = gameManager.GetOneMothershipSpawnPosition().position;
+
+            if (Factions.Singleton.factionList[factionIndex].factionName != "Galactic Syndicate")
+                ship.GetComponent<Ship>().hiddenFromRadar.Value = false;
         }
         else
         {
-            Vector2 offset = Random.onUnitCircle * GetMothership().correctionFactor * 1.5f;
-            spawnPos = motherShip.transform.position + new Vector3(offset.x, offset.y);
+            
+            for (int i = 0; true; i++)
+            {
+                Debug.Log(i);
+                Vector2 offset = Random.onUnitCircle * GetMothership().correctionFactor * (Mathf.Floor(i / 20f) + 1.5f);
+                spawnPosition = motherShip.transform.position + new Vector3(offset.x, offset.y);
+                if (Physics2D.OverlapPoint(spawnPosition) == null)
+                    break;
+            }
         }
-        GameObject ship = Instantiate(Factions.Singleton.factionList[factionIndex].factionShipList.PrefabList[shipIndex].Prefab, spawnPos, Quaternion.LookRotation(new Vector3(0, 0, 1), -spawnPos));
 
         ship.GetComponent<NetworkObject>().SpawnWithOwnership(OwnerClientId);
         ship.transform.parent = transform;
-
-        if (Factions.Singleton.factionList[factionIndex].factionName != "Galactic Syndicate" || ship.GetComponent<Ship>().GetShipClass() == Ship.ShipClasses.Mothership)
-            ship.GetComponent<Ship>().hiddenFromRadar.Value = false;
+        ship.transform.position = spawnPosition;
+        ship.transform.rotation = Quaternion.LookRotation(new Vector3(0, 0, 1), -ship.transform.position);
 
         GameSceneManager.Singleton.shipsInScene.Add(ship);
     }

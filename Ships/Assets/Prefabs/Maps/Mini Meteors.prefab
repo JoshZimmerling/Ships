@@ -898,6 +898,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2029457562242260145}
   - component: {fileID: 8881201240043071656}
+  - component: {fileID: 8324582785604401035}
   m_Layer: 0
   m_Name: Bottom RIght Cluster
   m_TagString: Untagged
@@ -1006,6 +1007,33 @@ PolygonCollider2D:
       - {x: 21.442465, y: 1.1497421}
       - {x: 21.154024, y: 7.3286896}
   m_UseDelaunayMesh: 1
+--- !u!50 &8324582785604401035
+Rigidbody2D:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1500392925651569885}
+  m_BodyType: 2
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
 --- !u!1 &1564032295879269237
 GameObject:
   m_ObjectHideFlags: 0
@@ -1049,6 +1077,7 @@ GameObject:
   m_Component:
   - component: {fileID: 392634171073155017}
   - component: {fileID: 9138790761751193275}
+  - component: {fileID: 7347053010267141646}
   m_Layer: 0
   m_Name: Bottom Piece
   m_TagString: Untagged
@@ -1152,6 +1181,33 @@ PolygonCollider2D:
       - {x: 4.5202746, y: 5.222946}
       - {x: 4.765996, y: 10.760365}
   m_UseDelaunayMesh: 1
+--- !u!50 &7347053010267141646
+Rigidbody2D:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1573383964416270008}
+  m_BodyType: 2
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
 --- !u!1 &1585016569314852573
 GameObject:
   m_ObjectHideFlags: 0
@@ -1725,6 +1781,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8360142761961169234}
   - component: {fileID: 3067270695454054828}
+  - component: {fileID: 31922460268262869}
   m_Layer: 0
   m_Name: Top Piece
   m_TagString: Untagged
@@ -1828,6 +1885,33 @@ PolygonCollider2D:
       - {x: 4.5202746, y: 5.222946}
       - {x: 4.765996, y: 10.760365}
   m_UseDelaunayMesh: 1
+--- !u!50 &31922460268262869
+Rigidbody2D:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2238140201703853248}
+  m_BodyType: 2
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
 --- !u!1 &2253566333510797589
 GameObject:
   m_ObjectHideFlags: 0
@@ -2040,6 +2124,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6094233241415556360}
   - component: {fileID: 7109852532170375475}
+  - component: {fileID: 5060760473004122819}
   m_Layer: 0
   m_Name: Left Spawn Divider
   m_TagString: Untagged
@@ -2158,6 +2243,33 @@ PolygonCollider2D:
       - {x: 19.812653, y: -1.533812}
       - {x: 19.77462, y: 5.68094}
   m_UseDelaunayMesh: 1
+--- !u!50 &5060760473004122819
+Rigidbody2D:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2471785052473705894}
+  m_BodyType: 2
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
 --- !u!1 &2540321027986128592
 GameObject:
   m_ObjectHideFlags: 0
@@ -3128,6 +3240,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5502680440723828543}
   - component: {fileID: 1682971655589554659}
+  - component: {fileID: 8332983788024662026}
   m_Layer: 0
   m_Name: Top Piece
   m_TagString: Untagged
@@ -3231,6 +3344,33 @@ PolygonCollider2D:
       - {x: 4.5202746, y: 5.222946}
       - {x: 4.765996, y: 10.760365}
   m_UseDelaunayMesh: 1
+--- !u!50 &8332983788024662026
+Rigidbody2D:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4066544220789493594}
+  m_BodyType: 2
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
 --- !u!1 &4175690855222355160
 GameObject:
   m_ObjectHideFlags: 0
@@ -4146,6 +4286,7 @@ GameObject:
   m_Component:
   - component: {fileID: 393105077279363095}
   - component: {fileID: 4418545576200755773}
+  - component: {fileID: 6764369826233647927}
   m_Layer: 0
   m_Name: Right Spawn Divider
   m_TagString: Untagged
@@ -4264,6 +4405,33 @@ PolygonCollider2D:
       - {x: 19.812653, y: -1.533812}
       - {x: 19.77462, y: 5.68094}
   m_UseDelaunayMesh: 1
+--- !u!50 &6764369826233647927
+Rigidbody2D:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6122770869133246075}
+  m_BodyType: 2
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
 --- !u!1 &6159125408597224154
 GameObject:
   m_ObjectHideFlags: 0
@@ -4400,6 +4568,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2965099439112190950}
   - component: {fileID: 7880650623360538413}
+  - component: {fileID: 5596739902177707923}
   m_Layer: 0
   m_Name: Top Right Cluster
   m_TagString: Untagged
@@ -4508,6 +4677,33 @@ PolygonCollider2D:
       - {x: 21.442465, y: 1.1497421}
       - {x: 21.154024, y: 7.3286896}
   m_UseDelaunayMesh: 1
+--- !u!50 &5596739902177707923
+Rigidbody2D:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6578136280703750817}
+  m_BodyType: 2
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
 --- !u!1 &6760164779520618956
 GameObject:
   m_ObjectHideFlags: 0
@@ -10933,6 +11129,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5243259682891136791}
   - component: {fileID: 143526079845922213}
+  - component: {fileID: 6974773063860881627}
   m_Layer: 0
   m_Name: Top Left Cluster
   m_TagString: Untagged
@@ -11041,6 +11238,33 @@ PolygonCollider2D:
       - {x: 21.442465, y: 1.1497421}
       - {x: 21.154024, y: 7.3286896}
   m_UseDelaunayMesh: 1
+--- !u!50 &6974773063860881627
+Rigidbody2D:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7661915712057379963}
+  m_BodyType: 2
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
 --- !u!1 &7769440646529295673
 GameObject:
   m_ObjectHideFlags: 0
@@ -11157,6 +11381,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1932718565241609553}
   - component: {fileID: 6575103855340567745}
+  - component: {fileID: 1051767526638689441}
   m_Layer: 0
   m_Name: Bottom Left Cluster
   m_TagString: Untagged
@@ -11265,6 +11490,33 @@ PolygonCollider2D:
       - {x: 21.442465, y: 1.1497421}
       - {x: 21.154024, y: 7.3286896}
   m_UseDelaunayMesh: 1
+--- !u!50 &1051767526638689441
+Rigidbody2D:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8054412071611156423}
+  m_BodyType: 2
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
 --- !u!1 &8097713476490161431
 GameObject:
   m_ObjectHideFlags: 0
@@ -11567,6 +11819,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4949628621017959429}
   - component: {fileID: 1946045710087802303}
+  - component: {fileID: 7931967695848540213}
   m_Layer: 0
   m_Name: Bottom Piece
   m_TagString: Untagged
@@ -11670,6 +11923,33 @@ PolygonCollider2D:
       - {x: 4.5202746, y: 5.222946}
       - {x: 4.765996, y: 10.760365}
   m_UseDelaunayMesh: 1
+--- !u!50 &7931967695848540213
+Rigidbody2D:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8437610222675713216}
+  m_BodyType: 2
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
 --- !u!1 &8440463975303746942
 GameObject:
   m_ObjectHideFlags: 0
