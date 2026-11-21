@@ -114,14 +114,14 @@ public class GhostAbility : NetworkBehaviour
     [Rpc(SendTo.Owner)]
     public void ShowInvisEffectsRPC()
     {
-        shipScript.SetRadarActive(false);
+        //shipScript.SetRadarActive(false);
         invisRangeIndicator.SetActive(true);
     }
 
     [Rpc(SendTo.Owner)]
     public void RemoveInvisEffectsRPC()
     {
-        shipScript.SetRadarActive(true);
+        //shipScript.SetRadarActive(true);
         invisRangeIndicator.SetActive(false);
     }
 }
