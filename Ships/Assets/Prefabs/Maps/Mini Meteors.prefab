@@ -2682,13 +2682,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 2342933015
+  GlobalObjectIdHash: 23975047
   InScenePlacedSourceGlobalObjectIdHash: 329350636
   DeferredDespawnTick: 0
   Ownership: 1
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
-  m_InScenePlaced: 1
+  m_InScenePlaced: 0
   ActiveSceneSynchronization: 0
   SceneMigrationSynchronization: 0
   SpawnWithObservers: 1
@@ -2715,7 +2715,7 @@ MonoBehaviour:
   neutralShipSpawnRates: 460000001e000000
   secondsUntilFirstNeutralShipSpawns: 10
   secondsBetweenNeutralShipSpawns: 30
-  maxNeutralShips: 4
+  maxNeutralShips: 2
   supplyDropPrefab: {fileID: 5386678104189029594, guid: a76544d0ef6c706489bda4dd2fa4bfaf, type: 3}
   secondsUntilFirstSupplyDropSpawns: 30
   secondsBetweenSupplyDropSpawns: 120
@@ -11997,7 +11997,7 @@ GameObject:
   - component: {fileID: 383611744790555716}
   - component: {fileID: 1160938245064410677}
   - component: {fileID: 4944244442570777156}
-  - component: {fileID: 78727390487762780}
+  - component: {fileID: 2738572703252919892}
   m_Layer: 0
   m_Name: Mini Meteors
   m_TagString: Untagged
@@ -12066,7 +12066,7 @@ MonoBehaviour:
   Ownership: 1
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
-  m_InScenePlaced: 1
+  m_InScenePlaced: 0
   ActiveSceneSynchronization: 0
   SceneMigrationSynchronization: 0
   SpawnWithObservers: 1
@@ -12082,7 +12082,7 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8580977611951109147}
   m_CullTransparentMesh: 1
---- !u!114 &78727390487762780
+--- !u!114 &2738572703252919892
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -12102,7 +12102,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: a68653755e4153746a7a7964dc5f38dd, type: 3}
+  m_Sprite: {fileID: 21300000, guid: f8272657acba37c4f831606670b2a326, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1

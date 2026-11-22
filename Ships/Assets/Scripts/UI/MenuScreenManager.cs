@@ -36,10 +36,12 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
     private GameObject playerViewerObject;
     [SerializeField] private GameObject playerRepeaterPrefab;
     private Button startGameButton;
+    private GameObject tooManyPlayersText;
     // Map settings
     private Button nextMapButton;
     private Button lastMapButton;
     private TextMeshProUGUI mapName;
+    private TextMeshProUGUI mapMaxPlayers;
     private Image mapImage;
     private GameSettingsManager gameSettingsManager;
     // Player settings
@@ -129,6 +131,7 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
         lastMapButton = transform.Find("Lobby Screen/Map Settings Window/Minimap/Last Map Button").GetComponent<Button>();
         lastMapButton.onClick.AddListener(() => gameSettingsManager.LastMap());
         mapName = transform.Find("Lobby Screen/Map Settings Window/Minimap/Map Name").GetComponent<TextMeshProUGUI>();
+        mapMaxPlayers = transform.Find("Lobby Screen/Map Settings Window/Minimap/Map Max Players").GetComponent<TextMeshProUGUI>();
         mapImage = transform.Find("Lobby Screen/Map Settings Window/Minimap").GetComponent<Image>();
 
         choosePrevFactionButton = transform.Find("Lobby Screen/Player Settings Window/Faction/Choose Previous Faction Button").GetComponent<Button>();
@@ -150,6 +153,8 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
             Destroy(t.gameObject);
         startGameButton = transform.Find("Lobby Screen/Start Game Button").GetComponent<Button>();
         startGameButton.onClick.AddListener(() => ReadyOrStartGame());
+        tooManyPlayersText = transform.Find("Lobby Screen/Too Many Players Text").gameObject;
+        tooManyPlayersText.SetActive(false);
 
         shipInfoScreen = transform.Find("Ship Info Screen").gameObject;
         exitShipInfoScreenButton = transform.Find("Ship Info Screen/Back Button").GetComponent<Button>();
@@ -428,12 +433,20 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
 
         if (NetworkManager.Singleton.IsHost)
         {   // Set button to clickable game
-            startGameButton.interactable = everyoneReady;
+            startGameButton.interactable = everyoneReady && AllowedNumberOfPlayersForMap();
             startGameButton.GetComponentInChildren<TextMeshProUGUI>().text = "Start Game";
+
+            if (!AllowedNumberOfPlayersForMap())
+                tooManyPlayersText.SetActive(true);
+            else
+                tooManyPlayersText.SetActive(false);
         }
         else
         {
-            startGameButton.GetComponentInChildren<TextMeshProUGUI>().text = "Ready";
+            if (!NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerData>().playerReady.Value)
+                startGameButton.GetComponentInChildren<TextMeshProUGUI>().text = "Ready";
+            else
+                startGameButton.GetComponentInChildren<TextMeshProUGUI>().text = "Unready";
             //ColorBlock colors = startGameButton.colors; //TODO: Fix later
             //colors.normalColor = NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerData>().playerReady.Value ? Color.gray : Color.white;
             //startGameButton.colors = colors;
@@ -442,6 +455,7 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
         nextMapButton.gameObject.SetActive(NetworkManager.Singleton.IsHost);
         lastMapButton.gameObject.SetActive(NetworkManager.Singleton.IsHost);
         mapName.text = gameSettingsManager.GetSelectedMapPrefab().name.ToString();
+        mapMaxPlayers.text = "Max Players: " + gameSettingsManager.GetSelectedMapMaxPlayers().ToString();
         mapImage.sprite = gameSettingsManager.GetSelectedMapImage();
     }
 
@@ -492,6 +506,10 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
 
         if (NetworkManager.Singleton.IsHost)
         {
+            Debug.Log(NetworkManager.Singleton.ConnectedClientsList.Count);
+            if (!AllowedNumberOfPlayersForMap())
+                return;
+
             spinner.SetActive(true);
             canClickButtons = false;
             try
@@ -515,6 +533,11 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
         {
             NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerData>().playerReady.Value = !NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerData>().playerReady.Value;
         }
+    }
+
+    private bool AllowedNumberOfPlayersForMap()
+    {
+        return gameSettingsManager.GetSelectedMapMaxPlayers() >= NetworkManager.Singleton.ConnectedClientsList.Count;
     }
 
     private void OpenUsernamePopup()
