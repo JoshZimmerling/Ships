@@ -76,9 +76,7 @@ public class Camera_Control : Singleton<Camera_Control>
 
         if (Input.GetKey(KeyCode.Space))
         {
-            //Center camera on mothership
-            MoveCameraToWorldSpace(NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerData>().GetMothership().gameObject.transform.position);
-            MoveViewport();
+            MoveCameraToMothership();
         }
     }
 
@@ -99,6 +97,12 @@ public class Camera_Control : Singleton<Camera_Control>
     public void MoveCameraToNormalizedPosition(Vector2 normalizedPositionVector)
     {
         gameObject.transform.position = new Vector3((-mapWidth / 2) + (mapWidth * normalizedPositionVector.x), (-mapWidth / 2) + (mapWidth * normalizedPositionVector.y), gameObject.transform.position.z);
+        MoveViewport();
+    }
+
+    public void MoveCameraToMothership()
+    {
+        MoveCameraToWorldSpace(NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerData>().GetMothership().gameObject.transform.position);
         MoveViewport();
     }
 

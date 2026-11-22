@@ -74,21 +74,15 @@ public class PlayerData : NetworkBehaviour
     [Rpc(SendTo.Server)]
     public void SpawnShipServerRPC(int factionIndex, int shipIndex)
     {
-        GameObject ship = Instantiate(Factions.Singleton.factionList[factionIndex].factionShipList.PrefabList[shipIndex].Prefab);
         Vector2 spawnPosition = Vector2.zero;
-        if (ship.GetComponent<Ship>().GetShipClass() == Ship.ShipClasses.Mothership)
+        if (Factions.Singleton.factionList[factionIndex].factionShipList.PrefabList[shipIndex].Prefab.GetComponent<Ship>().GetShipClass() == Ship.ShipClasses.Mothership)
         {
             spawnPosition = gameManager.GetOneMothershipSpawnPosition().position;
-
-            if (Factions.Singleton.factionList[factionIndex].factionName != "Galactic Syndicate")
-                ship.GetComponent<Ship>().hiddenFromRadar.Value = false;
         }
         else
         {
-            
             for (int i = 0; true; i++)
             {
-                Debug.Log(i);
                 Vector2 offset = Random.onUnitCircle * GetMothership().correctionFactor * (Mathf.Floor(i / 20f) + 1.5f);
                 spawnPosition = motherShip.transform.position + new Vector3(offset.x, offset.y);
                 if (Physics2D.OverlapPoint(spawnPosition) == null)
@@ -96,10 +90,13 @@ public class PlayerData : NetworkBehaviour
             }
         }
 
+        GameObject ship = Instantiate(Factions.Singleton.factionList[factionIndex].factionShipList.PrefabList[shipIndex].Prefab, spawnPosition, Quaternion.LookRotation(new Vector3(0, 0, 1), -spawnPosition));
         ship.GetComponent<NetworkObject>().SpawnWithOwnership(OwnerClientId);
         ship.transform.parent = transform;
-        ship.transform.position = spawnPosition;
-        ship.transform.rotation = Quaternion.LookRotation(new Vector3(0, 0, 1), -ship.transform.position);
+
+        //Anything that is either a mothership or not in the Galactic Syndicate faction should spawn NOT hidden from radar
+        if (Factions.Singleton.factionList[factionIndex].factionName != "Galactic Syndicate" || ship.GetComponent<Ship>().GetShipClass() == Ship.ShipClasses.Mothership)
+            ship.GetComponent<Ship>().hiddenFromRadar.Value = false;
 
         GameSceneManager.Singleton.shipsInScene.Add(ship);
     }
@@ -107,9 +104,8 @@ public class PlayerData : NetworkBehaviour
     public void SetMothership(Ship ms)
     {
         motherShip = ms;
-
         if (IsOwner)
-            Camera.main.gameObject.GetComponent<Camera_Control>().MoveCameraToWorldSpace(new Vector2(ms.transform.position.x, ms.transform.position.y));
+            Camera_Control.Singleton.MoveCameraToMothership();
     }
 
     public Ship GetMothership()
