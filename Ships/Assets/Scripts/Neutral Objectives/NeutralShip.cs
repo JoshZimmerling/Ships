@@ -57,18 +57,18 @@ public class NeutralShip : Ship
             patrolRouteLocations.Add(patrolStop);
     }
 
-    public new void DestroyShip(GameObject shipDamageCameFrom)
+    public void DestroyShip(GameObject shipDamageCameFrom, ulong shipDamageCameFromOwnerId)
     {
         if (patrolGroup == null)
         {
             GameSceneManager.Singleton.GetNeutralObjectivesManager().NeutralShipDeath(spawn);
-            ReceiveNeutralObjectivePayoutRPC(shipDamageCameFrom.GetComponent<Ship>().OwnerClientId, goldOnKill);
+            ReceiveNeutralObjectivePayoutRPC(shipDamageCameFromOwnerId, goldOnKill);
         }
         else
         {
             if (patrolGroup.IsLastPatrolShipToDie(gameObject))
             {
-                ReceiveNeutralObjectivePayoutRPC(shipDamageCameFrom.GetComponent<Ship>().OwnerClientId, patrolGroup.goldOnKill);
+                ReceiveNeutralObjectivePayoutRPC(shipDamageCameFromOwnerId, patrolGroup.goldOnKill);
             }
         }
         GameSceneManager.Singleton.shipsInScene.Remove(gameObject);

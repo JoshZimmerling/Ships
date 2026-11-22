@@ -16,6 +16,7 @@ public class Missile : NetworkBehaviour
     Transform missileTarget;
 
     public GameObject parentShip;
+    public ulong parentShipOwnerId;
     public bool isFromNeutralShip = false;
     private Color neutralShipColor = new Color(212 / 255f, 175 / 255f, 55 / 255f);
 
@@ -94,7 +95,7 @@ public class Missile : NetworkBehaviour
                 if (isFromNeutralShip)
                     return;
 
-                collision.attachedRigidbody.GetComponent<NeutralShip>().DoDamage(dmg, parentShip);
+                collision.attachedRigidbody.GetComponent<NeutralShip>().DoDamage(dmg, parentShip, parentShipOwnerId);
                 if (slowShipDuration > 0 && slowShipPercentage > 0)
                     collision.attachedRigidbody.GetComponent<Movement>().ChangeSpeed(slowShipPercentage, slowShipDuration);
             }
@@ -103,7 +104,7 @@ public class Missile : NetworkBehaviour
                 if (collision.attachedRigidbody.GetComponent<Ship>().OwnerClientId == this.OwnerClientId && !isFromNeutralShip)
                     return;
 
-                collision.attachedRigidbody.GetComponent<Ship>().DoDamage(dmg, parentShip);
+                collision.attachedRigidbody.GetComponent<Ship>().DoDamage(dmg, parentShip, parentShipOwnerId);
                 if (slowShipDuration > 0 && slowShipPercentage > 0)
                     collision.attachedRigidbody.GetComponent<Movement>().ChangeSpeed(slowShipPercentage, slowShipDuration);
             }
@@ -113,7 +114,7 @@ public class Missile : NetworkBehaviour
             if (collision.transform.parent.GetComponent<Ship>().OwnerClientId == this.OwnerClientId && !isFromNeutralShip)
                 return;
 
-            collision.transform.parent.GetComponent<Ship>().DoDamage(dmg, parentShip);
+            collision.transform.parent.GetComponent<Ship>().DoDamage(dmg, parentShip, parentShipOwnerId);
         }
         else if (collision.GetComponent<Missile>() != null)
         {
@@ -148,6 +149,7 @@ public class Missile : NetworkBehaviour
         slowShipDuration = slowDuration;
         missileTarget = target;
         parentShip = shipWhoShot;
+        parentShipOwnerId = shipWhoShot.GetComponent<Ship>().OwnerClientId;
         isFromNeutralShip = shipWhoShot.GetComponent<NeutralShip>() != null;
 
         if (isFromNeutralShip)

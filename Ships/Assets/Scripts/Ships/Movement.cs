@@ -26,9 +26,9 @@ public class Movement : NetworkBehaviour
     private bool rotateOnly;
 
     [SerializeField] private bool hasTurboMode = false; // Turbo mode allows the ship to accelerate beyoned it's normal max speed when continuing in a straight line
-    [SerializeField] private float turboBonus = 0.1f;
-    private float turboModeAllowedAngle = 5f;
-    private float turboModeMaxSpeedMultiplier = 3f;
+    [SerializeField] private float turboBonus = 0.15f;
+    private float turboModeAllowedAngle = 25f;
+    private float turboModeMaxSpeedMultiplier = 2.5f;
 
     private void FixedUpdate()
     {
@@ -48,7 +48,9 @@ public class Movement : NetworkBehaviour
         if (hasTurboMode && currentAllowedMaxSpeed >= shipMaxSpeed && !movingWithSpeedCap)
         {
             if (MathF.Abs(angle) < turboModeAllowedAngle && moving && currentAllowedMaxSpeed < (shipMaxSpeed * turboModeMaxSpeedMultiplier))
+            {
                 currentAllowedMaxSpeed += turboBonus * Time.deltaTime;
+            }
             else
                 currentAllowedMaxSpeed = shipMaxSpeed;
         }
@@ -232,7 +234,8 @@ public class Movement : NetworkBehaviour
         targetPos = target;
         rotateOnly = false;
         movingWithSpeedCap = false;
-        currentAllowedMaxSpeed = shipMaxSpeed;
+        if (currentAllowedMaxSpeed < shipMaxSpeed)
+            currentAllowedMaxSpeed = shipMaxSpeed;
         currentAllowedMaxRotationSpeed = shipTurnRate;
     }
 

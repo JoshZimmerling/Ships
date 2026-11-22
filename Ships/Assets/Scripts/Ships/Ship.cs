@@ -212,14 +212,14 @@ public class Ship : NetworkBehaviour
         return false;
     }
 
-    public void DoDamage(float damage, GameObject shipDamageCameFrom)
+    public void DoDamage(float damage, GameObject shipDamageCameFrom, ulong shipDamageCameFromOwnerID)
     {
         currentShipHP.Value -= damage;
         if (currentShipHP.Value <= 0 && !shipAlreadyBelowZeroHealth)
         {
             shipAlreadyBelowZeroHealth = true;
             if (shipClass == ShipClasses.NeutralShip)
-                gameObject.GetComponent<NeutralShip>().DestroyShip(shipDamageCameFrom);
+                gameObject.GetComponent<NeutralShip>().DestroyShip(shipDamageCameFrom, shipDamageCameFromOwnerID); //The owner ID is for edge case where a ship kills a neutral ship and then dies, we want a reference to the owner so they still get paid out
             else
                 DestroyShip(shipDamageCameFrom);
         }
