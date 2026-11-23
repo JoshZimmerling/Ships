@@ -506,7 +506,6 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
 
         if (NetworkManager.Singleton.IsHost)
         {
-            Debug.Log(NetworkManager.Singleton.ConnectedClientsList.Count);
             if (!AllowedNumberOfPlayersForMap())
                 return;
 

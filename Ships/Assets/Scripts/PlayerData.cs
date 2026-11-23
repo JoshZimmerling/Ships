@@ -155,6 +155,12 @@ public class PlayerData : NetworkBehaviour
         NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerData>().SetRevealMap(true);
     }
 
+    [Rpc(SendTo.Owner)]
+    public void SetReadyStateRPC(bool ready)
+    {
+        playerReady.Value = ready;
+    }
+
     public void SetRevealMap(bool b)
     {
         GetComponent<PassBufferPoints>().revealMap = b;

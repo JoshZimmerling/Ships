@@ -30,12 +30,21 @@ public class GameSettingsManager : NetworkBehaviour
     {
         mapIndex.Value++;
         if (mapIndex.Value >= mapsList.PrefabList.Count) mapIndex.Value = 0;
+        UnreadyAllOtherPlayers();
     }
 
     public void LastMap()
     {
         mapIndex.Value--;
         if (mapIndex.Value < 0) mapIndex.Value = mapsList.PrefabList.Count - 1;
+        UnreadyAllOtherPlayers();
+    }
+
+    private void UnreadyAllOtherPlayers()
+    {
+        foreach (NetworkClient client in NetworkManager.Singleton.ConnectedClientsList)
+            if (!client.PlayerObject.IsLocalPlayer)
+                client.PlayerObject.GetComponent<PlayerData>().SetReadyStateRPC(false);
     }
 
     public GameObject GetSelectedMapPrefab()
