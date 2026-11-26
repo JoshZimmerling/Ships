@@ -76,6 +76,11 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
     private TextMeshProUGUI shipAccelerationText;
     private TextMeshProUGUI shipTurningSpeedText;
     private TextMeshProUGUI shipDescriptionText;
+    private GameObject droneDetailsPanel;
+    private TextMeshProUGUI droneNameText;
+    private Image droneImage;
+    private Transform droneThrustersContainer;
+    private TextMeshProUGUI droneHealthText;
 
     [SerializeField] private GameObject turretRepeaterPrefab;
     private GameObject turretDetailsPanel;
@@ -87,6 +92,16 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
     private Transform turretLine_Left;
     private Transform turretLine_Right;
     private Transform turretCircle;
+
+    private GameObject droneTurretDetailsPanel;
+    private TextMeshProUGUI droneTurretTypeText;
+    private TextMeshProUGUI droneTurretDmgText;
+    private TextMeshProUGUI droneTurretFireRateText;
+    private TextMeshProUGUI droneTurretProjectileSpeedText;
+    private TextMeshProUGUI droneTurretRangeText;
+    private Transform droneTurretLine_Left;
+    private Transform droneTurretLine_Right;
+    private Transform droneTurretCircle;
 
     // Runtime variables
     public enum ScreenNames { LobbyListScreen, LobbyScreen, ShipInfoScreen };
@@ -179,6 +194,11 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
         shipAccelerationText = shipDetailsPanel.transform.Find("Ship Stats Panel/Acceleration Text").GetComponent<TextMeshProUGUI>();
         shipTurningSpeedText = shipDetailsPanel.transform.Find("Ship Stats Panel/Turning Speed Text").GetComponent<TextMeshProUGUI>();
         shipDescriptionText = shipDetailsPanel.transform.Find("Ship Stats Panel/Description Text").GetComponent<TextMeshProUGUI>();
+        droneDetailsPanel = shipDetailsPanel.transform.Find("Drone Details Panel").gameObject;
+        droneNameText = droneDetailsPanel.transform.Find("Drone Name").GetComponent<TextMeshProUGUI>();
+        droneImage = droneDetailsPanel.transform.Find("Drone Image").GetComponent<Image>();
+        droneThrustersContainer = droneDetailsPanel.transform.Find("Drone Thrusters");
+        droneHealthText = droneDetailsPanel.transform.Find("Drone Stats Panel/Health Text").GetComponent<TextMeshProUGUI>();
         shipDetailsPanel.SetActive(false);
 
         turretDetailsPanel = transform.Find("Ship Info Screen/Ship Details Panel/Turret Stats Panel").gameObject;
@@ -191,6 +211,17 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
         turretLine_Right = shipImage.transform.Find("Turret Line - Right");
         turretCircle = shipImage.transform.Find("Turret Circle");
         SetTurretLinesVisibility(false);
+
+        droneTurretDetailsPanel = transform.Find("Ship Info Screen/Ship Details Panel/Drone Details Panel/Drone Turret Stats Panel").gameObject;
+        droneTurretTypeText = droneTurretDetailsPanel.transform.Find("Turret Type Text").GetComponent<TextMeshProUGUI>();
+        droneTurretDmgText = droneTurretDetailsPanel.transform.Find("Damage Text").GetComponent<TextMeshProUGUI>();
+        droneTurretFireRateText = droneTurretDetailsPanel.transform.Find("Fire Rate Text").GetComponent<TextMeshProUGUI>();
+        droneTurretProjectileSpeedText = droneTurretDetailsPanel.transform.Find("Projectile Speed Text").GetComponent<TextMeshProUGUI>();
+        droneTurretRangeText = droneTurretDetailsPanel.transform.Find("Range Text").GetComponent<TextMeshProUGUI>();
+        droneTurretLine_Left = droneImage.transform.Find("Turret Line - Left");
+        droneTurretLine_Right = droneImage.transform.Find("Turret Line - Right");
+        droneTurretCircle = droneImage.transform.Find("Turret Circle");
+        SetDroneTurretLinesVisibility(false);
 
         //Get player username from save file
         playerName = Save.myGlobalSaveData.username;
@@ -604,8 +635,11 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
         //Populate the ships list
         foreach (NetworkPrefab prefab in factionToSetup.factionShipList.PrefabList)
         {
-            GameObject shipRepeater = Instantiate(shipRepeaterPrefab, shipList.transform);
-            shipRepeater.GetComponent<ShipRepeater>().Setup(prefab);
+            if (prefab.Prefab.GetComponent<Ship>().GetShipClass() != Ship.ShipClasses.Drone)
+            {
+                GameObject shipRepeater = Instantiate(shipRepeaterPrefab, shipList.transform);
+                shipRepeater.GetComponent<ShipRepeater>().Setup(prefab);
+            }
         }
     }
 
@@ -618,6 +652,7 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
         //Setup ship details panel
         shipDetailsPanel.SetActive(true);
         turretDetailsPanel.SetActive(false);
+        droneDetailsPanel.SetActive(false);
         SetTurretLinesVisibility(false);
         Ship selectedShipScript = selectedShipPrefab.Prefab.GetComponent<Ship>();
         Movement selectedShipMovementScript = selectedShipPrefab.Prefab.GetComponent<Movement>();
@@ -639,6 +674,82 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
             shipTurningSpeedText.text = "Turning Speed: N/A";
         }
         shipDescriptionText.text = selectedShipScript.shipDescriptionForUI;
+
+        //Setup drone panel if the ship has a drone it spawns
+        GameObject dronePrefab = selectedShipPrefab.Prefab.GetComponent<Ship>().GetShipsDronePrefab();
+        if (dronePrefab != null)
+        {
+            droneDetailsPanel.SetActive(true);
+            droneTurretDetailsPanel.SetActive(false);
+            SetDroneTurretLinesVisibility(false);
+            Ship droneShipScript = dronePrefab.GetComponent<Ship>();
+            droneImage.sprite = dronePrefab.transform.Find("Ship Sprite").GetComponent<SpriteRenderer>().sprite;
+            droneNameText.text = dronePrefab.name;
+            droneHealthText.text = "Health: " + droneShipScript.maxShipHP;
+
+            //Clear out previous drone turret indicators
+            foreach (Transform turretRepeater in droneImage.transform)
+                if (turretRepeater.GetComponent<TurretRepeater>() != null)
+                    Destroy(turretRepeater.gameObject);
+
+            //Setup new drone turret indicators
+            foreach (Transform turret in dronePrefab.transform.Find("Ship Sprite/Turrets"))
+            {
+                GameObject turretRepeater = Instantiate(turretRepeaterPrefab, droneImage.transform);
+                turretRepeater.GetComponent<TurretRepeater>().SetupDroneTurret(turret);
+            }
+
+            //Clear out previous drones thrusters
+            foreach (Transform thruster in droneThrustersContainer)
+                Destroy(thruster.gameObject);
+
+            //Setup new drones thrusters
+            foreach (Transform thruster in dronePrefab.transform.Find("Ship Sprite/Thrusters"))
+            {
+                ParticleSystem srcThruster = thruster.GetComponent<ParticleSystem>();
+                ParticleSystem dstThruster = Instantiate(shipThrusterPrefab, droneThrustersContainer).GetComponent<ParticleSystem>();
+
+                // 1. Main Module Settings
+                ParticleSystem.MainModule srcMain = srcThruster.main;
+                ParticleSystem.MainModule dstMain = dstThruster.main;
+
+                dstMain.duration = srcMain.duration;
+                dstMain.startLifetime = srcMain.startLifetime;
+                dstMain.startSpeed = srcMain.startSpeed;
+                dstMain.startSize = srcMain.startSize;
+                dstMain.simulationSpace = srcMain.simulationSpace;
+
+                // 2. Emission Module Settings
+                ParticleSystem.EmissionModule srcEmission = srcThruster.emission;
+                ParticleSystem.EmissionModule dstEmission = dstThruster.emission;
+
+                dstEmission.rateOverTime = srcEmission.rateOverTime;
+
+                // 3. Shape Module Settings
+                ParticleSystem.ShapeModule srcShape = srcThruster.shape;
+                ParticleSystem.ShapeModule dstShape = dstThruster.shape;
+
+                dstShape.shapeType = srcShape.shapeType;
+                dstShape.radius = srcShape.radius;
+                dstShape.position = srcShape.position;
+                dstShape.rotation = srcShape.rotation;
+
+                // 4. Color Over Lifetime Module Settings
+                ParticleSystem.ColorOverLifetimeModule srcCLT = srcThruster.colorOverLifetime;
+                ParticleSystem.ColorOverLifetimeModule dstCLT = dstThruster.colorOverLifetime;
+
+                dstCLT.color = srcCLT.color;
+
+                // 5. Size Over Lifetime Module Settings
+                ParticleSystem.SizeOverLifetimeModule srcSLT = srcThruster.sizeOverLifetime;
+                ParticleSystem.SizeOverLifetimeModule dstSLT = dstThruster.sizeOverLifetime;
+
+                dstSLT.size = srcSLT.size;
+
+                // 6. Start
+                dstThruster.Play();
+            }
+        }
 
         //Clear out previous turret indicators
         foreach (Transform turretRepeater in shipImage.transform)
@@ -766,11 +877,75 @@ public class MenuScreenManager : Singleton<MenuScreenManager>
         }
     }
 
+    public void SelectedDroneTurretChange(TurretRepeater selectedTurretRepeater)
+    {
+        //Show and update drone turret panel
+        droneTurretDetailsPanel.SetActive(true);
+        Turret turretScript = selectedTurretRepeater.turretTransform.GetComponent<Turret>();
+
+        droneTurretTypeText.text = "Turret Type: ";
+        droneTurretDmgText.text = "Dmg / Shot: " + turretScript.GetDamageText();
+        droneTurretFireRateText.text = "Shots / Sec: " + turretScript.GetShotsPerSec();
+        droneTurretProjectileSpeedText.text = "Projectile Speed: " + turretScript.GetProjectileSpeed();
+        droneTurretRangeText.text = "Range: " + turretScript.GetRange();
+
+        switch (turretScript.GetTurretType())
+        {
+            case Turret.TurretType.LightTurret:
+                droneTurretTypeText.text += "Light";
+                break;
+            case Turret.TurretType.MediumTurret:
+                droneTurretTypeText.text += "Medium";
+                break;
+            case Turret.TurretType.HeavyTurret:
+                droneTurretTypeText.text += "Heavy";
+                break;
+            case Turret.TurretType.HawkGun:
+                droneTurretTypeText.text += "Heavy";
+                turretRangeText.text += " | " + (turretScript.GetRange() * 2);
+                break;
+            case Turret.TurretType.MissilePods:
+                droneTurretTypeText.text += "Missile";
+                break;
+
+        }
+
+        //Put the turret lines to the right spot
+        SetDroneTurretLinesVisibility(true);
+        droneTurretLine_Left.position = selectedTurretRepeater.transform.position;
+        droneTurretLine_Right.position = selectedTurretRepeater.transform.position;
+        droneTurretLine_Left.rotation = Quaternion.Euler(0f, 0f, turretScript.GetAimDirection() - 90f + turretScript.GetFiringArc() / 2f);
+        droneTurretLine_Right.rotation = Quaternion.Euler(0f, 0f, turretScript.GetAimDirection() - 90f - turretScript.GetFiringArc() / 2f);
+
+        //If it is a 360 turret show the circle, and rotate the lines to show direction of fire for missiles
+        if (turretScript.GetFiringArc() == 360)
+        {
+            if (turretScript.GetTurretType() == Turret.TurretType.MissilePods)
+            {
+                droneTurretLine_Left.rotation = Quaternion.Euler(0f, 0f, turretScript.GetAimDirection() - 90f);
+                droneTurretLine_Right.rotation = Quaternion.Euler(0f, 0f, turretScript.GetAimDirection() - 90f);
+            }
+            else
+            {
+                SetDroneTurretLinesVisibility(false);
+            }
+            droneTurretCircle.gameObject.SetActive(true);
+            droneTurretCircle.position = selectedTurretRepeater.transform.position;
+        }
+    }
+
     private void SetTurretLinesVisibility(bool visible)
     {
         turretLine_Left.gameObject.SetActive(visible);
         turretLine_Right.gameObject.SetActive(visible);
         turretCircle.gameObject.SetActive(false);
+    }
+
+    private void SetDroneTurretLinesVisibility(bool visible)
+    {
+        droneTurretLine_Left.gameObject.SetActive(visible);
+        droneTurretLine_Right.gameObject.SetActive(visible);
+        droneTurretCircle.gameObject.SetActive(false);
     }
 
     private void ChooseFaction(int changeFaction)

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class GoliathAbility : NetworkBehaviour
 {
-    [SerializeField] private GameObject fighterPrefab;
+    private GameObject fighterPrefab;
 
     [SerializeField] private int fightersOnSpawn;
     [SerializeField] private int maxFighters;
@@ -21,6 +21,7 @@ public class GoliathAbility : NetworkBehaviour
     {
         if (!IsHost) return;
 
+        fighterPrefab = gameObject.GetComponent<Ship>().GetShipsDronePrefab();
         fighters = new List<GameObject>();
         for (int i = 0; i < fightersOnSpawn; i++)
             SpawnFighter();

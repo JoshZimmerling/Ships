@@ -2235,9 +2235,13 @@ PrefabInstance:
       value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 1993422899511674839, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
+      propertyPath: shipsDronePrefab
+      value: 
+      objectReference: {fileID: 4472712856276870429, guid: 9c1482b2ddf02d846a36dfcc3f0b6d74, type: 3}
+    - target: {fileID: 1993422899511674839, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: shipDescriptionForUI
-      value: The Goliath spawns in Legionnaires that swarm onto it's targets, causing
-        chaos in the enemy ranks.
+      value: The Goliath spawns in up to 6 Legionnaires that swarm nearby enemies,
+        they heal to full health when returning back.
       objectReference: {fileID: 0}
     - target: {fileID: 2351284334504759342, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
       propertyPath: m_Sprite
@@ -2429,7 +2433,7 @@ PrefabInstance:
       addedObject: {fileID: 4280753266369381733}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 5167211490098671168, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
-      insertIndex: -1
+      insertIndex: 5
       addedObject: {fileID: 4746465276816094758}
   m_SourcePrefab: {fileID: 100100000, guid: 91c21a44a755b7a4c953e88595045ee5, type: 3}
 --- !u!1 &3114489228333015238 stripped
@@ -2450,7 +2454,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GoliathAbility
   ShowTopMostFoldoutHeaderGroup: 1
-  fighterPrefab: {fileID: 4472712856276870429, guid: 9c1482b2ddf02d846a36dfcc3f0b6d74, type: 3}
   fightersOnSpawn: 2
   maxFighters: 6
   spawnCooldown: 10

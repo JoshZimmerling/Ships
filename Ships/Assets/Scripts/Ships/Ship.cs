@@ -53,6 +53,8 @@ public class Ship : NetworkBehaviour
 
     public readonly NetworkVariable<bool> hiddenFromRadar = new NetworkVariable<bool>(true);
 
+    [SerializeField] private GameObject shipsDronePrefab;
+
     // Ship Components
     private Transform hpBar;
     [SerializeField] public GameObject popupTextPrefab;
@@ -326,6 +328,11 @@ public class Ship : NetworkBehaviour
     public ShipClasses GetShipClass()
     {
         return shipClass;
+    }
+
+    public GameObject GetShipsDronePrefab()
+    {
+        return shipsDronePrefab;
     }
 
     public float GetShipCost()
